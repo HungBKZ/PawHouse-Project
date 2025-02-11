@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thức Ăn Thú Cưng - PawHouse</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">PawHouse</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Trang Chủ</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link active" href="products.html">Sản Phẩm</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="services.html">Dịch Vụ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#reviews">Đánh giá</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary text-white" href="contact.html"
+                >Liên Hệ</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Banner -->
+    <section class="container-fluid p-0">
+      <img src="./imgs/bannerfood.jpg" class="w-100" alt="Thức Ăn Thú Cưng" />
+    </section>
+
+    <!-- Giới thiệu Thức Ăn -->
+    <section class="container text-center py-5">
+      <h2 class="mb-3">Thức Ăn Dinh Dưỡng Cho Thú Cưng</h2>
+      <p class="lead">
+        Cung cấp thực phẩm an toàn, bổ dưỡng cho thú cưng của bạn.
+      </p>
+    </section>
+
+    <!-- Danh sách sản phẩm -->
+    <section class="container">
+      <h3 class="text-center mb-4">Sản Phẩm Thức Ăn</h3>
+      <div class="row">
+        <!-- Sản phẩm 1 -->
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img
+              src="./imgs/pedigree.jpg"
+              class="card-img-top"
+              alt="Thức ăn chó"
+            />
+            <div class="card-body text-center">
+              <h5 class="card-title">Pedigree</h5>
+              <p class="card-text">
+                Giàu protein, vitamin giúp chó phát triển khỏe mạnh.
+              </p>
+              <p class="fw-bold text-primary">250.000 VND</p>
+              <button class="btn btn-success">Mua Ngay</button>
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-cart"></i> Thêm vào Giỏ
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Sản phẩm 2 -->
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img
+              src="./imgs/catfood.jpg"
+              class="card-img-top"
+              alt="Thức ăn mèo"
+            />
+            <div class="card-body text-center">
+              <h5 class="card-title">Me-O</h5>
+              <p class="card-text">
+                Hỗ trợ tiêu hóa, giúp lông mềm mượt và chắc khỏe.
+              </p>
+              <p class="fw-bold text-primary">220.000 VND</p>
+              <button class="btn btn-success">Mua Ngay</button>
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-cart"></i> Thêm vào Giỏ
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Sản phẩm 3 -->
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img src="./imgs/prodiet.jpg" class="card-img-top" alt="prodiet" />
+            <div class="card-body text-center">
+              <h5 class="card-title">Pro Diet</h5>
+              <p class="card-text">
+                Thức ăn giàu chất xơ, tốt cho hệ tiêu hóa của thỏ.
+              </p>
+              <p class="fw-bold text-primary">180.000 VND</p>
+              <button class="btn btn-success">Mua Ngay</button>
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-cart"></i> Thêm vào Giỏ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comment and Rating Section -->
+    <section id="reviews" class="container py-5">
+      <h2 class="text-center mb-4">Đánh Giá & Bình Luận</h2>
+      <div class="mb-3">
+        <label for="userComment" class="form-label"
+          >Viết đánh giá của bạn:</label
+        >
+        <textarea
+          class="form-control"
+          id="userComment"
+          rows="3"
+          placeholder="Nhập bình luận..."
+        ></textarea>
+        <button class="btn btn-primary mt-3">Gửi Bình Luận</button>
+      </div>
+      <div class="mt-4">
+        <p>
+          <strong>Nguyễn Văn A:</strong> "Sản phẩm rất tốt, thú cưng của mình
+          rất thích! ⭐⭐⭐⭐⭐"
+        </p>
+        <p>
+          <strong>Trần Thị B:</strong> "Chất lượng ổn, nhưng giá hơi cao so với
+          thị trường. ⭐⭐⭐⭐"
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white text-center py-4">
+      <p>&copy; 2025 PawHouse. Tất cả các quyền được bảo lưu.</p>
+      <p>
+        <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+      </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

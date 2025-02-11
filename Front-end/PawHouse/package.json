@@ -1,0 +1,25 @@
+{
+  "name": "bootstrap-demo",
+  "version": "1.0.0",
+  "description": "**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run lite",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lite": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://thanhng4@bitbucket.org/group-x-fer202-sp25/bootstrap-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/group-x-fer202-sp25/bootstrap-demo/issues"
+  },
+  "homepage": "https://bitbucket.org/group-x-fer202-sp25/bootstrap-demo#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  }
+}
