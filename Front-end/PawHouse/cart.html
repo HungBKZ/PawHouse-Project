@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Giỏ Hàng - PawHouse</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <style>
+      .cart-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .total-price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #28a745;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">PawHouse</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Trang Chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="products.html">Sản Phẩm</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="services.html">Dịch Vụ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="cart.html"
+                ><i class="bi bi-cart"></i> Giỏ Hàng</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link btn btn-primary text-white"
+                href="checkout.html"
+                >Thanh Toán</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Giỏ Hàng -->
+    <section class="container my-5">
+      <h2 class="text-center mb-4">Giỏ Hàng Của Bạn</h2>
+      <div class="table-responsive">
+        <table class="table text-center">
+          <thead class="table-dark">
+            <tr>
+              <th>Hình Ảnh</th>
+              <th>Sản Phẩm</th>
+              <th>Giá</th>
+              <th>Số Lượng</th>
+              <th>Tổng</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody id="cart-items">
+            <!-- Sản phẩm mẫu -->
+            <tr>
+              <td>
+                <img
+                  src="https://source.unsplash.com/80x80/?dog-food"
+                  class="cart-img"
+                  alt="Thức Ăn Chó"
+                />
+              </td>
+              <td>Thức Ăn Cho Chó</td>
+              <td class="price">250.000 VNĐ</td>
+              <td>
+                <div class="quantity-control">
+                  <button class="btn btn-sm btn-outline-secondary decrease">
+                    -
+                  </button>
+                  <span class="quantity">1</span>
+                  <button class="btn btn-sm btn-outline-secondary increase">
+                    +
+                  </button>
+                </div>
+              </td>
+              <td class="total-price">250.000 VNĐ</td>
+              <td>
+                <button class="btn btn-danger btn-sm remove-item">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-end">
+        <h4>
+          Tổng Cộng:
+          <span id="grand-total" class="text-success">250.000 VNĐ</span>
+        </h4>
+        <a href="checkout.html" class="btn btn-primary mt-3"
+          >Tiến Hành Thanh Toán</a
+        >
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white text-center py-4">
+      <p>&copy; 2025 PawHouse. Tất cả các quyền được bảo lưu.</p>
+      <p>
+        <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+      </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const cartItems = document.querySelectorAll("#cart-items tr");
+
+        cartItems.forEach((row) => {
+          const decreaseBtn = row.querySelector(".decrease");
+          const increaseBtn = row.querySelector(".increase");
+          const quantitySpan = row.querySelector(".quantity");
+          const price = parseInt(
+            row.querySelector(".price").textContent.replace(/\D/g, "")
+          );
+          const totalPrice = row.querySelector(".total-price");
+          const removeBtn = row.querySelector(".remove-item");
+
+          let quantity = parseInt(quantitySpan.textContent);
+
+          decreaseBtn.addEventListener("click", () => {
+            if (quantity > 1) {
+              quantity--;
+              quantitySpan.textContent = quantity;
+              totalPrice.textContent =
+                (price * quantity).toLocaleString() + " VNĐ";
+              updateGrandTotal();
+            }
+          });
+
+          increaseBtn.addEventListener("click", () => {
+            quantity++;
+            quantitySpan.textContent = quantity;
+            totalPrice.textContent =
+              (price * quantity).toLocaleString() + " VNĐ";
+            updateGrandTotal();
+          });
+
+          removeBtn.addEventListener("click", () => {
+            row.remove();
+            updateGrandTotal();
+          });
+        });
+
+        function updateGrandTotal() {
+          let grandTotal = 0;
+          document.querySelectorAll(".total-price").forEach((item) => {
+            grandTotal += parseInt(item.textContent.replace(/\D/g, ""));
+          });
+          document.getElementById("grand-total").textContent =
+            grandTotal.toLocaleString() + " VNĐ";
+        }
+      });
+    </script>
+  </body>
+</html>

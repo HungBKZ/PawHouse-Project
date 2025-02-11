@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dịch Vụ Nhận Nuôi - PawHouse</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">PawHouse</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Trang Chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="products.html">Sản Phẩm</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="services.html">Dịch Vụ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Đánh giá</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary text-white" href="contact.html"
+                >Liên Hệ</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Banner -->
+    <section class="container-fluid p-0">
+      <img src="./imgs/bannerpet.jpg" class="w-100" alt="Dịch Vụ Nhận Nuôi" />
+    </section>
+
+    <!-- Giới thiệu Dịch vụ -->
+    <section class="container text-center py-5">
+      <h2 class="mb-3">Hãy Cho Thú Cưng Một Ngôi Nhà Mới</h2>
+      <p class="lead">
+        Chúng tôi giúp bạn tìm một người bạn đồng hành hoàn hảo.
+      </p>
+    </section>
+
+    <!-- Danh sách Thú Cưng -->
+    <section class="container">
+      <h3 class="text-center mb-4">Thú Cưng Đang Chờ Nhận Nuôi</h3>
+      <div class="row text-center">
+        <div class="col-md-4">
+          <img src="./imgs/bubby.jpg" class="w-100 rounded" alt="Chó con" />
+          <h4 class="mt-3">Bobby</h4>
+          <p>Chó con, 3 tháng tuổi, hiền lành và đáng yêu.</p>
+        </div>
+        <div class="col-md-4">
+          <img src="./imgs/mimi.png" class="w-100 rounded" alt="Mèo con" />
+          <h4 class="mt-3">Mimi</h4>
+          <p>Mèo con, 2 tháng tuổi, thích được vuốt ve.</p>
+        </div>
+        <div class="col-md-4">
+          <img src="./imgs/snowy.jpg" class="w-100 rounded" alt="Thỏ" />
+          <h4 class="mt-3">Snowy</h4>
+          <p>Mèo trắng, 5 tháng tuổi, hiền lành và thân thiện.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lợi ích khi nhận nuôi -->
+    <section class="container my-5 text-center">
+      <h3 class="mb-4">Lợi Ích Khi Nhận Nuôi Thú Cưng</h3>
+      <div class="row">
+        <div class="col-md-4">
+          <i class="bi bi-heart-fill text-primary fs-1"></i>
+          <h5 class="mt-3">Tạo Mối Quan Hệ Đặc Biệt</h5>
+          <p>Thú cưng sẽ là người bạn trung thành của bạn.</p>
+        </div>
+        <div class="col-md-4">
+          <i class="bi bi-house-door-fill text-success fs-1"></i>
+          <h5 class="mt-3">Cung Cấp Ngôi Nhà Mới</h5>
+          <p>Giúp thú cưng có một mái ấm trọn vẹn.</p>
+        </div>
+        <div class="col-md-4">
+          <i class="bi bi-emoji-smile-fill text-warning fs-1"></i>
+          <h5 class="mt-3">Mang Lại Niềm Vui</h5>
+          <p>Thú cưng giúp bạn giảm căng thẳng và tạo động lực.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Đăng Ký Nhận Nuôi -->
+    <section class="container my-5">
+      <h3 class="text-center mb-4">Đăng Ký Nhận Nuôi</h3>
+      <form>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Họ và tên"
+              required
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Số điện thoại"
+              required
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <select class="form-select" required>
+              <option value="">Chọn thú cưng</option>
+              <option>Bobby - Chó con</option>
+              <option>Mimi - Mèo con</option>
+              <option>Snowy - Thỏ</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100">
+              Gửi Yêu Cầu
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white text-center py-4">
+      <p>&copy; 2025 PawHouse. Tất cả các quyền được bảo lưu.</p>
+      <p>
+        <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+      </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
