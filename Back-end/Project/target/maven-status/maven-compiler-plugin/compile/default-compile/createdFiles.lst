@@ -3,13 +3,17 @@ Model\Service.class
 com\mycompany\mavenproject1\resources\JakartaEE91Resource.class
 Model\AdoptionHistory.class
 Model\Pet.class
+controller\ForgotPasswordServlet.class
 Utils\DBContext.class
 dao\ProductCategoryDAO.class
+controller\ResetPasswordServlet.class
 com\mycompany\mavenproject1\JakartaRestConfiguration.class
 dao\UserDAO.class
 Model\Payment.class
+controller\ForgotPasswordServlet$1.class
 Model\Cart.class
 Model\Product.class
+controller\LoginServlet.class
 dao\RoleDAO.class
 Model\MedicalRecords.class
 Model\PetCategories.class
@@ -22,4 +26,5 @@ Model\User.class
 Model\OrderDetails.class
 Model\Role.class
 Model\ServiceCategories.class
+controller\RegisterServlet.class
 dao\ProductDAO.class
