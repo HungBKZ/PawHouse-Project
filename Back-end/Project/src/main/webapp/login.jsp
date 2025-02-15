@@ -1,0 +1,118 @@
+<%-- 
+    Document   : login
+    Created on : Feb 15, 2025, 10:06:35 PM
+    Author     : hungv
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Login - PawHouse</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Arial', sans-serif;
+            }
+            .login-container {
+                max-width: 400px;
+                margin: 50px auto;
+                padding: 20px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .login-header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .login-header img {
+                max-width: 150px;
+                margin-bottom: 20px;
+            }
+            .form-control {
+                border-radius: 20px;
+                padding: 10px 15px;
+            }
+            .btn-login {
+                border-radius: 20px;
+                padding: 10px 20px;
+                width: 100%;
+                background-color: #4CAF50;
+                border: none;
+            }
+            .btn-login:hover {
+                background-color: #45a049;
+            }
+            .google-btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+            .forgot-password {
+                text-align: right;
+                margin: 10px 0;
+            }
+            .register-link {
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="login-container">
+                <div class="login-header">
+                    <img src="assets/images/logo.png" alt="PawHouse Logo">
+                    <h2>Welcome to PawHouse</h2>
+                </div>
+                
+                <% if(request.getAttribute("error") != null) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= request.getAttribute("error") %>
+                    </div>
+                <% } %>
+                
+                <form action="login" method="POST">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="forgotPassword.jsp">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-login">Login</button>
+                </form>
+                
+                <div class="text-center my-3">
+                    <span>OR</span>
+                </div>
+                
+                <div class="google-btn">
+                    <div id="g_id_onload"
+                         data-client_id="1070356535427-6piumat66ak1u72qng1rafu4vmpmom94.apps.googleusercontent.com"
+                         data-callback="handleCredentialResponse">
+                    </div>
+                    <div class="g_id_signin" data-type="standard"></div>
+                </div>
+                
+                <div class="register-link">
+                    Don't have an account? <a href="register.jsp">Register here</a>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function handleCredentialResponse(response) {
+                // Handle Google Sign-In response
+                console.log("Google Sign-In Response:", response);
+                // You'll need to implement the backend handling for Google Sign-In
+            }
+        </script>
+    </body>
+</html>
