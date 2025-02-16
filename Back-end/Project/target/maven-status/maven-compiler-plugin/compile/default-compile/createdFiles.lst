@@ -24,6 +24,7 @@ Model\Orders.class
 Model\ProductCategories.class
 Model\User.class
 Model\OrderDetails.class
+controller\LogoutServlet.class
 Model\Role.class
 Model\ServiceCategories.class
 controller\RegisterServlet.class
