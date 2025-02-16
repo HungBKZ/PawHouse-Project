@@ -18,7 +18,7 @@ public class DBContext {
             String url = "jdbc:sqlserver://localhost:1433;"
                     + "databaseName=PawHouseProject;"
                     + "user=sa;"
-                    + "password=123;"
+                    + "password=12345;"
                     + "encrypt=true;"
                     + "trustServerCertificate=true;";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

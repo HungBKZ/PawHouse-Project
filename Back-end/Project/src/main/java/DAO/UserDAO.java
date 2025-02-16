@@ -137,4 +137,16 @@ public class UserDAO extends DBContext {
             return rowsAffected > 0;
         }
     }
+
+    public boolean updatePasswordByEmail(String email, String newPassword) throws SQLException {
+        String query = "UPDATE Users SET Password = ? WHERE Email = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, newPassword);
+            ps.setString(2, email);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 }

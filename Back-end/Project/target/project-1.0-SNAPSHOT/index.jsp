@@ -1,4 +1,3 @@
-
 <%@ page import="Model.User" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
@@ -26,13 +25,15 @@
                         <li class="nav-item"><a class="nav-link" href="services.jsp">Dịch Vụ</a></li>
                         <li class="nav-item"><a class="nav-link" href="adoption.jsp">Nhận Nuôi</a></li>
                         <li class="nav-item"><a class="nav-link" href="cart.jsp"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
-                            <% User user = (User) session.getAttribute("loggedInUser"); %>
-                            <% if (user == null) { %>
+                            <% 
+                                User user = (User) session.getAttribute("loggedInUser");
+                                if (user == null) { 
+                            %>
                         <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="login.jsp">Đăng Nhập</a></li>
-                            <% } else {%>
-                        <li class="nav-item"><a class="nav-link" href="profile.jsp"><i class="bi bi-person-circle"></i> <%= user.getFullName()%></a></li>
-                        <li class="nav-item"><a class="nav-link" href="logout.jsp">Đăng Xuất</a></li>
-                            <% }%>
+                            <% } else { %>
+                        <li class="nav-item"><span class="nav-link">Chào mừng, <%= user.getFullName()%></span></li>
+                        <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="logout">Đăng Xuất</a></li>
+                            <% } %>
                     </ul>
                 </div>
             </div>

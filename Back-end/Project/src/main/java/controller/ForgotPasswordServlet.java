@@ -8,93 +8,99 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
-import java.util.UUID;
-import javax.mail.*;
-import javax.mail.internet.*;
 
 @WebServlet(name = "ForgotPasswordServlet", urlPatterns = {"/forgotPassword"})
 public class ForgotPasswordServlet extends HttpServlet {
     
-    private static final String EMAIL_FROM = "your-email@gmail.com"; // Replace with your email
-    private static final String EMAIL_PASSWORD = "your-app-password"; // Replace with your app password
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String token = request.getParameter("token");
-        if (token != null) {
-            // Show reset password form
-            request.setAttribute("token", token);
-            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
-        }
+        // Show the forgot password form
+        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
     }
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
+        String action = request.getParameter("action");
         UserDAO userDAO = new UserDAO();
         
-        try {
-            if (userDAO.checkEmailExists(email)) {
-                // Generate reset token
-                String token = UUID.randomUUID().toString();
-                
-                // Save token to database
-                if (userDAO.saveResetToken(email, token)) {
-                    // Send reset email
-                    sendResetEmail(email, token);
-                    
-                    request.setAttribute("success", "Password reset instructions have been sent to your email.");
-                } else {
-                    request.setAttribute("error", "Failed to process your request. Please try again.");
-                }
-            } else {
-                request.setAttribute("error", "Email address not found!");
-            }
-        } catch (SQLException e) {
-            request.setAttribute("error", "Database error: " + e.getMessage());
+        if ("checkEmail".equals(action)) {
+            // Step 1: Check email exists
+            handleEmailCheck(request, response, userDAO);
+        } else if ("resetPassword".equals(action)) {
+            // Step 2: Reset password
+            handlePasswordReset(request, response, userDAO);
+        } else {
+            request.setAttribute("error", "Invalid action");
+            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
         }
-        
-        request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
     }
     
-    private void sendResetEmail(String toEmail, String token) {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        
-        Session session = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(EMAIL_FROM, EMAIL_PASSWORD);
-            }
-        });
+    private void handleEmailCheck(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
         
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(EMAIL_FROM));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Reset Your PawHouse Password");
+            if (email == null || email.trim().isEmpty()) {
+                request.setAttribute("error", "Please enter your email address.");
+                request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+                return;
+            }
+
+            if (userDAO.checkEmailExists(email)) {
+                // Email exists, show password reset form
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "No account found with this email address.");
+                request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+            }
+        } catch (SQLException e) {
+            request.setAttribute("error", "An error occurred. Please try again later.");
+            request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
+            e.printStackTrace();
+        }
+    }
+    
+    private void handlePasswordReset(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
+            throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+        
+        try {
+            // Validate inputs
+            if (email == null || email.trim().isEmpty() || 
+                newPassword == null || newPassword.trim().isEmpty() ||
+                confirmPassword == null || confirmPassword.trim().isEmpty()) {
+                request.setAttribute("error", "All fields are required.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+                return;
+            }
             
-            String resetLink = "http://localhost:8080/PawHouse/forgotPassword?token=" + token;
-            String emailContent = 
-                "Dear PawHouse User,<br><br>" +
-                "We received a request to reset your password. Click the link below to create a new password:<br><br>" +
-                "<a href='" + resetLink + "'>" + resetLink + "</a><br><br>" +
-                "If you didn't request this, you can safely ignore this email.<br><br>" +
-                "Best regards,<br>" +
-                "The PawHouse Team";
+            // Check if passwords match
+            if (!newPassword.equals(confirmPassword)) {
+                request.setAttribute("error", "Passwords do not match.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+                return;
+            }
             
-            message.setContent(emailContent, "text/html; charset=utf-8");
-            Transport.send(message);
-            
-        } catch (MessagingException e) {
+            // Update password in database
+            if (userDAO.updatePasswordByEmail(email, newPassword)) {
+                request.setAttribute("success", "Password has been reset successfully. You can now login with your new password.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "Failed to reset password. Please try again.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+            }
+        } catch (SQLException e) {
+            request.setAttribute("error", "An error occurred. Please try again later.");
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
             e.printStackTrace();
         }
     }

@@ -4,6 +4,7 @@
     Author     : hungv
 --%>
 
+<%@page import="Model.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -63,6 +64,20 @@
     </head>
     <body>
         <div class="container">
+            <div class="nav-container">
+                <ul class="nav-list">
+                  
+                    <% 
+                        User user = (User) session.getAttribute("loggedInUser");
+                        if (user == null) { 
+                    %>
+                  
+                    <% } else { %>
+                    <li class="nav-item"><span class="nav-link">Chào mừng, <%= user.getFullName()%></span></li>
+                    <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="logout">Đăng Xuất</a></li>
+                    <% } %>
+                </ul>
+            </div>
             <div class="login-container">
                 <div class="login-header">
                     <img src="assets/images/logo.png" alt="PawHouse Logo">
@@ -73,6 +88,13 @@
                     <div class="alert alert-danger" role="alert">
                         <%= request.getAttribute("error") %>
                     </div>
+                <% } %>
+                
+                <% if(session.getAttribute("success") != null) { %>
+                    <div class="alert alert-success" role="alert">
+                        <%= session.getAttribute("success") %>
+                    </div>
+                    <% session.removeAttribute("success"); %>
                 <% } %>
                 
                 <form action="login" method="POST">
@@ -99,9 +121,17 @@
                     </div>
                     <div class="g_id_signin" data-type="standard"></div>
                 </div>
+                  <li class="nav-item">
+                        <a href="index.jsp" class="nav-link btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Trang Chủ
+                        </a>
+                    </li>
                 
                 <div class="register-link">
-                    Don't have an account? <a href="register.jsp">Register here</a>
+                    <p>Don't have an account? <a href="register.jsp">Register here</a></p>
+                    <a href="index.jsp" class="btn btn-outline-secondary mt-3">
+                        <i class="fas fa-arrow-left"></i> Quay Lại Trang Chủ
+                    </a>
                 </div>
             </div>
         </div>
@@ -114,5 +144,6 @@
                 // You'll need to implement the backend handling for Google Sign-In
             }
         </script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     </body>
 </html>

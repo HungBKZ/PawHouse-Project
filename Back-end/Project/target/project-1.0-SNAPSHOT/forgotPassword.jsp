@@ -87,6 +87,7 @@
                 <% } %>
                 
                 <form action="forgotPassword" method="POST" id="forgotForm">
+                    <input type="hidden" name="action" value="checkEmail">
                     <div class="mb-3">
                         <label for="email" class="form-label">Enter your email address</label>
                         <input type="email" class="form-control" id="email" name="email" required
@@ -94,12 +95,12 @@
                     </div>
                     
                     <ul class="steps">
-                        <li>We'll send a password reset link to your email</li>
-                        <li>Click the link in the email</li>
+                        <li>Enter your registered email address</li>
                         <li>Create your new password</li>
+                        <li>Start using your new password</li>
                     </ul>
                     
-                    <button type="submit" class="btn btn-submit">Send Reset Link</button>
+                    <button type="submit" class="btn btn-submit">Continue</button>
                 </form>
                 
                 <div class="back-to-login">
