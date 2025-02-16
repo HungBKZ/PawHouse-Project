@@ -10,7 +10,6 @@ controller\ResetPasswordServlet.class
 com\mycompany\mavenproject1\JakartaRestConfiguration.class
 dao\UserDAO.class
 Model\Payment.class
-controller\ForgotPasswordServlet$1.class
 Model\Cart.class
 Model\Product.class
 controller\LoginServlet.class

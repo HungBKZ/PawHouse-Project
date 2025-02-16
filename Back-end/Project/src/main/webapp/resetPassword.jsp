@@ -72,12 +72,13 @@
                     </div>
                 <% } %>
                 
-                <form action="resetPassword" method="POST" id="resetForm">
-                    <input type="hidden" name="token" value="${param.token}">
+                <form action="forgotPassword" method="POST" id="resetForm">
+                    <input type="hidden" name="action" value="resetPassword">
+                    <input type="hidden" name="email" value="${requestScope.email}">
                     
                     <div class="mb-3">
-                        <label for="password" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required
                                pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
                     </div>
                     
@@ -103,7 +104,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.getElementById('resetForm').addEventListener('submit', function(event) {
-                var password = document.getElementById('password').value;
+                var password = document.getElementById('newPassword').value;
                 var confirmPassword = document.getElementById('confirmPassword').value;
                 
                 if (password !== confirmPassword) {
