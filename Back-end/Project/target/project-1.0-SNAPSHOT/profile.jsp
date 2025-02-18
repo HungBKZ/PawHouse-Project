@@ -1,10 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="Model.User" %>
+<%@ page import="dao.UserDAO" %>
+<%@ page import="Utils.PasswordHasher" %>
 
 <%
-    HttpSession sessionObj = request.getSession();
-    User user = (User) sessionObj.getAttribute("loggedInUser");
+    User user = null;
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("authToken")) {
+                String decodedValue = PasswordHasher.decodeBase64(cookie.getValue());
+                String[] parts = decodedValue.split(":");
+                if (parts.length == 2) {
+                    String email = parts[0];
+                    UserDAO userDAO = new UserDAO();
+                    user = userDAO.getUserByEmail(email);
+                }
+                break;
+            }
+        }
+    }
+    
     if (user == null) {
         response.sendRedirect("login.jsp");
         return;

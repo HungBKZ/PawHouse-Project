@@ -2,7 +2,30 @@
 <%@ page import="java.util.List" %>
 <%@ page import="Model.Product" %>
 <%@ page import="Model.Cart" %>
+<%@ page import="Model.User" %>
+<%@ page import="dao.UserDAO" %>
+<%@ page import="Utils.PasswordHasher" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
+
+<%
+    // Check for authenticated user
+    User user = null;
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("authToken")) {
+                String decodedValue = PasswordHasher.decodeBase64(cookie.getValue());
+                String[] parts = decodedValue.split(":");
+                if (parts.length == 2) {
+                    String email = parts[0];
+                    UserDAO userDAO = new UserDAO();
+                    user = userDAO.getUserByEmail(email);
+                }
+                break;
+            }
+        }
+    }
+%>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -27,6 +50,12 @@
                     <li class="nav-item"><a class="nav-link" href="products.jsp">Sản Phẩm</a></li>
                     <li class="nav-item"><a class="nav-link" href="services.jsp">Dịch Vụ</a></li>
                     <li class="nav-item"><a class="nav-link active" href="cart.jsp"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
+                    <% if (user == null) { %>
+                        <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="login.jsp">Đăng Nhập</a></li>
+                    <% } else { %>
+                        <li class="nav-item"><span class="nav-link">Chào mừng, <%= user.getFullName() %></span></li>
+                        <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="logout">Đăng Xuất</a></li>
+                    <% } %>
                 </ul>
             </div>
         </div>

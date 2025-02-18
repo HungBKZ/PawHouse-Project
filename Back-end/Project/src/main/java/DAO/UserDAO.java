@@ -9,6 +9,7 @@ import Utils.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import Utils.PasswordHasher;
 
 public class UserDAO extends DBContext {
 
@@ -45,7 +46,7 @@ public class UserDAO extends DBContext {
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
-            ps.setString(2, password);
+            ps.setString(2, PasswordHasher.hashMD5(password));
             
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -87,7 +88,7 @@ public class UserDAO extends DBContext {
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword());
+            ps.setString(2, PasswordHasher.hashMD5(user.getPassword()));
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
@@ -130,7 +131,7 @@ public class UserDAO extends DBContext {
                       "WHERE ResetToken = ? AND ResetTokenExpiry > GETDATE()";
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, newPassword);
+            ps.setString(1, PasswordHasher.hashMD5(newPassword));
             ps.setString(2, token);
             
             int rowsAffected = ps.executeUpdate();
@@ -142,11 +143,34 @@ public class UserDAO extends DBContext {
         String query = "UPDATE Users SET Password = ? WHERE Email = ?";
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, newPassword);
+            ps.setString(1, PasswordHasher.hashMD5(newPassword));
             ps.setString(2, email);
             
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         }
+    }
+
+    public User getUserByEmail(String email) {
+        String query = "SELECT * FROM Users WHERE Email = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setUsername(rs.getString("Username"));
+                user.setEmail(rs.getString("Email"));
+                user.setFullName(rs.getString("FullName"));
+                user.setPhone(rs.getString("Phone"));
+                user.setStatus(rs.getBoolean("Status"));
+                return user;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

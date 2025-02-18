@@ -60,18 +60,35 @@
                 text-align: center;
                 margin-top: 20px;
             }
+            .form-check {
+                margin: 15px 0;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="nav-container">
                 <ul class="nav-list">
-                  
                     <% 
+                        // Get cookies
+                        String savedEmail = "";
+                        String savedPassword = "";
+                        Cookie[] cookies = request.getCookies();
+                        if (cookies != null) {
+                            for (Cookie cookie : cookies) {
+                                if (cookie.getName().equals("savedEmail")) {
+                                    savedEmail = cookie.getValue();
+                                }
+                                if (cookie.getName().equals("savedPassword")) {
+                                    savedPassword = Utils.PasswordHasher.decodeBase64(cookie.getValue());
+                                }
+                            }
+                        }
+                        
                         User user = (User) session.getAttribute("loggedInUser");
                         if (user == null) { 
                     %>
-                  
+                    
                     <% } else { %>
                     <li class="nav-item"><span class="nav-link">Chào mừng, <%= user.getFullName()%></span></li>
                     <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="logout">Đăng Xuất</a></li>
@@ -99,10 +116,14 @@
                 
                 <form action="login" method="POST">
                     <div class="mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        <input type="email" class="form-control" name="email" placeholder="Email" required value="<%= savedEmail %>">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                        <input type="password" class="form-control" name="password" placeholder="Password" required value="<%= savedPassword %>">
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" <%= !savedEmail.isEmpty() ? "checked" : "" %>>
+                        <label class="form-check-label" for="rememberMe">Lưu mật khẩu</label>
                     </div>
                     <div class="forgot-password">
                         <a href="forgotPassword.jsp">Forgot Password?</a>
@@ -121,11 +142,7 @@
                     </div>
                     <div class="g_id_signin" data-type="standard"></div>
                 </div>
-                  <li class="nav-item">
-                        <a href="index.jsp" class="nav-link btn btn-outline-primary">
-                            <i class="fas fa-home"></i> Trang Chủ
-                        </a>
-                    </li>
+                 
                 
                 <div class="register-link">
                     <p>Don't have an account? <a href="register.jsp">Register here</a></p>
