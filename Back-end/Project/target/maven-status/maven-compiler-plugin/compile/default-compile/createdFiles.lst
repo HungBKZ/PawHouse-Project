@@ -13,6 +13,7 @@ Model\Payment.class
 Model\Cart.class
 Model\Product.class
 controller\LoginServlet.class
+Utils\PasswordHasher.class
 dao\RoleDAO.class
 Model\MedicalRecords.class
 Model\PetCategories.class

@@ -1,4 +1,3 @@
-<%@ page import="Model.User" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
@@ -11,33 +10,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     </head>
     <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="index.jsp">PawHouse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link active" href="index.jsp">Trang Chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="products.jsp">Sản Phẩm</a></li>
-                        <li class="nav-item"><a class="nav-link" href="services.jsp">Dịch Vụ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="adoption.jsp">Nhận Nuôi</a></li>
-                        <li class="nav-item"><a class="nav-link" href="cart.jsp"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
-                            <% 
-                                User user = (User) session.getAttribute("loggedInUser");
-                                if (user == null) { 
-                            %>
-                        <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="login.jsp">Đăng Nhập</a></li>
-                            <% } else { %>
-                        <li class="nav-item"><span class="nav-link">Chào mừng, <%= user.getFullName()%></span></li>
-                        <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="logout">Đăng Xuất</a></li>
-                            <% } %>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="includes/navbar.jsp" %>
 
         <!-- Carousel -->
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
