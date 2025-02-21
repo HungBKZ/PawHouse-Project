@@ -151,26 +151,46 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM Users WHERE Email = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
+        
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
             
-            if (rs.next()) {
-                User user = new User();
-                user.setUserID(rs.getInt("UserID"));
-                user.setUsername(rs.getString("Username"));
-                user.setEmail(rs.getString("Email"));
-                user.setFullName(rs.getString("FullName"));
-                user.setPhone(rs.getString("Phone"));
-                user.setStatus(rs.getBoolean("Status"));
-                return user;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setStatus(rs.getBoolean("Status"));
+                    return user;
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean createUser(User user) throws SQLException {
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Avatar, Status, RoleID) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword()); // For Google users, password will be empty
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getFullName());
+            ps.setString(5, user.getPhone());
+            ps.setString(6, user.getAvatar());
+            ps.setBoolean(7, user.isStatus());
+            ps.setInt(8, 2); // RoleID 2 for regular users
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
     }
 }
