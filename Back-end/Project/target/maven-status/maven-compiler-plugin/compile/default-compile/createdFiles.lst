@@ -4,12 +4,14 @@ com\mycompany\mavenproject1\resources\JakartaEE91Resource.class
 Model\AdoptionHistory.class
 Model\Pet.class
 controller\ForgotPasswordServlet.class
+controller\GoogleLogin.class
 Utils\DBContext.class
 dao\ProductCategoryDAO.class
 controller\ResetPasswordServlet.class
 com\mycompany\mavenproject1\JakartaRestConfiguration.class
 dao\UserDAO.class
 Model\Payment.class
+constant\Iconstant.class
 Model\Cart.class
 Model\Product.class
 controller\LoginServlet.class
@@ -26,6 +28,7 @@ Model\User.class
 Model\OrderDetails.class
 controller\LogoutServlet.class
 Model\Role.class
+Model\GoogleAccount.class
 Model\ServiceCategories.class
 controller\RegisterServlet.class
 dao\ProductDAO.class
