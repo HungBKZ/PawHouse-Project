@@ -30,8 +30,8 @@ public class UserDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setStatus(rs.getBoolean("Status"));
-
+                user.setUserStatus(rs.getBoolean("UserStatus"));
+                user.setAddress(rs.getString("Address"));
                 userList.add(user);
             }
         } catch (SQLException e) {
@@ -58,7 +58,8 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setStatus(rs.getBoolean("Status"));
+                    user.setUserStatus(rs.getBoolean("Status"));
+                    user.setAddress(rs.getString("Address"));
                     return user;
                 }
             }
@@ -83,8 +84,8 @@ public class UserDAO extends DBContext {
     }
     
     public boolean registerUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Status, RoleID) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, 2)"; // RoleID 2 for regular user
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Status, RoleID, Address) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, 2, ?)"; // RoleID 2 for regular user
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
@@ -92,7 +93,8 @@ public class UserDAO extends DBContext {
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
-            ps.setBoolean(6, user.isStatus());
+            ps.setBoolean(6, user.isUserStatus());
+            ps.setString(7, user.getAddress());
             
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -165,7 +167,8 @@ public class UserDAO extends DBContext {
                 user.setEmail(rs.getString("Email"));
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
-                user.setStatus(rs.getBoolean("Status"));
+                user.setUserStatus(rs.getBoolean("Status"));
+                user.setAddress(rs.getString("Address"));
                 return user;
             }
         } catch (SQLException e) {
