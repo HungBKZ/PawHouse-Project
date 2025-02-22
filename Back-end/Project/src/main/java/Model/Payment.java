@@ -17,18 +17,18 @@ public class Payment {
     private double amount;
     private Date paymentDate;
     private String paymentMethod;
-    private boolean status;
+    private boolean paymentStatus;
 
     public Payment() {
     }
 
-    public Payment(int paymentID, Orders order, double amount, Date paymentDate, String paymentMethod, boolean status) {
+    public Payment(int paymentID, Orders order, double amount, Date paymentDate, String paymentMethod, boolean paymentStatus) {
         this.paymentID = paymentID;
         this.order = order;
         this.amount = amount;
         this.paymentDate = paymentDate;
         this.paymentMethod = paymentMethod;
-        this.status = status;
+        this.paymentStatus = paymentStatus;
     }
 
     public int getPaymentID() {
@@ -71,12 +71,12 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isPaymentStatus() {
+        return paymentStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setPaymentStatus(boolean paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
 }

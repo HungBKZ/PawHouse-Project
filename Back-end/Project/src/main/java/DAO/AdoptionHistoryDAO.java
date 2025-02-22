@@ -25,7 +25,7 @@ public class AdoptionHistoryDAO extends DBContext {
                 AdoptionHistory adoption = new AdoptionHistory();
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
-                adoption.setStatus(rs.getString("Status"));
+                adoption.setAdoptionStatus(rs.getString("Status"));
                 adoption.setNotes(rs.getString("Notes"));
                 adoptionList.add(adoption);
             }

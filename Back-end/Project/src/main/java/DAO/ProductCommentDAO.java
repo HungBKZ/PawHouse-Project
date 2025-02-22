@@ -28,7 +28,7 @@ public class ProductCommentDAO extends DBContext {
                 comment.setStar(rs.getInt("Star"));
                 comment.setContent(rs.getString("Content"));
                 comment.setDateComment(rs.getDate("Date_Comment"));
-                comment.setStatus(rs.getBoolean("ProductCommentStatus"));
+                comment.setProductCommentStatus(rs.getBoolean("ProductCommentStatus"));
                 commentList.add(comment);
             }
         } catch (SQLException e) {
