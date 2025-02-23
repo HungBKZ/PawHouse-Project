@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="Model.User" %>
-<%@ page import="dao.UserDAO" %>
+<%@ page import="DAO.UserDAO" %>
 <%@ page import="Utils.PasswordHasher" %>
 
 <%
@@ -76,7 +76,7 @@
         <div class="mt-4">
             <p><strong>Email:</strong> <%= user.getEmail() %></p>
             <p><strong>Số điện thoại:</strong> <%= user.getPhone() %></p>
-            <p><strong>Trạng thái:</strong> <%= user.isStatus() ? "Hoạt động" : "Bị khóa" %></p>
+            <p><strong>Trạng thái:</strong> <%= user.isUserStatus() ? "Hoạt động" : "Bị khóa" %></p>
         </div>
         <a href="logout.jsp" class="btn btn-logout w-100 text-white">Đăng Xuất</a>
     </div>
