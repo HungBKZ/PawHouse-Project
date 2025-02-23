@@ -27,5 +27,6 @@ Model\OrderDetails.class
 controller\LogoutServlet.class
 Model\Role.class
 Model\ServiceCategories.class
+dao\ServiceDAO.class
 controller\RegisterServlet.class
 dao\ProductDAO.class
