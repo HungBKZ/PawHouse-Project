@@ -1,7 +1,7 @@
 package controller;
 
 import Model.User;
-import dao.UserDAO;
+import DAO.UserDAO;
 import Utils.PasswordHasher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

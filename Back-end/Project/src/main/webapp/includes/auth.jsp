@@ -1,5 +1,5 @@
 <%@ page import="Model.User" %>
-<%@ page import="dao.UserDAO" %>
+<%@ page import="DAO.UserDAO" %>
 <%@ page import="Utils.PasswordHasher" %>
 <%!
     public User getAuthenticatedUser(HttpServletRequest request) {

@@ -1,7 +1,7 @@
 package controller;
 
 import Model.User;
-import dao.UserDAO;
+import DAO.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -61,7 +61,7 @@ public class RegisterServlet extends HttpServlet {
             newUser.setEmail(email);
             newUser.setFullName(fullName);
             newUser.setPhone(phone);
-            newUser.setStatus(true); // Assuming new users are active by default
+            newUser.setUserStatus(true); // Assuming new users are active by default
 
             try {
                 boolean registrationSuccess = userDAO.registerUser(newUser);

@@ -15,17 +15,17 @@ public class AdoptionHistory {
     private int adoptionID;
     private Pet pet;
     private Date adoptionDate;
-    private String status;
+    private String adoptionStatus;
     private String notes;
 
     public AdoptionHistory() {
     }
 
-    public AdoptionHistory(int adoptionID, Pet pet, Date adoptionDate, String status, String notes) {
+    public AdoptionHistory(int adoptionID, Pet pet, Date adoptionDate, String adoptionStatus, String notes) {
         this.adoptionID = adoptionID;
         this.pet = pet;
         this.adoptionDate = adoptionDate;
-        this.status = status;
+        this.adoptionStatus = adoptionStatus;
         this.notes = notes;
     }
 
@@ -53,12 +53,12 @@ public class AdoptionHistory {
         this.adoptionDate = adoptionDate;
     }
 
-    public String getStatus() {
-        return status;
+    public String getAdoptionStatus() {
+        return adoptionStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setAdoptionStatus(String adoptionStatus) {
+        this.adoptionStatus = adoptionStatus;
     }
 
     public String getNotes() {
