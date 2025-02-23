@@ -26,6 +26,9 @@ public class ServiceDAO extends DBContext {
             while (rs.next()) {
                 Service service = new Service();
                 service.setServiceID(rs.getInt("ServiceID"));
+                ServiceCategories category = new ServiceCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                service.setCategory(category);
                 service.setServiceName(rs.getString("ServiceName"));
                 service.setDescription(rs.getString("Description"));
                 service.setPrice(rs.getDouble("Price"));
@@ -44,7 +47,7 @@ public class ServiceDAO extends DBContext {
         String query = "SELECT * FROM Services WHERE CategoryID = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
-            ps.setInt(2, categoryID);
+            ps.setInt(1, categoryID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Service service = new Service();
@@ -53,9 +56,9 @@ public class ServiceDAO extends DBContext {
                 service.setDescription(rs.getString("Description"));
                 service.setPrice(rs.getDouble("Price"));
                 service.setServiceStatus(rs.getBoolean("ServiceStatus"));
-                ServiceCategories cat = new ServiceCategories();
-                cat.setCategoryID(rs.getInt("CategoryID"));
-                service.setCategory(cat);
+                ServiceCategories category = new ServiceCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                service.setCategory(category);
                 serviceList.add(service);
             }
         } catch (SQLException e) {
@@ -78,9 +81,9 @@ public class ServiceDAO extends DBContext {
                 service.setDescription(rs.getString("Description"));
                 service.setPrice(rs.getDouble("Price"));
                 service.setServiceStatus(rs.getBoolean("ServiceStatus"));
-                ServiceCategories cat = new ServiceCategories();
-                cat.setCategoryID(rs.getInt("CategoryID"));
-                service.setCategory(cat);
+                ServiceCategories category = new ServiceCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                service.setCategory(category);
                 serviceList.add(service);
             }
         } catch (SQLException e) {
@@ -103,14 +106,79 @@ public class ServiceDAO extends DBContext {
                 service.setDescription(rs.getString("Description"));
                 service.setPrice(rs.getDouble("Price"));
                 service.setServiceStatus(rs.getBoolean("ServiceStatus"));
-                ServiceCategories cat = new ServiceCategories();
-                cat.setCategoryID(rs.getInt("CategoryID"));
-                service.setCategory(cat);
+                ServiceCategories category = new ServiceCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                service.setCategory(category);
                 serviceList.add(service);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return serviceList;
+    }
+
+    public Service getById(int id) {
+        Service service = null;
+        String query = "SELECT * FROM Services WHERE ServiceID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    service = new Service();
+                    service.setServiceID(rs.getInt("ServiceID"));
+                    ServiceCategories category = new ServiceCategories();
+                    category.setCategoryID(rs.getInt("CategoryID"));
+                    service.setCategory(category);
+                    service.setServiceName(rs.getString("ServiceName"));
+                    service.setDescription(rs.getString("Description"));
+                    service.setPrice(rs.getDouble("Price"));
+                    service.setServiceImage(rs.getString("ServiceImage"));
+                    service.setServiceStatus(rs.getBoolean("ServiceStatus"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return service;
+    }
+
+    public void updateService(Service service) {
+        String query = "UPDATE Services SETCategoryID = ?, SETServiceName = ?, Description = ?, Price = ?, SETServiceImage = ?, ServiceStatus = ? WHERE ServiceID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, service.getCategory().getCategoryID());
+            ps.setString(2, service.getServiceName());
+            ps.setString(3, service.getDescription());
+            ps.setDouble(4, service.getPrice());
+            ps.setString(5, service.getServiceImage());
+            ps.setBoolean(6, service.isServiceStatus());
+            ps.setInt(7, service.getServiceID());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertService(Service service) {
+        String query = "INSERT INTO Services (CategoryID, ServiceName, Description, Price, ServiceImage, ServiceStatus) VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, service.getCategory().getCategoryID());
+            ps.setString(2, service.getServiceName());
+            ps.setString(3, service.getDescription());
+            ps.setDouble(4, service.getPrice());
+            ps.setString(5, service.getServiceImage());
+            ps.setBoolean(6, service.isServiceStatus());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void deleteService(int id) {
+        String query = "DELETE FROM Services WHERE ServiceID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
