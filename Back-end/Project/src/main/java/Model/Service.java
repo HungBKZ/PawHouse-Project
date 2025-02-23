@@ -16,19 +16,19 @@ public class Service {
     private String description;
     private double price;
     private String serviceImage;
-    private boolean status;
+    private boolean serviceStatus;
 
     public Service() {
     }
 
-    public Service(int serviceID, ServiceCategories category, String serviceName, String description, double price, String serviceImage, boolean status) {
+    public Service(int serviceID, ServiceCategories category, String serviceName, String description, double price, String serviceImage, boolean servicetatus) {
         this.serviceID = serviceID;
         this.category = category;
         this.serviceName = serviceName;
         this.description = description;
         this.price = price;
         this.serviceImage = serviceImage;
-        this.status = status;
+        this.serviceStatus = serviceStatus;
     }
 
     public int getServiceID() {
@@ -79,12 +79,12 @@ public class Service {
         this.serviceImage = serviceImage;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isServiceStatus() {
+        return serviceStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setServiceStatus(boolean serviceStatus) {
+        this.serviceStatus = serviceStatus;
     }
 
 }

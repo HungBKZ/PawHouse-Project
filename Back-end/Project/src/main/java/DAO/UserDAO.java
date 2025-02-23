@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao;
+package DAO;
 
 import Model.User;
 import Utils.DBContext;
@@ -30,7 +30,7 @@ public class UserDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setStatus(rs.getBoolean("Status"));
+                user.setUserStatus(rs.getBoolean("UserStatus"));
 
                 userList.add(user);
             }
@@ -58,7 +58,7 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setStatus(rs.getBoolean("Status"));
+                    user.setUserStatus(rs.getBoolean("UserStatus"));
                     return user;
                 }
             }
@@ -83,7 +83,7 @@ public class UserDAO extends DBContext {
     }
     
     public boolean registerUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Status, RoleID) " +
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, UserStatus, RoleID) " +
                       "VALUES (?, ?, ?, ?, ?, ?, 2)"; // RoleID 2 for regular user
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -92,7 +92,7 @@ public class UserDAO extends DBContext {
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
-            ps.setBoolean(6, user.isStatus());
+            ps.setBoolean(6, user.isUserStatus());
             
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -167,7 +167,7 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setStatus(rs.getBoolean("Status"));
+                    user.setUserStatus(rs.getBoolean("UserStatus"));
                     return user;
                 }
             }
@@ -176,7 +176,7 @@ public class UserDAO extends DBContext {
     }
 
     public boolean createUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Avatar, Status, RoleID) " +
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Avatar, UserStatus, RoleID) " +
                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -186,7 +186,7 @@ public class UserDAO extends DBContext {
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
             ps.setString(6, user.getAvatar());
-            ps.setBoolean(7, user.isStatus());
+            ps.setBoolean(7, user.isUserStatus());
             ps.setInt(8, 2); // RoleID 2 for regular users
             
             int rowsAffected = ps.executeUpdate();

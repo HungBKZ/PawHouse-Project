@@ -16,17 +16,17 @@ public class Orders {
     private User user;
     private Date orderDate;
     private double totalAmount;
-    private boolean status;
+    private boolean orderStatus;
 
     public Orders() {
     }
 
-    public Orders(int orderID, User user, Date orderDate, double totalAmount, boolean status) {
+    public Orders(int orderID, User user, Date orderDate, double totalAmount, boolean orderStatus) {
         this.orderID = orderID;
         this.user = user;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
-        this.status = status;
+        this.orderStatus = orderStatus;
     }
 
     public int getOrderID() {
@@ -61,12 +61,12 @@ public class Orders {
         this.totalAmount = totalAmount;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isOrderStatus() {
+        return orderStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setOrderStatus(boolean orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
 }
