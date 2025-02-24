@@ -109,10 +109,15 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="phone" class="form-label required">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" required
-                               pattern="[0-9]{10}"
-                               title="Please enter a valid 10-digit phone number">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" 
+                               pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="2" 
+                                placeholder="Enter your address"></textarea>
                     </div>
                     
                     <button type="submit" class="btn btn-register">Create Account</button>

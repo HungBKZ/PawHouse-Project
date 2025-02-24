@@ -1,9 +1,10 @@
+<%@page import="DAO.UserDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Model.Product" %>
 <%@ page import="Model.Cart" %>
 <%@ page import="Model.User" %>
-<%@ page import="dao.UserDAO" %>
+<%@ page import="DAO.UserDAO" %>
 <%@ page import="Utils.PasswordHasher" %>
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 

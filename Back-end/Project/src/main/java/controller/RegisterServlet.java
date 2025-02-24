@@ -30,6 +30,7 @@ public class RegisterServlet extends HttpServlet {
         String confirmPassword = request.getParameter("confirmPassword");
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
         
         // Validate password match
         if (!password.equals(confirmPassword)) {
@@ -61,6 +62,7 @@ public class RegisterServlet extends HttpServlet {
             newUser.setEmail(email);
             newUser.setFullName(fullName);
             newUser.setPhone(phone);
+            newUser.setAddress(address);
             newUser.setUserStatus(true); // Assuming new users are active by default
 
             try {
