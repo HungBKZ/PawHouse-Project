@@ -4,6 +4,7 @@
  */
 package controller;
 
+import Model.GoogleAccount;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import constant.Iconstant;
@@ -37,6 +38,18 @@ public class GoogleLogin {
         String accessToken = jobj.get("access_token").toString().replaceAll("\"", "");
 
         return accessToken;
+
+    }
+
+    public static GoogleAccount getUserinfo(final String accessToken) throws ClientProtocolException, IOException {
+
+        String link = Iconstant.GOOGLE_LINK_GET_USER_INFO + accessToken;
+
+        String response = Request.Get(link).execute().returnContent().asString();
+
+        GoogleAccount googlePojo = new Gson().fromJson(response, GoogleAccount.class);
+
+        return googlePojo;
 
     }
 

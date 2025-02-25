@@ -9,11 +9,13 @@ import Utils.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  *
  * @author admin
  */
 public class MedicalRecordDAO extends DBContext {
+
     public List<MedicalRecords> getAll() {
         List<MedicalRecords> recordList = new ArrayList<>();
         String query = "SELECT * FROM MedicalRecords";

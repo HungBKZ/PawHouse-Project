@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdoptionHistoryDAO extends DBContext {
+
     public List<AdoptionHistory> getAll() {
         List<AdoptionHistory> adoptionList = new ArrayList<>();
         String query = "SELECT * FROM AdoptionHistory";

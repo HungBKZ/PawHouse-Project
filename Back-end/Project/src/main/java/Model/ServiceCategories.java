@@ -9,15 +9,14 @@ package Model;
  * @author admin
  */
 public class ServiceCategories {
+
     private int categoryID;
     private String categoryName;
     private String description;
 
     public ServiceCategories() {
     }
-    
-    
-    
+
     public ServiceCategories(int categoryID, String categoryName, String description) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
@@ -47,6 +46,5 @@ public class ServiceCategories {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
+
 }

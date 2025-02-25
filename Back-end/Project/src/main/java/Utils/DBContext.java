@@ -11,9 +11,10 @@ import java.sql.*;
  * @author shandy
  */
 public class DBContext {
+
     protected Connection connection;
-    public DBContext()
-    {
+
+    public DBContext() {
         try {
             String url = "jdbc:sqlserver://localhost:1433;"
                     + "databaseName=PawHouseProjectHasData;"
@@ -26,5 +27,11 @@ public class DBContext {
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println(ex);
         }
-    }    
+    }
+
+    public static Connection getConnection() throws SQLException {
+        // Khởi tạo đối tượng DBContext, nó sẽ thiết lập kết nối trong constructor
+        DBContext dbContext = new DBContext();
+        return dbContext.connection;
+    }
 }

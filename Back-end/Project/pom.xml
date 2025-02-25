@@ -39,10 +39,10 @@
             <type>jar</type>
         </dependency>
         <dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.10.1</version>
-</dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -66,11 +66,21 @@
             <version>1.45.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/fluent-hc -->
-<dependency>
-    <groupId>org.apache.httpcomponents</groupId>
-    <artifactId>fluent-hc</artifactId>
-    <version>4.5.5</version>
-</dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opencensus</groupId>
+            <artifactId>opencensus-contrib-http-util</artifactId>
+            <version>0.31.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opencensus</groupId>
+            <artifactId>opencensus-api</artifactId>
+            <version>0.31.1</version>
+        </dependency>
     </dependencies>
     
     <build>
