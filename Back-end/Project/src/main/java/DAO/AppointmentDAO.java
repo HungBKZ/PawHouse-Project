@@ -35,4 +35,3 @@ public class AppointmentDAO extends DBContext {
         return appointmentList;
     }
 }
-

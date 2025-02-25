@@ -12,6 +12,7 @@ DAO\ProductCategoryDAO.class
 DAO\ProductDAO.class
 DAO\MedicalRecordDAO.class
 DAO\PaymentDAO.class
+controller\GoogleLoginServlet.class
 com\mycompany\mavenproject1\JakartaRestConfiguration.class
 DAO\PetCategoriesDAO.class
 Model\Payment.class
