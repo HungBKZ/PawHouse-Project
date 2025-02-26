@@ -68,6 +68,7 @@
         </style>
     </head>
     <body>
+        
         <div class="profile-container">
             <h2 class="text-center text-primary">Hồ Sơ Cá Nhân</h2>
             <img src="<%= user.getAvatar() %>" class="profile-avatar" alt="Avatar">
@@ -81,4 +82,6 @@
             <a href="logout.jsp" class="btn btn-logout w-100 text-white">Đăng Xuất</a>
         </div>
     </body>
+   
+
 </html>

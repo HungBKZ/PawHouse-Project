@@ -25,19 +25,6 @@
             }
         }
     }
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("username")) {
-                try {
-                    googleUsername = java.net.URLDecoder.decode(cookie.getValue(), "UTF-8");
-                } catch (Exception e) {
-                    // Handle decoding error if necessary
-                    googleUsername = cookie.getValue();
-                }
-                break;
-            }
-        }
-    }
 %>
 
 <!DOCTYPE html>
@@ -50,29 +37,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     </head>
     <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="index.jsp">PawHouse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="products.jsp">Sản Phẩm</a></li>
-                        <li class="nav-item"><a class="nav-link" href="services.jsp">Dịch Vụ</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="cart.jsp"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
-                            <% if (user == null) { %>
-                        <li class="nav-item"><a class="nav-link btn btn-primary text-white" href="login.jsp">Đăng Nhập</a></li>
-                            <% } else {%>
-                        <li class="nav-item"><span class="nav-link">Chào mừng, <%= user.getFullName()%></span></li>
-                        <li class="nav-item"><a class="nav-link btn btn-danger text-white" href="logout">Đăng Xuất</a></li>
-                            <% } %>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+       <%@ include file="includes/navbar.jsp" %>
 
         <!-- Giỏ Hàng -->
         <section class="container my-5">
@@ -125,9 +90,8 @@
         </section>
 
         <!-- Footer -->
-        <footer class="footer bg-dark text-white text-center py-4">
-            <p>&copy; 2025 PawHouse. Tất cả các quyền được bảo lưu.</p>
-        </footer>
+        <%@ include file="includes/footer.jsp" %>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

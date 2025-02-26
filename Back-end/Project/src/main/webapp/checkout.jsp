@@ -21,24 +21,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Thanh Toán - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #f9f9f9;
+            }
+
+            .checkout-container {
+                max-width: 600px;
+                margin: auto;
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .checkout-container h2 {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .btn-success {
+                font-size: 1.1rem;
+                transition: 0.3s;
+            }
+
+            .btn-success:hover {
+                transform: scale(1.05);
+            }
+        </style>
     </head>
     <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="index.jsp">PawHouse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="products.jsp">Sản Phẩm</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="checkout.jsp">Thanh Toán</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="includes/navbar.jsp" %>
 
         <!-- Checkout Form -->
         <section class="container checkout-container my-5">
@@ -60,7 +74,22 @@
                     <label class="form-label">Email</label>
                     <input type="email" class="form-control" name="email" required>
                 </div>
-                <h4 class="text-end">Tổng Cộng: <span class="text-success"><%= total %> VNĐ</span></h4>
+
+                <!-- Phương thức thanh toán -->
+                <div class="mb-3">
+                    <label class="form-label">Phương Thức Thanh Toán</label>
+                    <select class="form-select" name="paymentMethod" required>
+                        <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                        <option value="momo">Ví MoMo</option>
+                        <option value="bank">Chuyển khoản ngân hàng</option>
+                    </select>
+                </div>
+
+                <!-- Hiển thị tổng cộng -->
+                <div class="text-end">
+                    <h4>Tổng Cộng: <span class="text-success"><%= total%> VNĐ</span></h4>
+                </div>
+
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success w-100">Xác Nhận Thanh Toán</button>
                 </div>
@@ -68,9 +97,8 @@
         </section>
 
         <!-- Footer -->
-        <footer class="footer bg-dark text-white text-center py-4">
-            <p>&copy; 2025 PawHouse. Tất cả các quyền được bảo lưu.</p>
-        </footer>
+        <%@ include file="includes/footer.jsp" %>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

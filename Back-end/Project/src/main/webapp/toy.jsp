@@ -8,54 +8,94 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Đồ Chơi Thú Cưng - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
         <style>
             body {
                 font-family: Arial, sans-serif;
-                background: #f5f5f5;
+                background: #f9f9f9;
             }
-            .container {
-                margin-top: 20px;
-            }
+
+            /* Sidebar Categories */
             .category-sidebar {
                 background: white;
                 padding: 20px;
                 border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
+
+            .category-sidebar h5 {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .category-sidebar ul li a {
+                text-decoration: none;
+                color: #333;
+                font-size: 1rem;
+                display: block;
+                padding: 8px 0;
+                transition: 0.3s;
+            }
+
+            .category-sidebar ul li a:hover {
+                color: #ff6600;
+                font-weight: bold;
+            }
+
+            /* Product Card */
             .product-card {
                 background: white;
                 padding: 15px;
                 border-radius: 10px;
-                transition: 0.3s;
                 text-align: center;
+                transition: 0.3s;
+                position: relative;
+                overflow: hidden;
             }
+
             .product-card img {
                 max-width: 100%;
                 height: auto;
                 border-radius: 10px;
+                transition: transform 0.3s;
             }
-            .product-card:hover {
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+            .product-card:hover img {
+                transform: scale(1.1);
+            }
+
+            .product-card h5 {
+                font-weight: bold;
+                margin-top: 10px;
+                font-size: 1.1rem;
+            }
+
+            .product-card .price {
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: #ff6600;
+            }
+
+            .product-card .btn {
+                transition: 0.3s;
+                font-size: 0.9rem;
+            }
+
+            .product-card .btn:hover {
+                transform: scale(1.1);
+            }
+
+            /* Search & Sort */
+            .search-sort-container {
+                background: white;
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
         </style>
     </head>
     <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="index.jsp">PawHouse</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="toy.jsp">Đồ Chơi</a></li>
-                        <li class="nav-item"><a class="nav-link" href="products.jsp">Sản Phẩm</a></li>
-                        <li class="nav-item"><a class="nav-link" href="services.jsp">Dịch Vụ</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <%@ include file="includes/navbar.jsp" %>
 
         <!-- Banner -->
         <section class="container-fluid p-0">
@@ -63,51 +103,54 @@
         </section>
 
         <!-- Danh sách sản phẩm -->
-        <div class="container">
+        <div class="container mt-4">
             <div class="row">
                 <!-- Sidebar Categories -->
                 <div class="col-md-3">
                     <div class="category-sidebar">
-                        <h5>Categories</h5>
+                        <h5>Danh Mục</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#">All Products</a></li>
-                            <li><a href="#">Dog Toys</a></li>
-                            <li><a href="#">Cat Toys</a></li>
-                            <li><a href="#">Bird Toys</a></li>
+                            <li><a href="#">Tất Cả Sản Phẩm</a></li>
+                            <li><a href="#">Đồ Chơi Cho Chó</a></li>
+                            <li><a href="#">Đồ Chơi Cho Mèo</a></li>
+                            <li><a href="#">Đồ Chơi Cho Chim</a></li>
                         </ul>
                     </div>
                 </div>
+
                 <!-- Search and Sort -->
                 <div class="col-md-9">
-                    <div class="d-flex justify-content-between mb-3">
-                        <input type="text" class="form-control w-50" id="searchBox" placeholder="Search...">
+                    <div class="search-sort-container d-flex justify-content-between mb-3">
+                        <input type="text" class="form-control w-50" id="searchBox" placeholder="Tìm kiếm sản phẩm...">
                         <select class="form-select w-25" id="sortOptions">
-                            <option value="name_asc">Name (A-Z)</option>
-                            <option value="name_desc">Name (Z-A)</option>
-                            <option value="price_low">Price - Low to High</option>
-                            <option value="price_high">Price - High to Low</option>
-                            <option value="newest">Newest Arrivals</option>
+                            <option value="name_asc">Tên (A-Z)</option>
+                            <option value="name_desc">Tên (Z-A)</option>
+                            <option value="price_low">Giá - Thấp đến Cao</option>
+                            <option value="price_high">Giá - Cao đến Thấp</option>
+                            <option value="newest">Sản phẩm mới nhất</option>
                         </select>
                     </div>
+
+                    <!-- Product List -->
                     <div class="row" id="productGrid">
                         <% List<Product> toyList = (List<Product>) request.getAttribute("toyList");
-                           if (toyList != null) {
-                               for (Product product : toyList) { %>
-                        <div class="col-md-4 mb-4 product-item" data-name="<%= product.getProductName() %>" data-price="<%= product.getPrice() %>">
-                            <div class="product-card">
-                                <img src="<%= product.getProductImage() %>" alt="<%= product.getProductName() %>">
-                                <h5><%= product.getProductName() %></h5>
-                                <p><%= product.getDescription() %></p>
-                                <p class="fw-bold text-primary"><%= product.getPrice() %> VND</p>
-                                <button class="btn btn-success">Mua Ngay</button>
-                                <a href="addToCart.jsp?id=<%= product.getProductID() %>" class="btn btn-outline-primary">
+                        if (toyList != null) {
+                            for (Product product : toyList) {%>
+                        <div class="col-md-4 mb-4 product-item" data-name="<%= product.getProductName()%>" data-price="<%= product.getPrice()%>">
+                            <div class="product-card shadow">
+                                <img src="<%= product.getProductImage()%>" alt="<%= product.getProductName()%>">
+                                <h5><%= product.getProductName()%></h5>
+                                <p class="price"><%= product.getPrice()%> VND</p>
+                                <button class="btn btn-success w-100">Mua Ngay</button>
+                                <a href="addToCart.jsp?id=<%= product.getProductID()%>" class="btn btn-outline-primary w-100 mt-2">
                                     <i class="bi bi-cart"></i> Thêm vào Giỏ
                                 </a>
                             </div>
                         </div>
-                        <% } } else { %>
+                        <% }
+                    } else { %>
                         <p class="text-center">Không có sản phẩm nào.</p>
-                        <% } %>
+                        <% }%>
                     </div>
                 </div>
             </div>
@@ -132,15 +175,10 @@
                     let nameA = a.getAttribute("data-name").toLowerCase();
                     let nameB = b.getAttribute("data-name").toLowerCase();
 
-                    if (sortBy === "price_low")
-                        return priceA - priceB;
-                    if (sortBy === "price_high")
-                        return priceB - priceA;
-                    if (sortBy === "name_asc")
-                        return nameA.localeCompare(nameB);
-                    if (sortBy === "name_desc")
-                        return nameB.localeCompare(nameA);
-                    return 0;
+                    return sortBy === "price_low" ? priceA - priceB :
+                            sortBy === "price_high" ? priceB - priceA :
+                            sortBy === "name_asc" ? nameA.localeCompare(nameB) :
+                            sortBy === "name_desc" ? nameB.localeCompare(nameA) : 0;
                 });
 
                 let container = document.getElementById("productGrid");
@@ -148,10 +186,6 @@
             });
         </script>
 
-        <!-- Footer -->
-        <footer class="footer bg-dark text-white text-center py-4">
-            <p>&copy; 2025 PawHouse. Tất cả các quyền được bảo lưu.</p>
-        </footer>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <%@ include file="includes/footer.jsp" %>
     </body>
 </html>
