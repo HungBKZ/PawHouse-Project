@@ -37,7 +37,6 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     </head>
     <body>
-       <%@ include file="includes/navbar.jsp" %>
 
         <!-- Giỏ Hàng -->
         <section class="container my-5">

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="Model.Product" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -179,6 +180,20 @@
                 color: black;
                 border-color: #ffcc00;
             }
+
+            /* Căn chỉnh video */
+            .video-container {
+                position: relative;
+                overflow: hidden;
+                border-radius: 15px; /* Bo góc */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
+            }
+
+            .video-container video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
         </style>
     </head>
     <body>
@@ -222,6 +237,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Nút điều hướng -->
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon"></span>
@@ -231,56 +247,55 @@
             </button>
         </div>
 
+        <!-- Video Tutorial -->
+        <section id="video-tutorial" class="container py-5">
+            <h2 class="text-center mb-4">Hướng Dẫn Chăm Sóc Thú Cưng</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="video-container">
+                        <video autoplay loop muted playsinline controls>
+                            <source src="imgs/video.mp4" type="video/mp4">
+                            Trình duyệt của bạn không hỗ trợ video.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-
-        <!-- Sản phẩm nổi bật -->
+        <!-- Sản Phẩm Nổi Bật -->
         <section id="products" class="container py-5">
-            <h2 class="text-center fw-bold mb-4">Sản Phẩm Nổi Bật</h2>
-            <div class="row g-4">
+            <h2 class="text-center mb-4">Sản Phẩm Nổi Bật</h2>
+            <div class="row">
                 <div class="col-md-4">
-                    <div class="product-card card border-0 shadow">
-                        <a href="food.jsp">
-                            <div class="product-img">
-                                <img src="./imgs/food.jpg" class="card-img-top" alt="Thức ăn">
-                            </div>
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Thức Ăn Thú Cưng</h5>
+                    <div class="card">
+                        <a href="food.jsp"><img src="./imgs/food.jpg" class="card-img-top" alt="Thức ăn"></a>
+                        <div class="card-body">
+                            <h5 class="card-title">Thức Ăn Thú Cưng</h5>
                             <p class="card-text">Sản phẩm dinh dưỡng giúp thú cưng phát triển khỏe mạnh.</p>
-                            <a href="food.jsp" class="btn btn-primary btn-custom">Xem ngay</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="product-card card border-0 shadow">
-                        <a href="toy.jsp">
-                            <div class="product-img">
-                                <img src="./imgs/toy_.jpg" class="card-img-top" alt="Đồ chơi">
-                            </div>
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Đồ Chơi Thú Cưng</h5>
+                    <div class="card">
+                        <a href="toy.jsp"><img src="./imgs/toy_.jpg" class="card-img-top" alt="Đồ chơi"></a>
+                        <div class="card-body">
+                            <h5 class="card-title">Đồ Chơi Thú Cưng</h5>
                             <p class="card-text">Giúp thú cưng vui chơi và rèn luyện sức khỏe.</p>
-                            <a href="toy.jsp" class="btn btn-primary btn-custom">Xem ngay</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="product-card card border-0 shadow">
-                        <a href="accessory.jsp">
-                            <div class="product-img">
-                                <img src="./imgs/phukien.png" class="card-img-top" alt="Phụ kiện">
-                            </div>
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Phụ Kiện Thú Cưng</h5>
+                    <div class="card">
+                        <a href="accessory.jsp"><img src="./imgs/phukien.png" class="card-img-top" alt="Phụ kiện"></a>
+                        <div class="card-body">
+                            <h5 class="card-title">Phụ Kiện Thú Cưng</h5>
                             <p class="card-text">Những món đồ không thể thiếu để chăm sóc thú cưng tốt hơn.</p>
-                            <a href="accessory.jsp" class="btn btn-primary btn-custom">Xem ngay</a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <!-- Dịch Vụ -->
         <section id="services" class="container py-5">
