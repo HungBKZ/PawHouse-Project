@@ -46,7 +46,7 @@
                 <table class="table text-center">
                     <thead class="table-dark">
                         <tr>
-                            <th>Hình Ảnh</th>
+                            <th>Hình Ảnh123</th>
                             <th>Sản Phẩm</th>
                             <th>Giá</th>
                             <th>Số Lượng</th>
