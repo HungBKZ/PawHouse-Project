@@ -73,19 +73,19 @@
                     <h2>Forgot Password?</h2>
                     <p class="text-muted">Don't worry! We'll help you recover your password.</p>
                 </div>
-                
+
                 <% if(request.getAttribute("error") != null) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <%= request.getAttribute("error") %>
-                    </div>
+                <div class="alert alert-danger" role="alert">
+                    <%= request.getAttribute("error") %>
+                </div>
                 <% } %>
-                
+
                 <% if(request.getAttribute("success") != null) { %>
-                    <div class="alert alert-success" role="alert">
-                        <%= request.getAttribute("success") %>
-                    </div>
+                <div class="alert alert-success" role="alert">
+                    <%= request.getAttribute("success") %>
+                </div>
                 <% } %>
-                
+
                 <form action="forgotPassword" method="POST" id="forgotForm">
                     <input type="hidden" name="action" value="checkEmail">
                     <div class="mb-3">
@@ -93,22 +93,22 @@
                         <input type="email" class="form-control" id="email" name="email" required
                                placeholder="Enter your registered email">
                     </div>
-                    
+
                     <ul class="steps">
                         <li>Enter your registered email address</li>
                         <li>Create your new password</li>
                         <li>Start using your new password</li>
                     </ul>
-                    
+
                     <button type="submit" class="btn btn-submit">Continue</button>
                 </form>
-                
+
                 <div class="back-to-login">
                     <a href="login.jsp">Back to Login</a>
                 </div>
             </div>
         </div>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
