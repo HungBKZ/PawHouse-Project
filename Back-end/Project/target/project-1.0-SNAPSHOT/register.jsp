@@ -61,13 +61,13 @@
                     <h2>Create Your Account</h2>
                     <p class="text-muted">Join PawHouse and start your pet care journey!</p>
                 </div>
-                
+
                 <% if(request.getAttribute("error") != null) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <%= request.getAttribute("error") %>
-                    </div>
+                <div class="alert alert-danger" role="alert">
+                    <%= request.getAttribute("error") %>
+                </div>
                 <% } %>
-                
+
                 <form action="register" method="POST" id="registerForm">
                     <div class="row">
                         <div class="col-md-6">
@@ -85,7 +85,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -102,34 +102,34 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="fullName" class="form-label required">Full Name</label>
                         <input type="text" class="form-control" id="fullName" name="fullName" required>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="phone" class="form-label required">Phone Number</label>
                         <input type="tel" class="form-control" id="phone" name="phone" required
                                pattern="[0-9]{10}"
                                title="Please enter a valid 10-digit phone number">
                     </div>
-                    
+
                     <button type="submit" class="btn btn-register">Create Account</button>
                 </form>
-                
+
                 <div class="login-link">
                     Already have an account? <a href="login.jsp">Login here</a>
                 </div>
             </div>
         </div>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            document.getElementById('registerForm').addEventListener('submit', function(event) {
+            document.getElementById('registerForm').addEventListener('submit', function (event) {
                 var password = document.getElementById('password').value;
                 var confirmPassword = document.getElementById('confirmPassword').value;
-                
+
                 if (password !== confirmPassword) {
                     event.preventDefault();
                     alert('Passwords do not match!');

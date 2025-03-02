@@ -18,9 +18,10 @@ public class User {
     private String fullName;
     private String phone;
     private String avatar;
-    private boolean status;
+    private boolean userStatus;
+    private String address;
 
-    public User(int userID, Role role, String username, String password, String email, String fullName, String phone, String avatar, boolean status) {
+    public User(int userID, Role role, String username, String password, String email, String fullName, String phone, String avatar, boolean userStatus, String address) {
         this.userID = userID;
         this.role = role;
         this.username = username;
@@ -29,7 +30,8 @@ public class User {
         this.fullName = fullName;
         this.phone = phone;
         this.avatar = avatar;
-        this.status = status;
+        this.userStatus = userStatus;
+        this.address = address;
     }
 
     public User() {
@@ -99,12 +101,20 @@ public class User {
         this.avatar = avatar;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isUserStatus() {
+        return userStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setUserStatus(boolean userStatus) {
+        this.userStatus = userStatus;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 }

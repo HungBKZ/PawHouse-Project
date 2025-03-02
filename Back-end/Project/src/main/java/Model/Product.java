@@ -17,12 +17,12 @@ public class Product {
     private double price;
     private int stock;
     private String productImage;
-    private boolean status;
+    private boolean productStatus;
 
     public Product() {
     }
 
-    public Product(int productID, ProductCategories category, String productName, String description, double price, int stock, String productImage, boolean status) {
+    public Product(int productID, ProductCategories category, String productName, String description, double price, int stock, String productImage, boolean productStatus) {
         this.productID = productID;
         this.category = category;
         this.productName = productName;
@@ -30,7 +30,7 @@ public class Product {
         this.price = price;
         this.stock = stock;
         this.productImage = productImage;
-        this.status = status;
+        this.productStatus = productStatus;
     }
 
     public int getProductID() {
@@ -89,12 +89,12 @@ public class Product {
         this.productImage = productImage;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isProductStatus() {
+        return productStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setProductStatus(boolean prouctStatus) {
+        this.productStatus = productStatus;
     }
 
 }

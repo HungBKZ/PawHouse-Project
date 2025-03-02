@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class PasswordHasher {
+
     public static String hashMD5(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -20,11 +21,11 @@ public class PasswordHasher {
             throw new RuntimeException("Error hashing password", e);
         }
     }
-    
+
     public static String encodeBase64(String text) {
         return Base64.getEncoder().encodeToString(text.getBytes());
     }
-    
+
     public static String decodeBase64(String encodedText) {
         try {
             byte[] decodedBytes = Base64.getDecoder().decode(encodedText);

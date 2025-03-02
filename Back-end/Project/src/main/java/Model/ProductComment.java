@@ -19,12 +19,12 @@ public class ProductComment {
     private String content;
     private Date dateComment;
     private String image;
-    private boolean status;
+    private boolean productCommentStatus;
 
     public ProductComment() {
     }
 
-    public ProductComment(int commentID, User user, Product product, int star, String content, Date dateComment, String image, boolean status) {
+    public ProductComment(int commentID, User user, Product product, int star, String content, Date dateComment, String image, boolean productCommentStatus) {
         this.commentID = commentID;
         this.user = user;
         this.product = product;
@@ -32,7 +32,7 @@ public class ProductComment {
         this.content = content;
         this.dateComment = dateComment;
         this.image = image;
-        this.status = status;
+        this.productCommentStatus = productCommentStatus;
     }
 
     public int getCommentID() {
@@ -91,12 +91,12 @@ public class ProductComment {
         this.image = image;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isProductCommentStatus() {
+        return productCommentStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setProductCommentStatus(boolean productCommentStatus) {
+        this.productCommentStatus = productCommentStatus;
     }
 
 }

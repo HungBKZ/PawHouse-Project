@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao;
+package DAO;
 
 import Model.User;
 import Utils.DBContext;
@@ -30,7 +30,7 @@ public class UserDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setStatus(rs.getBoolean("Status"));
+                user.setUserStatus(rs.getBoolean("UserStatus"));
 
                 userList.add(user);
             }
@@ -43,11 +43,11 @@ public class UserDAO extends DBContext {
 
     public User checkLogin(String email, String password) throws SQLException {
         String query = "SELECT * FROM Users WHERE Email = ? AND Password = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
             ps.setString(2, PasswordHasher.hashMD5(password));
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
@@ -58,7 +58,7 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setStatus(rs.getBoolean("Status"));
+                    user.setUserStatus(rs.getBoolean("UserStatus"));
                     return user;
                 }
             }
@@ -68,11 +68,11 @@ public class UserDAO extends DBContext {
 
     public boolean checkUserExists(String username, String email) throws SQLException {
         String query = "SELECT COUNT(*) FROM Users WHERE Username = ? OR Email = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, username);
             ps.setString(2, email);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -81,19 +81,34 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-    
+
+    public boolean checkUserExists2(String email) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Users WHERE  Email = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean registerUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Status, RoleID) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, 2)"; // RoleID 2 for regular user
-        
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, UserStatus, RoleID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, 2)"; // RoleID 2 for regular user
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, PasswordHasher.hashMD5(user.getPassword()));
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
-            ps.setBoolean(6, user.isStatus());
-            
+            ps.setBoolean(6, user.isUserStatus());
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         }
@@ -101,10 +116,10 @@ public class UserDAO extends DBContext {
 
     public boolean checkEmailExists(String email) throws SQLException {
         String query = "SELECT COUNT(*) FROM Users WHERE Email = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -113,27 +128,27 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-    
+
     public boolean saveResetToken(String email, String token) throws SQLException {
         String query = "UPDATE Users SET ResetToken = ?, ResetTokenExpiry = DATEADD(HOUR, 24, GETDATE()) WHERE Email = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, token);
             ps.setString(2, email);
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         }
     }
-    
+
     public boolean resetPassword(String token, String newPassword) throws SQLException {
-        String query = "UPDATE Users SET Password = ?, ResetToken = NULL, ResetTokenExpiry = NULL " +
-                      "WHERE ResetToken = ? AND ResetTokenExpiry > GETDATE()";
-        
+        String query = "UPDATE Users SET Password = ?, ResetToken = NULL, ResetTokenExpiry = NULL "
+                + "WHERE ResetToken = ? AND ResetTokenExpiry > GETDATE()";
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, PasswordHasher.hashMD5(newPassword));
             ps.setString(2, token);
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         }
@@ -141,11 +156,11 @@ public class UserDAO extends DBContext {
 
     public boolean updatePasswordByEmail(String email, String newPassword) throws SQLException {
         String query = "UPDATE Users SET Password = ? WHERE Email = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, PasswordHasher.hashMD5(newPassword));
             ps.setString(2, email);
-            
+
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         }
@@ -153,10 +168,10 @@ public class UserDAO extends DBContext {
 
     public User getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM Users WHERE Email = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
@@ -167,7 +182,7 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setStatus(rs.getBoolean("Status"));
+                    user.setUserStatus(rs.getBoolean("UserStatus"));
                     return user;
                 }
             }
@@ -176,9 +191,9 @@ public class UserDAO extends DBContext {
     }
 
     public boolean createUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Avatar, Status, RoleID) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Avatar, UserStatus, RoleID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword()); // For Google users, password will be empty
@@ -186,10 +201,39 @@ public class UserDAO extends DBContext {
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
             ps.setString(6, user.getAvatar());
-            ps.setBoolean(7, user.isStatus());
+            ps.setBoolean(7, user.isUserStatus());
             ps.setInt(8, 2); // RoleID 2 for regular users
-            
+
             int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public boolean saveGoogleEmail(String email, String fullName, String picture) throws SQLException {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+
+        // Check if email exists
+        String checkQuery = "SELECT Email FROM Users WHERE Email = ?";
+        try (PreparedStatement checkPs = connection.prepareStatement(checkQuery)) {
+            checkPs.setString(1, email);
+            try (ResultSet rs = checkPs.executeQuery()) {
+                if (rs.next()) {
+                    return true; // Email already exists, consider this a success
+                }
+            }
+        }
+
+        // If email doesn't exist, insert new user with Google email
+        String insertQuery = "INSERT INTO Users (Email, Username, Password, FullName, Avatar, UserStatus, RoleID) VALUES (?, ?, ?, ?, ?, 1, 2)";
+        try (PreparedStatement insertPs = connection.prepareStatement(insertQuery)) {
+            insertPs.setString(1, email);
+            insertPs.setString(2, email); // Use email as initial username
+            insertPs.setString(3, "google_oauth"); // Default password for Google users
+            insertPs.setString(4, fullName != null ? fullName : email); // Use email as fallback if name is null
+            insertPs.setString(5, picture); // Set Google profile picture as avatar
+            int rowsAffected = insertPs.executeUpdate();
             return rowsAffected > 0;
         }
     }

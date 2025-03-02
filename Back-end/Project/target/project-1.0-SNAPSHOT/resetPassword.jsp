@@ -65,28 +65,28 @@
                     <h2>Reset Password</h2>
                     <p class="text-muted">Create your new password</p>
                 </div>
-                
+
                 <% if(request.getAttribute("error") != null) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <%= request.getAttribute("error") %>
-                    </div>
+                <div class="alert alert-danger" role="alert">
+                    <%= request.getAttribute("error") %>
+                </div>
                 <% } %>
-                
+
                 <form action="forgotPassword" method="POST" id="resetForm">
                     <input type="hidden" name="action" value="resetPassword">
                     <input type="hidden" name="email" value="${requestScope.email}">
-                    
+
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">New Password</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" required
                                pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm New Password</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                     </div>
-                    
+
                     <div class="password-requirements">
                         <strong>Password Requirements:</strong>
                         <ul>
@@ -95,18 +95,18 @@
                             <li>Both passwords must match</li>
                         </ul>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-reset">Reset Password</button>
                 </form>
             </div>
         </div>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            document.getElementById('resetForm').addEventListener('submit', function(event) {
+            document.getElementById('resetForm').addEventListener('submit', function (event) {
                 var password = document.getElementById('newPassword').value;
                 var confirmPassword = document.getElementById('confirmPassword').value;
-                
+
                 if (password !== confirmPassword) {
                     event.preventDefault();
                     alert('Passwords do not match!');

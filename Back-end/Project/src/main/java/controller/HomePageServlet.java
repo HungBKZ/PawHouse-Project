@@ -1,7 +1,7 @@
 package controller;
 
 import Model.User;
-import dao.UserDAO;
+import DAO.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,12 +18,12 @@ public class HomePageServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-        
+
         if (loggedInUser != null) {
             // Add user information to request
             request.setAttribute("user", loggedInUser);
         }
-        
+
         // Forward to index.jsp
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao;
+package DAO;
 
 import Model.Orders;
 import Utils.DBContext;
@@ -24,7 +24,7 @@ public class OrderDAO extends DBContext {
                 Orders order = new Orders();
                 order.setOrderID(rs.getInt("OrderID"));
                 order.setTotalAmount(rs.getDouble("TotalAmount"));
-                order.setStatus(rs.getBoolean("Status"));
+                order.setOrderStatus(rs.getBoolean("Status"));
 
                 orderList.add(order);
             }
@@ -35,4 +35,3 @@ public class OrderDAO extends DBContext {
         return orderList;
     }
 }
-
