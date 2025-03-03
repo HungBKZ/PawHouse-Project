@@ -19,7 +19,7 @@ public class Iconstant {
 
     public static final String GOOGLE_CLIENT_SECRET = "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";
 
-    public static final String GOOGLE_REDIRECT_URI = "http://localhost:8080/PawShop/home";
+    public static final String GOOGLE_REDIRECT_URI = "http://localhost:8080/google-login";
 
     public static final String GOOGLE_GRANT_TYPE = "authorization_code";
 

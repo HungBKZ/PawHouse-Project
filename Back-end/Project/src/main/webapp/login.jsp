@@ -137,7 +137,7 @@
 
                 <div class="google-btn">
                     <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile
-                       &redirect_uri=http://localhost:8080/PawShop/google-login&response_type=code&client_id=1042966270361-g65nrjskukgb6r5n2b6tbjrkbi9qi9fp.apps.googleusercontent.com">
+                       &redirect_uri=http://localhost:8080/google-login&response_type=code&client_id=1042966270361-g65nrjskukgb6r5n2b6tbjrkbi9qi9fp.apps.googleusercontent.com">
                         <button>Đăng nhập với Google</button>
                     </a>
 
