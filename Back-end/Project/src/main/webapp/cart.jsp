@@ -1,96 +1,163 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List" %>
-<%@ page import="Model.Product" %>
-<%@ page import="Model.Cart" %>
-<%@ page import="Model.User" %>
-<%@ page import="DAO.UserDAO" %>
-<%@ page import="Utils.PasswordHasher" %>
-<%@ page import="jakarta.servlet.http.HttpSession" %>
-
-<%
-    // Check for authenticated user
-    User user = null;
-    Cookie[] cookies = request.getCookies();
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("authToken")) {
-                String decodedValue = PasswordHasher.decodeBase64(cookie.getValue());
-                String[] parts = decodedValue.split(":");
-                if (parts.length == 2) {
-                    String email = parts[0];
-                    UserDAO userDAO = new UserDAO();
-                    user = userDAO.getUserByEmail(email);
-                }
-                break;
-            }
-        }
-    }
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Giỏ Hàng - PawHouse</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Giỏ Hàng - PawHouse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Làm to checkbox */
+        .product-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
 
-        <!-- Giỏ Hàng -->
-        <section class="container my-5">
-            <h2 class="text-center mb-4">Giỏ Hàng Của Bạn</h2>
-            <div class="table-responsive">
-                <table class="table text-center">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Hình Ảnh</th>
-                            <th>Sản Phẩm</th>
-                            <th>Giá</th>
-                            <th>Số Lượng</th>
-                            <th>Tổng</th>
-                            <th>Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% List<Cart> cart = (List<Cart>) session.getAttribute("cart");
-                            if (cart != null && !cart.isEmpty()) {
-                                for (Cart item : cart) {%>
-                        <tr>
-                            <td><img src="<%= item.getProduct().getProductImage()%>" class="cart-img" alt="<%= item.getProduct().getProductName()%>"></td>
-                            <td><%= item.getProduct().getProductName()%></td>
-                            <td class="price"><%= item.getProduct().getPrice()%> VNĐ</td>
-                            <td><%= item.getQuantity()%></td>
-                            <td class="total-price"><%= item.getQuantity() * item.getProduct().getPrice()%> VNĐ</td>
-                            <td><a href="removeFromCart.jsp?id=<%= item.getProduct().getProductID()%>" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a></td>
-                        </tr>
-                        <%    }
-                        } else { %>
-                        <tr>
-                            <td colspan="6">Giỏ hàng của bạn đang trống.</td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-            <div class="text-end">
-                <h4>Tổng Cộng: <span class="text-success">
-                        <% double total = 0;
-                            if (cart != null) {
-                                for (Cart item : cart) {
-                                    total += item.getQuantity() * item.getProduct().getPrice();
-                                }
-                            }
-                        %>
-                        <%= total%> VNĐ</span></h4>
-                <a href="checkout.jsp" class="btn btn-primary mt-3">Tiến Hành Thanh Toán</a>
-            </div>
-        </section>
+        .select-all-checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
 
-        <!-- Footer -->
-        <%@ include file="includes/footer.jsp" %>
+        /* Nút xóa đẹp hơn */
+        .btn-delete {
+            background-color: #ff4d4d;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+        .btn-delete:hover {
+            background-color: #e60000;
+        }
+
+        /* Hiệu ứng hover */
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Căn giữa nội dung trong bảng */
+        table th, table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        /* Tổng tiền đẹp hơn */
+        .total-amount {
+            font-size: 22px;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+
+    <script>
+        function selectAll(source) {
+            let checkboxes = document.querySelectorAll('.product-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = source.checked;
+            });
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let total = 0;
+            document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
+                let price = parseFloat(checkbox.getAttribute("data-price"));
+                let quantity = parseInt(checkbox.getAttribute("data-quantity"));
+                total += price * quantity;
+            });
+            document.getElementById("totalAmount").innerText = total.toLocaleString() + " VNĐ";
+        }
+
+        function submitSelected() {
+            let selectedProducts = [];
+            document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
+                selectedProducts.push(checkbox.value);
+            });
+
+            if (selectedProducts.length === 0) {
+                alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+                return;
+            }
+
+            let form = document.getElementById("checkout-form");
+            form.elements["selectedProducts"].value = selectedProducts.join(",");
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+    <%@ include file="includes/navbar.jsp" %>
+
+    <section class="container my-5">
+        <h2 class="text-center mb-4">🛒 Giỏ Hàng Của Bạn</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th><input type="checkbox" class="select-all-checkbox" onclick="selectAll(this)"></th>
+                        <th>Hình Ảnh</th>
+                        <th>Sản Phẩm</th>
+                        <th>Giá</th>
+                        <th>Số Lượng</th>
+                        <th>Tổng</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${not empty cartList}">
+                            <c:forEach var="cart" items="${cartList}">
+                                <c:set var="subtotal" value="${cart.quantity * cart.product.price}" />
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="product-checkbox" value="${cart.product.productID}" 
+                                               data-price="${cart.product.price}" data-quantity="${cart.quantity}" 
+                                               onclick="updateTotal()">
+                                    </td>
+                                    <td><img src="${cart.product.productImage}" width="80" class="img-thumbnail"></td>
+                                    <td>${cart.product.productName}</td>
+                                    <td>${cart.product.price} VNĐ</td>
+                                    <td>${cart.quantity}</td>
+                                    <td>${subtotal} VNĐ</td>
+                                    <td>
+                                        <a href="DeleteFromCart?id=${cart.product.productID}" class="btn btn-delete">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="7">Giỏ hàng của bạn đang trống.</td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="text-end">
+            <h4>Tổng Cộng: <span class="total-amount" id="totalAmount">0 VNĐ</span></h4>
+            <form id="checkout-form" action="checkout.jsp" method="POST">
+                <input type="hidden" name="selectedProducts">
+                <button type="button" class="btn btn-primary mt-3" onclick="submitSelected()">
+                    <i class="fas fa-credit-card"></i> Tiến Hành Thanh Toán
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <%@ include file="includes/footer.jsp" %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
