@@ -5,6 +5,7 @@
 package DAO;
 
 import Model.User;
+import Model.Role;
 import Utils.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
@@ -226,15 +227,47 @@ public class UserDAO extends DBContext {
         }
 
         // If email doesn't exist, insert new user with Google email
-        String insertQuery = "INSERT INTO Users (Email, Username, Password, FullName, Avatar, UserStatus, RoleID) VALUES (?, ?, ?, ?, ?, 1, 2)";
+        String insertQuery = "INSERT INTO Users (Email, Username, Password, FullName,Phone,Avatar, UserStatus, RoleID) VALUES (?, ?, ?, ?, ?, ?, 1, 2)";
         try (PreparedStatement insertPs = connection.prepareStatement(insertQuery)) {
             insertPs.setString(1, email);
             insertPs.setString(2, email); // Use email as initial username
-            insertPs.setString(3, "google_oauth"); // Default password for Google users
+            insertPs.setString(3, "MD5"); // Default password for Google users
             insertPs.setString(4, fullName != null ? fullName : email); // Use email as fallback if name is null
-            insertPs.setString(5, picture); // Set Google profile picture as avatar
+            insertPs.setString(5, "0000000000"); 
+            insertPs.setString(6, email);
             int rowsAffected = insertPs.executeUpdate();
             return rowsAffected > 0;
         }
     }
+
+    public boolean updateUserProfile(User user) throws SQLException {
+        String query = "UPDATE Users SET FullName = ?, Phone = ? WHERE UserID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, user.getFullName());
+            ps.setString(2, user.getPhone());
+            ps.setInt(3, user.getUserID());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+   public Role checkRole(int userID) throws SQLException {
+    String query = "SELECT r.RoleID, r.RoleName FROM Users u " +
+                   "JOIN Roles r ON u.RoleID = r.RoleID " +
+                   "WHERE u.UserID = ?";
+
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, userID);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new Role(rs.getInt("RoleID"), rs.getString("RoleName"));
+            }
+        }
+    }
+    return null;
+}
+
 }

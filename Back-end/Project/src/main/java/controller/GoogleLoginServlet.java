@@ -2,6 +2,7 @@ package controller;
 
 import DAO.UserDAO;
 import Model.GoogleAccount;
+import Model.User;
 import Utils.DBContext;
 import constant.Iconstant;
 import controller.GoogleLogin;
@@ -30,7 +31,12 @@ public class GoogleLoginServlet extends HttpServlet {
         try {
             UserDAO userDAO = new UserDAO();
             boolean saved = userDAO.saveGoogleEmail(acc.getEmail(), acc.getName(), acc.getPicture());
+
             if (saved) {
+
+                User user = userDAO.getUserByEmail(acc.getEmail()); // Lấy thông tin user từ DB
+                HttpSession session = request.getSession();
+                session.setAttribute("loggedInUser", user); // Lưu vào session
                 // Create cookies for user information with URL encoding
                 Cookie emailCookie = new Cookie("email", java.net.URLEncoder.encode(acc.getEmail(), "UTF-8"));
                 Cookie usernameCookie = new Cookie("username", java.net.URLEncoder.encode(acc.getName(), "UTF-8"));
