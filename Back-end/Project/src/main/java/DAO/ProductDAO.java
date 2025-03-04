@@ -43,11 +43,27 @@ public class ProductDAO extends DBContext {
         return productList;
     }
 
+    public void updateProductStock(int productId, int newStock) {
+        String query = "UPDATE Products SET Stock = ? WHERE ProductID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, newStock);
+            ps.setInt(2, productId);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("✔ Cập nhật stock thành công: " + newStock);
+            } else {
+                System.out.println("❌ Lỗi: Không thể cập nhật stock!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Product> getProductsByCategory(int categoryID) {
         List<Product> productListByCategory = new ArrayList<>();
-        String query = "SELECT p.*, c.CategoryName FROM Products p " +
-                      "INNER JOIN ProductCategories c ON p.CategoryID = c.CategoryID " +
-                      "WHERE p.CategoryID = ?";
+        String query = "SELECT p.*, c.CategoryName FROM Products p "
+                + "INNER JOIN ProductCategories c ON p.CategoryID = c.CategoryID "
+                + "WHERE p.CategoryID = ?";
 
         try {
             PreparedStatement ps = connection.prepareStatement(query);
@@ -297,8 +313,9 @@ public class ProductDAO extends DBContext {
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         List<Product> list = dao.getAll();
-        
-        for(Product o : list)
+
+        for (Product o : list) {
             System.out.println(o);
+        }
     }
 }

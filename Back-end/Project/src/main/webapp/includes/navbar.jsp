@@ -25,9 +25,9 @@
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
                 <li class="nav-item"><a class="nav-link" href="/Product">Sản Phẩm</a></li>
-                <li class="nav-item"><a class="nav-link" href="services.jsp">Dịch Vụ</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Service">Dịch Vụ</a></li>
                 <li class="nav-item"><a class="nav-link" href="adoption.jsp">Nhận Nuôi</a></li>
-                <li class="nav-item"><a class="nav-link" href="cart.jsp"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Cart"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
             </ul>
 
             <% if (user == null && googleUsername == null) { %>
