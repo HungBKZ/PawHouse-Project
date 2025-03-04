@@ -7,18 +7,27 @@
 <%
     HttpSession sessionObj = request.getSession();
     User user = (User) sessionObj.getAttribute("loggedInUser");
+    String message = (String) request.getAttribute("message");
+    String error = (String) request.getAttribute("error");
+    boolean isGoogleUser = false;
 
     if (user == null) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("authToken".equals(cookie.getName())) {
-                    String decodedValue = PasswordHasher.decodeBase64(cookie.getValue());
-                    if (decodedValue != null && decodedValue.contains(":")) {
-                        String email = decodedValue.split(":")[0];
-                        UserDAO userDAO = new UserDAO();
-                        user = userDAO.getUserByEmail(email);
-                        sessionObj.setAttribute("loggedInUser", user);
+        // Try to get Google user
+        user = (User) sessionObj.getAttribute("loggedInUser");
+        if (user != null) {
+            isGoogleUser = true;
+        } else {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("authToken".equals(cookie.getName())) {
+                        String decodedValue = PasswordHasher.decodeBase64(cookie.getValue());
+                        if (decodedValue != null && decodedValue.contains(":")) {
+                            String email = decodedValue.split(":")[0];
+                            UserDAO userDAO = new UserDAO();
+                            user = userDAO.getUserByEmail(email);
+                            sessionObj.setAttribute("loggedInUser", user);
+                        }
                     }
                 }
             }
@@ -38,23 +47,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Hồ Sơ Cá Nhân - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
             body {
                 background: linear-gradient(135deg, #f8b500, #ff6f61);
                 min-height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                padding: 20px;
             }
             .profile-container {
                 background: white;
                 padding: 40px;
                 border-radius: 15px;
                 box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-                max-width: 500px;
+                max-width: 800px;
                 width: 100%;
-                text-align: center;
+                margin: 20px auto;
             }
             .profile-avatar {
                 width: 120px;
@@ -90,23 +97,93 @@
             .btn-edit:hover {
                 background: #0056b3;
             }
+            .form-section {
+                border-top: 1px solid #dee2e6;
+                padding-top: 20px;
+                margin-top: 20px;
+            }
+            .alert {
+                margin-bottom: 20px;
+            }
+            .google-badge {
+                background-color: #4285f4;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 0.8rem;
+                margin-left: 10px;
+            }
         </style>
     </head>
     <body>
         <div class="profile-container">
-            <h2 class="text-primary">Hồ Sơ Cá Nhân</h2>
-            <img src="<%= user.getAvatar()%>" class="profile-avatar" alt="Avatar">
-            <h4><%= user.getFullName()%></h4>
-            <p class="text-muted">Vai trò: <strong><%= user.getRole().getRoleName()%></strong></p>
+            <div class="text-center mb-4">
+                <h2 class="text-primary">Hồ Sơ Cá Nhân</h2>
+                <img src="<%= user.getAvatar() != null ? user.getAvatar() : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" %>" 
+                     class="profile-avatar" alt="Avatar">
+                <h4><%= user.getFullName()%>
+                    <% if (isGoogleUser) { %>
+                    <span class="google-badge"><i class="fab fa-google"></i> Google</span>
+                    <% } %>
+                </h4>
+                <p class="text-muted">Vai trò: <strong><%= user.getRole() != null ? user.getRole().getRoleName() : "Người dùng" %></strong></p>
+            </div>
 
-            <div class="profile-info"><i class="fas fa-envelope"></i> Email: <%= user.getEmail()%></div>
-            <div class="profile-info"><i class="fas fa-phone"></i> Số điện thoại: <%= user.getPhone()%></div>
-            <div class="profile-info"><i class="fas fa-user-check"></i> Trạng thái: <strong><%= user.isUserStatus() ? "Hoạt động" : "Bị khóa"%></strong></div>
+            <% if (message != null) { %>
+                <div class="alert alert-success" role="alert">
+                    <%= message %>
+                </div>
+            <% } %>
+            <% if (error != null) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+            <% } %>
 
-            <div class="d-flex justify-content-between mt-4">
-                <a href="editProfile.jsp" class="btn btn-custom btn-edit w-50 me-2"><i class="fas fa-edit"></i> Chỉnh Sửa</a>
-                <a href="logout.jsp" class="btn btn-custom w-50"><i class="fas fa-sign-out-alt"></i> Đăng Xuất</a>
+            <!-- Thông tin cá nhân -->
+            <form action="UpdateProfileServlet" method="POST" class="form-section">
+                <h4 class="mb-3">Thông tin cá nhân</h4>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" class="form-control" value="<%= user.getEmail()%>" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-user"></i> Họ và tên</label>
+                    <input type="text" name="fullName" class="form-control" value="<%= user.getFullName()%>" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-phone"></i> Số điện thoại</label>
+                    <input type="tel" name="phone" class="form-control" value="<%= user.getPhone()%>" required>
+                </div>
+                <button type="submit" class="btn btn-custom btn-edit w-100">Cập nhật thông tin</button>
+            </form>
+
+            <!-- Đổi mật khẩu - Chỉ hiển thị cho người dùng hệ thống -->
+            <% if (!isGoogleUser && user.getPassword() != null && !user.getPassword().isEmpty()) { %>
+            <form action="ChangePasswordServlet" method="POST" class="form-section">
+                <h4 class="mb-3">Đổi mật khẩu</h4>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-lock"></i> Mật khẩu hiện tại</label>
+                    <input type="password" name="currentPassword" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-key"></i> Mật khẩu mới</label>
+                    <input type="password" name="newPassword" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-check"></i> Xác nhận mật khẩu mới</label>
+                    <input type="password" name="confirmPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-custom btn-edit w-100">Đổi mật khẩu</button>
+            </form>
+            <% } %>
+
+            <div class="text-center mt-4">
+                <a href="index.jsp" class="btn btn-secondary me-2"><i class="fas fa-home"></i> Trang chủ</a>
+                <a href="logout" class="btn btn-custom"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
             </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

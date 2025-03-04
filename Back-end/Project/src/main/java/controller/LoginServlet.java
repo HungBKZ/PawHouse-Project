@@ -1,6 +1,7 @@
 package controller;
 
 import Model.User;
+import Model.Role;
 import DAO.UserDAO;
 import Utils.PasswordHasher;
 import jakarta.servlet.ServletException;
@@ -22,10 +23,10 @@ public class LoginServlet extends HttpServlet {
             String savedPassword = null;
 
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("savedEmail")) {
+                if ("savedEmail".equals(cookie.getName())) {
                     savedEmail = cookie.getValue();
                 }
-                if (cookie.getName().equals("savedPassword")) {
+                if ("savedPassword".equals(cookie.getName())) {
                     savedPassword = PasswordHasher.decodeBase64(cookie.getValue());
                 }
             }
@@ -35,12 +36,7 @@ public class LoginServlet extends HttpServlet {
                 try {
                     User user = userDAO.checkLogin(savedEmail, savedPassword);
                     if (user != null) {
-                        // Create authentication cookie
-                        Cookie authCookie = new Cookie("authToken", PasswordHasher.encodeBase64(savedEmail + ":" + user.getUserID()));
-                        authCookie.setMaxAge(COOKIE_MAX_AGE);
-                        authCookie.setPath("/");
-                        response.addCookie(authCookie);
-
+                        authenticateUser(response, user);
                         response.sendRedirect("index.jsp");
                         return;
                     }
@@ -72,41 +68,27 @@ public class LoginServlet extends HttpServlet {
         try {
             User user = userDAO.checkLogin(email, password);
             if (user != null) {
-                // Create authentication cookie
-                Cookie authCookie = new Cookie("authToken", PasswordHasher.encodeBase64(email + ":" + user.getUserID()));
-                authCookie.setMaxAge(COOKIE_MAX_AGE);
-                authCookie.setPath("/");
-                response.addCookie(authCookie);
+                // Check user role
+                Role role = userDAO.checkRole(user.getUserID());
+                if (role == null) {
+                    error = "Tài khoản của bạn chưa được cấp quyền. Vui lòng liên hệ quản trị viên!";
+                    request.setAttribute("error", error);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                }
+
+                user.setRole(role);
+                authenticateUser(response, user);
 
                 // Handle remember me
                 if (rememberMe != null) {
-                    Cookie emailCookie = new Cookie("savedEmail", email);
-                    Cookie passwordCookie = new Cookie("savedPassword", PasswordHasher.encodeBase64(password));
-
-                    emailCookie.setMaxAge(COOKIE_MAX_AGE);
-                    passwordCookie.setMaxAge(COOKIE_MAX_AGE);
-
-                    emailCookie.setPath("/");
-                    passwordCookie.setPath("/");
-
-                    response.addCookie(emailCookie);
-                    response.addCookie(passwordCookie);
+                    saveLoginCookies(response, email, password);
                 } else {
-                    // Remove saved credentials if remember me is not checked
-                    Cookie emailCookie = new Cookie("savedEmail", "");
-                    Cookie passwordCookie = new Cookie("savedPassword", "");
-
-                    emailCookie.setMaxAge(0);
-                    passwordCookie.setMaxAge(0);
-
-                    emailCookie.setPath("/");
-                    passwordCookie.setPath("/");
-
-                    response.addCookie(emailCookie);
-                    response.addCookie(passwordCookie);
+                    clearLoginCookies(response);
                 }
 
-                response.sendRedirect("index.jsp");
+                // Redirect based on role
+                handleUserLogin(user, response);
             } else {
                 error = "Email hoặc mật khẩu không đúng!";
                 request.setAttribute("error", error);
@@ -116,6 +98,66 @@ public class LoginServlet extends HttpServlet {
             error = "Có lỗi xảy ra: " + e.getMessage();
             request.setAttribute("error", error);
             request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
+    }
+
+    private void authenticateUser(HttpServletResponse response, User user) {
+        Cookie authCookie = new Cookie("authToken", PasswordHasher.encodeBase64(user.getEmail() + ":" + user.getUserID()));
+        authCookie.setMaxAge(COOKIE_MAX_AGE);
+        authCookie.setPath("/");
+        response.addCookie(authCookie);
+    }
+
+    private void saveLoginCookies(HttpServletResponse response, String email, String password) {
+        Cookie emailCookie = new Cookie("savedEmail", email);
+        Cookie passwordCookie = new Cookie("savedPassword", PasswordHasher.encodeBase64(password));
+
+        emailCookie.setMaxAge(COOKIE_MAX_AGE);
+        passwordCookie.setMaxAge(COOKIE_MAX_AGE);
+
+        emailCookie.setPath("/");
+        passwordCookie.setPath("/");
+
+        response.addCookie(emailCookie);
+        response.addCookie(passwordCookie);
+    }
+
+    private void clearLoginCookies(HttpServletResponse response) {
+        Cookie emailCookie = new Cookie("savedEmail", "");
+        Cookie passwordCookie = new Cookie("savedPassword", "");
+
+        emailCookie.setMaxAge(0);
+        passwordCookie.setMaxAge(0);
+
+        emailCookie.setPath("/");
+        passwordCookie.setPath("/");
+
+        response.addCookie(emailCookie);
+        response.addCookie(passwordCookie);
+    }
+
+    private void handleUserLogin(User user, HttpServletResponse response) throws IOException {
+        if (user.getRole() == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+
+        switch (user.getRole().getRoleID()) {
+            case 1:
+                response.sendRedirect("admin.jsp");
+                break;
+            case 2:
+                response.sendRedirect("index.jsp");
+                break;
+            case 3:
+                response.sendRedirect("staff.jsp");
+                break;
+            case 4:
+                response.sendRedirect("doctor.jsp");
+                break;
+            default:
+                response.sendRedirect("index.jsp");
+                break;
         }
     }
 }
