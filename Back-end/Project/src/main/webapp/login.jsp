@@ -26,6 +26,7 @@
                 border-radius: 10px;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
+
             .login-header {
                 text-align: center;
                 margin-bottom: 30px;
@@ -63,6 +64,43 @@
             .form-check {
                 margin: 15px 0;
             }
+            .google-btn {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .google-login-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #ffffff; /* Nền trắng theo thiết kế Google */
+                color: #757575; /* Màu chữ xám */
+                font-size: 16px;
+                font-weight: bold;
+                padding: 10px 20px;
+                border: 1px solid #d9d9d9;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+                width: 250px;
+            }
+
+            .google-login-btn img {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+
+            .google-login-btn:hover {
+                background-color: #f1f1f1;
+                border-color: #c0c0c0;
+            }
+
+            .google-btn a {
+                text-decoration: none;
+            }
+
         </style>
     </head>
     <body>
@@ -134,14 +172,17 @@
                 <div class="text-center my-3">
                     <span>OR</span>
                 </div>
-
                 <div class="google-btn">
                     <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile
-                       &redirect_uri=http://localhost:8080/google-login&response_type=code&client_id=1042966270361-g65nrjskukgb6r5n2b6tbjrkbi9qi9fp.apps.googleusercontent.com">
-                        <button>Đăng nhập với Google</button>
+                       &redirect_uri=http://localhost:8080/google-login&response_type=code
+                       &client_id=1042966270361-g65nrjskukgb6r5n2b6tbjrkbi9qi9fp.apps.googleusercontent.com">
+                        <button class="google-login-btn">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" alt="Google Logo">
+                            Đăng nhập với Google
+                        </button>
                     </a>
-
                 </div>
+
 
                 <div class="register-link">
                     <p>Don't have an account? <a href="register.jsp">Register here</a></p>

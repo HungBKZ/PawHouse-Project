@@ -119,26 +119,26 @@
         <div class="profile-container">
             <div class="text-center mb-4">
                 <h2 class="text-primary">Hồ Sơ Cá Nhân</h2>
-                <img src="<%= user.getAvatar() != null ? user.getAvatar() : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" %>" 
+                <img src="<%= user.getAvatar() != null ? user.getAvatar() : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"%>" 
                      class="profile-avatar" alt="Avatar">
                 <h4><%= user.getFullName()%>
                     <% if (isGoogleUser) { %>
                     <span class="google-badge"><i class="fab fa-google"></i> Google</span>
-                    <% } %>
+                    <% }%>
                 </h4>
-                <p class="text-muted">Vai trò: <strong><%= user.getRole() != null ? user.getRole().getRoleName() : "Người dùng" %></strong></p>
+                <p class="text-muted">Vai trò: <strong><%= user.getRole() != null ? user.getRole().getRoleName() : "Người dùng"%></strong></p>
             </div>
 
-            <% if (message != null) { %>
-                <div class="alert alert-success" role="alert">
-                    <%= message %>
-                </div>
+            <% if (message != null) {%>
+            <div class="alert alert-success" role="alert">
+                <%= message%>
+            </div>
             <% } %>
-            <% if (error != null) { %>
-                <div class="alert alert-danger" role="alert">
-                    <%= error %>
-                </div>
-            <% } %>
+            <% if (error != null) {%>
+            <div class="alert alert-danger" role="alert">
+                <%= error%>
+            </div>
+            <% }%>
 
             <!-- Thông tin cá nhân -->
             <form action="UpdateProfileServlet" method="POST" class="form-section">
@@ -151,9 +151,15 @@
                     <label class="form-label"><i class="fas fa-user"></i> Họ và tên</label>
                     <input type="text" name="fullName" class="form-control" value="<%= user.getFullName()%>" required>
                 </div>
-                <div class="mb-3">
+                <<div class="mb-3">
                     <label class="form-label"><i class="fas fa-phone"></i> Số điện thoại</label>
-                    <input type="tel" name="phone" class="form-control" value="<%= user.getPhone()%>" required>
+                    <input type="tel" name="phone" class="form-control" 
+                           value="<%= user.getPhone()%>" 
+                           pattern="[0-9]{10}" 
+                           maxlength="10" 
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
+                           required>
+                    <small class="text-muted">Vui lòng nhập đúng 10 chữ số.</small>
                 </div>
                 <button type="submit" class="btn btn-custom btn-edit w-100">Cập nhật thông tin</button>
             </form>
@@ -176,7 +182,7 @@
                 </div>
                 <button type="submit" class="btn btn-custom btn-edit w-100">Đổi mật khẩu</button>
             </form>
-            <% } %>
+            <% }%>
 
             <div class="text-center mt-4">
                 <a href="index.jsp" class="btn btn-secondary me-2"><i class="fas fa-home"></i> Trang chủ</a>
