@@ -1,13 +1,16 @@
 package controller;
 
 import DAO.UserDAO;
+import Utils.EmailUtility;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Random;
 
 @WebServlet(name = "ForgotPasswordServlet", urlPatterns = {"/forgotPassword"})
 public class ForgotPasswordServlet extends HttpServlet {
@@ -15,7 +18,6 @@ public class ForgotPasswordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Show the forgot password form
         request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
     }
 
@@ -26,10 +28,10 @@ public class ForgotPasswordServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
 
         if ("checkEmail".equals(action)) {
-            // Step 1: Check email exists
             handleEmailCheck(request, response, userDAO);
+        } else if ("verifyOTP".equals(action)) {
+            handleOTPVerification(request, response, userDAO);
         } else if ("resetPassword".equals(action)) {
-            // Step 2: Reset password
             handlePasswordReset(request, response, userDAO);
         } else {
             request.setAttribute("error", "Invalid action");
@@ -49,9 +51,28 @@ public class ForgotPasswordServlet extends HttpServlet {
             }
 
             if (userDAO.checkEmailExists(email)) {
-                // Email exists, show password reset form
-                request.setAttribute("email", email);
-                request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+                // Generate OTP
+                Random random = new Random();
+                int otp = random.nextInt(900000) + 100000; // 6-digit OTP
+
+                // Store OTP and email in session
+                HttpSession session = request.getSession();
+                session.setAttribute("otp", otp);
+                session.setAttribute("email", email);
+
+                // Send OTP via email
+                String subject = "Password Reset OTP - PawHouse";
+                String content = String.format(
+                    "<h2>Password Reset OTP</h2>" +
+                    "<p>Your OTP for password reset is: <strong>%d</strong></p>" +
+                    "<p>This OTP will expire in 10 minutes.</p>" +
+                    "<p>If you did not request this password reset, please ignore this email.</p>",
+                    otp
+                );
+                EmailUtility.sendEmail(email, subject, content);
+
+                // Redirect to OTP verification page
+                request.getRequestDispatcher("verifyOTPForgotPassword.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "No account found with this email address.");
                 request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
@@ -63,9 +84,27 @@ public class ForgotPasswordServlet extends HttpServlet {
         }
     }
 
+    private void handleOTPVerification(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String enteredOTP = request.getParameter("otp");
+        int storedOTP = (int) session.getAttribute("otp");
+        String email = (String) session.getAttribute("email");
+
+        if (enteredOTP.equals(String.valueOf(storedOTP))) {
+            // OTP verified, show password reset form
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+        } else {
+            request.setAttribute("error", "Invalid OTP. Please try again.");
+            request.getRequestDispatcher("verifyOTPForgotPassword.jsp").forward(request, response);
+        }
+    }
+
     private void handlePasswordReset(HttpServletRequest request, HttpServletResponse response, UserDAO userDAO)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("email");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
@@ -90,6 +129,10 @@ public class ForgotPasswordServlet extends HttpServlet {
 
             // Update password in database
             if (userDAO.updatePasswordByEmail(email, newPassword)) {
+                // Clear session attributes
+                session.removeAttribute("otp");
+                session.removeAttribute("email");
+                
                 request.setAttribute("success", "Password has been reset successfully. You can now login with your new password.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             } else {
