@@ -61,9 +61,8 @@
         <div class="container">
             <div class="reset-container">
                 <div class="reset-header">
-                    <img src="assets/images/logo.png" alt="PawHouse Logo">
-                    <h2>Reset Password</h2>
-                    <p class="text-muted">Create your new password</p>
+                    <h2>Tạo Lại Mật Khẩu</h2>
+                    <p class="text-muted">Tạo mật khẩu mới của bạn</p>
                 </div>
 
                 <% if(request.getAttribute("error") != null) { %>
@@ -77,26 +76,26 @@
                     <input type="hidden" name="email" value="${requestScope.email}">
 
                     <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
+                        <label for="newPassword" class="form-label">Mật Khẩu Mới</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" required
                                pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
                     </div>
 
                     <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <label for="confirmPassword" class="form-label">Xác Nhận Mật Khẩu Mới</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                     </div>
 
                     <div class="password-requirements">
-                        <strong>Password Requirements:</strong>
+                        <strong>Yêu Cầu Mật Khẩu:</strong>
                         <ul>
-                            <li>At least 8 characters long</li>
-                            <li>Must contain letters and numbers</li>
-                            <li>Both passwords must match</li>
+                            <li>Ít nhất có 8 ký tự</li>
+                            <li>Phải chứa chữ cái và số</li>
+                            <li>Cả hai mật khẩu phải trùng nhau</li>
                         </ul>
                     </div>
 
-                    <button type="submit" class="btn btn-reset">Reset Password</button>
+                    <button type="submit" class="btn btn-reset">Tạo Lại Mật Khẩu</button>
                 </form>
             </div>
         </div>
@@ -109,7 +108,7 @@
 
                 if (password !== confirmPassword) {
                     event.preventDefault();
-                    alert('Passwords do not match!');
+                    alert('Mật khẩu không khớp nhau!');
                 }
             });
         </script>
