@@ -231,7 +231,7 @@ public class UserDAO extends DBContext {
         try (PreparedStatement insertPs = connection.prepareStatement(insertQuery)) {
             insertPs.setString(1, email);
             insertPs.setString(2, email); // Use email as initial username
-            insertPs.setString(3, "MD5"); // Default password for Google users
+            insertPs.setString(3, PasswordHasher.hashMD5("123456")); // Default password for Google users
             insertPs.setString(4, fullName != null ? fullName : email); // Use email as fallback if name is null
             insertPs.setString(5, "0000000000"); 
             insertPs.setString(6, email);
@@ -270,5 +270,15 @@ public class UserDAO extends DBContext {
     return null;
 }
 
-   
+    public boolean updateUserPassword(int userId, String newPassword) throws SQLException {
+        String query = "UPDATE Users SET Password = ? WHERE UserID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, PasswordHasher.hashMD5(newPassword));
+            ps.setInt(2, userId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 }
