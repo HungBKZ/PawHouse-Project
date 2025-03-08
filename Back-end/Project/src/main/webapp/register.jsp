@@ -59,23 +59,23 @@
                 <div class="register-header">
                     <img src="assets/images/logo.png" alt="PawHouse Logo">
                     <h2>Create Your Account</h2>
-                    <p class="text-muted">Join PawHouse and start your pet care journey!</p>
+                    <p class="text-muted">Đăng Ký PawHouse Và Bắt Đầu Qúa Trình Chăm Sóc Thú Cưng Của Bạn!</p>
                 </div>
 
-                <% if(request.getAttribute("error") != null) { %>
+                <% if (request.getAttribute("error") != null) {%>
                 <div class="alert alert-danger" role="alert">
-                    <%= request.getAttribute("error") %>
+                    <%= request.getAttribute("error")%>
                 </div>
-                <% } %>
+                <% }%>
 
                 <form action="register" method="POST" id="registerForm">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="username" class="form-label required">Username</label>
+                                <label for="username" class="form-label required">Tên Đăng Nhập</label>
                                 <input type="text" class="form-control" id="username" name="username" required
                                        pattern="[a-zA-Z0-9_]{3,20}" 
-                                       title="Username must be 3-20 characters long and can only contain letters, numbers, and underscores">
+                                       title="Tên người dùng phải có độ dài từ 3 đến 20 ký tự và chỉ được chứa chữ cái, số và dấu gạch dưới.">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -89,37 +89,37 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="password" class="form-label required">Password</label>
+                                <label for="password" class="form-label required">Nhập Mật Khẩu</label>
                                 <input type="password" class="form-control" id="password" name="password" required
                                        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-                                       title="Password must be at least 8 characters long and include both letters and numbers">
+                                       title=" Mật khẩu phải có ít nhất 8 ký tự và bao gồm cả chữ cái và số">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="confirmPassword" class="form-label required">Confirm Password</label>
+                                <label for="confirmPassword" class="form-label required">Nhập Lại Mật Khẩu</label>
                                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="fullName" class="form-label required">Full Name</label>
+                        <label for="fullName" class="form-label required">Họ Và Tên</label>
                         <input type="text" class="form-control" id="fullName" name="fullName" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="phone" class="form-label required">Phone Number</label>
+                        <label for="phone" class="form-label required">Số Điện Thoại</label>
                         <input type="tel" class="form-control" id="phone" name="phone" required
                                pattern="[0-9]{10}"
-                               title="Please enter a valid 10-digit phone number">
+                               title="Chỉ Được Nhập 10 số">
                     </div>
 
-                    <button type="submit" class="btn btn-register">Create Account</button>
+                    <button type="submit" class="btn btn-register">Tạo Tài Khoản</button>
                 </form>
 
                 <div class="login-link">
-                    Already have an account? <a href="login.jsp">Login here</a>
+                    Nếu Đã Có Tài Khoản? <a href="login.jsp">Đăng Nhập ở đây</a>
                 </div>
             </div>
         </div>

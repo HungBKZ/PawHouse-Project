@@ -8,6 +8,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>PawHouse - Chăm Sóc Thú Cưng</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
         <style>
             /* Điều chỉnh chiều cao carousel */
@@ -481,7 +483,7 @@
             <!-- Thanh tiến trình (Step Progress) -->
             <div class="d-flex justify-content-center align-items-center mb-4 flex-wrap">
                 <%-- Danh sách các bước --%>
-                <% String[] steps = {"Veterinary Service", "Activity Exercise", "Activity Results", "Dog Boarding", "Cat Boarding", "Pet Grooming", "Healthy Meals"}; %>
+                <% String[] steps = {"Dịch Vụ Thú Y", "Hoạt Động Vận Động", "Kết Qủa Hoạt Động", "Lưu Trú Chó", "Lưu Trữ Mèo", "Chăm Sóc Mèo", "Bữa Ăn Dinh Dưỡng"}; %>
                 <% for (int i = 0; i < steps.length; i++) {%>
                 <div class="step">
                     <div class="circle"><%= i + 1%></div>
@@ -494,7 +496,8 @@
             <!-- Dịch vụ đánh giá (Căn chỉnh đều) -->
             <div class="d-flex justify-content-center flex-wrap">
                 <%-- Danh sách dịch vụ với Bootstrap Icons --%>
-                <% String[] serviceIcons = {"bi-heart-pulse", "bi-bicycle", "bi-clipboard-check", "bi-house-door", "bi-twitter", "bi-scissors", "bi-balloon-heart-fill"}; %>
+             <% String[] serviceIcons = {"bi-heart-pulse", "bi-bicycle", "bi-clipboard-check", "bi-house-door", "bi bi-bag-heart-fill", "bi-scissors", "bi-balloon-heart-fill"}; %>
+
                 <% for (int i = 0; i < steps.length; i++) {%>
                 <div class="review-card">
                     <i class="bi <%= serviceIcons[i]%> service-icon"></i>
@@ -558,5 +561,6 @@
         </script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
     </body>
 </html>

@@ -167,7 +167,7 @@
             <!-- Đổi mật khẩu - Chỉ hiển thị cho người dùng hệ thống -->
             <% if (!isGoogleUser && user.getPassword() != null && !user.getPassword().isEmpty()) { %>
             <form action="ChangePasswordServlet" method="POST" class="form-section">
-                <h4 class="mb-3">Đổi mật khẩu</h4>
+                <h4 class="mb-3">Đổi mật khẩu(Đối với Tài Khoản Google, Mật khẩu mặc định là 123456</h4>
                 <div class="mb-3">
                     <label class="form-label"><i class="fas fa-lock"></i> Mật khẩu hiện tại</label>
                     <input type="password" name="currentPassword" class="form-control" required>
