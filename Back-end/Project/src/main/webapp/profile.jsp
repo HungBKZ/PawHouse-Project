@@ -141,33 +141,37 @@
             <% }%>
 
             <!-- Thông tin cá nhân -->
-            <form action="UpdateProfileServlet" method="POST" class="form-section">
+            <form action="UpdateProfileServlet" method="POST" enctype="multipart/form-data" class="form-section">
                 <h4 class="mb-3">Thông tin cá nhân</h4>
+
+<!--                 Avatar hiện tại 
+                <div class="mb-3 text-center">
+                    <img src="<%= user.getAvatar() != null ? user.getAvatar() : "imgs/default-avatar.png"%>" 
+                         class="profile-avatar" id="avatarPreview" alt="Avatar hiện tại">
+                </div>-->
+
+                <!-- Upload Avatar -->
                 <div class="mb-3">
-                    <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" class="form-control" value="<%= user.getEmail()%>" readonly>
+                    <label class="form-label"><i class="fas fa-image"></i> Thay đổi Avatar</label>
+                    <input type="file" name="avatar" class="form-control" accept="image/*" id="avatarInput">
                 </div>
+
+                <!-- Thông tin cá nhân -->
                 <div class="mb-3">
                     <label class="form-label"><i class="fas fa-user"></i> Họ và tên</label>
                     <input type="text" name="fullName" class="form-control" value="<%= user.getFullName()%>" required>
                 </div>
-                <<div class="mb-3">
+                <div class="mb-3">
                     <label class="form-label"><i class="fas fa-phone"></i> Số điện thoại</label>
-                    <input type="tel" name="phone" class="form-control" 
-                           value="<%= user.getPhone()%>" 
-                           pattern="[0-9]{10}" 
-                           maxlength="10" 
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
-                           required>
-                    <small class="text-muted">Vui lòng nhập đúng 10 chữ số.</small>
+                    <input type="tel" name="phone" class="form-control" value="<%= user.getPhone()%>" required>
                 </div>
                 <button type="submit" class="btn btn-custom btn-edit w-100">Cập nhật thông tin</button>
             </form>
-
             <!-- Đổi mật khẩu - Chỉ hiển thị cho người dùng hệ thống -->
             <% if (!isGoogleUser && user.getPassword() != null && !user.getPassword().isEmpty()) { %>
             <form action="ChangePasswordServlet" method="POST" class="form-section">
-                <h4 class="mb-3">Đổi mật khẩu(Đối với Tài Khoản Google, Mật khẩu mặc định là 123456</h4>
+                <h4 class="mb-3">Đổi mật khẩu</h4>
+                 <div class="mb-3">Đối với tài khoản google, mật khẩu mặc định là "123456"</div>
                 <div class="mb-3">
                     <label class="form-label"><i class="fas fa-lock"></i> Mật khẩu hiện tại</label>
                     <input type="password" name="currentPassword" class="form-control" required>
@@ -190,6 +194,14 @@
             </div>
         </div>
 
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function previewAvatar(event) {
+                const output = document.getElementById('avatarPreview');
+                output.src = URL.createObjectURL(event.target.files[0]);
+                output.onload = () => URL.revokeObjectURL(output.src);
+            }
+        </script>
     </body>
 </html>

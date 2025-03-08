@@ -233,42 +233,58 @@ public class UserDAO extends DBContext {
             insertPs.setString(2, email); // Use email as initial username
             insertPs.setString(3, PasswordHasher.hashMD5("123456")); // Default password for Google users
             insertPs.setString(4, fullName != null ? fullName : email); // Use email as fallback if name is null
-            insertPs.setString(5, "0000000000"); 
+            insertPs.setString(5, "0000000000");
             insertPs.setString(6, email);
             int rowsAffected = insertPs.executeUpdate();
             return rowsAffected > 0;
         }
     }
 
-    public boolean updateUserProfile(User user) throws SQLException {
-        String query = "UPDATE Users SET FullName = ?, Phone = ? WHERE UserID = ?";
+//    public boolean updateUserProfile(User user) throws SQLException {
+//        String query = "UPDATE Users SET FullName = ?, Phone = ? WHERE UserID = ?";
+//
+//        try (PreparedStatement ps = connection.prepareStatement(query)) {
+//            ps.setString(1, user.getFullName());
+//            ps.setString(2, user.getPhone());
+//            ps.setInt(3, user.getUserID());
+//
+//            int rowsAffected = ps.executeUpdate();
+//            return rowsAffected > 0;
+//        }
+//    }
+    public boolean updateUserProfile(User user) {
+        String sql = "UPDATE Users SET FullName = ?, Phone = ?, Avatar = ? WHERE UserID = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, user.getFullName());
-            ps.setString(2, user.getPhone());
-            ps.setInt(3, user.getUserID());
+            stmt.setString(1, user.getFullName());
+            stmt.setString(2, user.getPhone());
+            stmt.setString(3, user.getAvatar());
+            stmt.setInt(4, user.getUserID());
 
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-   public Role checkRole(int userID) throws SQLException {
-    String query = "SELECT r.RoleID, r.RoleName FROM Users u " +
-                   "JOIN Roles r ON u.RoleID = r.RoleID " +
-                   "WHERE u.UserID = ?";
+    public Role checkRole(int userID) throws SQLException {
+        String query = "SELECT r.RoleID, r.RoleName FROM Users u "
+                + "JOIN Roles r ON u.RoleID = r.RoleID "
+                + "WHERE u.UserID = ?";
 
-    try (Connection conn = getConnection();
-         PreparedStatement ps = conn.prepareStatement(query)) {
-        ps.setInt(1, userID);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return new Role(rs.getInt("RoleID"), rs.getString("RoleName"));
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, userID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Role(rs.getInt("RoleID"), rs.getString("RoleName"));
+                }
             }
         }
+        return null;
     }
-    return null;
-}
 
     public boolean updateUserPassword(int userId, String newPassword) throws SQLException {
         String query = "UPDATE Users SET Password = ? WHERE UserID = ?";
