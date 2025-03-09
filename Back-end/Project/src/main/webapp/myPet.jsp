@@ -4,7 +4,15 @@
 
 <%
     List<Pet> petList = (List<Pet>) request.getAttribute("myPets");
-    boolean isStaff = (Boolean) request.getAttribute("isStaff");
+    Boolean isStaffObj = (Boolean) request.getAttribute("isStaff");
+    boolean isStaff = isStaffObj != null ? isStaffObj : false;
+    String successMessage = (String) request.getAttribute("successMessage");
+    
+    // Redirect to servlet if accessed directly
+    if (petList == null) {
+        response.sendRedirect("MyPet");
+        return;
+    }
 %>
 
 <!DOCTYPE html>
@@ -79,6 +87,13 @@
         <%@ include file="includes/navbar.jsp" %>
 
         <div class="container mt-5">
+            <% if (successMessage != null) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> <%= successMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+            
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="text-primary"><i class="fas fa-paw"></i> Thú cưng của tôi</h2>
                 <% if (isStaff) { %>

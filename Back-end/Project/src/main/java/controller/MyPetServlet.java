@@ -33,6 +33,7 @@ public class MyPetServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
+        String success = request.getParameter("success");
         boolean isStaff = user.getRole() != null && user.getRole().getRoleID() == 2;
 
         if (action != null && isStaff) {
@@ -56,7 +57,6 @@ public class MyPetServlet extends HttpServlet {
             String inUseService = pet.getInUseService();
             if (inUseService == null || inUseService.trim().isEmpty()) {
                 pet.setInUseService("Chưa từng sử dụng dịch vụ");
-                System.out.println("Pet " + pet.getPetName() + " has no service status");
             } else {
                 // Chuyển đổi giá trị số sang text
                 switch (inUseService) {
@@ -72,12 +72,17 @@ public class MyPetServlet extends HttpServlet {
                     default:
                         pet.setInUseService("Chưa từng sử dụng dịch vụ");
                 }
-                System.out.println("Pet " + pet.getPetName() + " service status: " + inUseService + " -> " + pet.getInUseService());
             }
         }
 
         request.setAttribute("myPets", petList);
         request.setAttribute("isStaff", isStaff);
+        
+        // Set success message if present
+        if (success != null && success.equals("adopted")) {
+            request.setAttribute("successMessage", "Bạn đã nhận nuôi thú cưng thành công!");
+        }
+        
         request.getRequestDispatcher("/myPet.jsp").forward(request, response);
     }
 }
