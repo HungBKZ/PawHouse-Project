@@ -15,75 +15,96 @@
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <style>
             body {
-                background-color: #f8f9fa;
+                background: url('imgs/pethouse.png') no-repeat center center;
+                background-size: contain; /* Giữ nguyên tỉ lệ, không kéo giãn ảnh */
+                background-attachment: fixed; /* Giữ cố định khi cuộn */
                 font-family: 'Arial', sans-serif;
-            }
-            .login-container {
-                max-width: 400px;
-                margin: 50px auto;
-                padding: 20px;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
             }
 
-            .login-header {
+
+            .login-container {
+                width: 100%;
+                max-width: 420px;
+                padding: 30px;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 15px;
+                box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
                 text-align: center;
-                margin-bottom: 30px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /* Đảm bảo canh giữa */
             }
+
+
+
             .login-header img {
-                max-width: 150px;
-                margin-bottom: 20px;
+                max-width: 120px;
+                margin-bottom: 15px;
             }
+
+            .login-header h2 {
+                font-size: 26px;
+                font-weight: bold;
+                color: #ff9900;
+            }
+
             .form-control {
                 border-radius: 20px;
-                padding: 10px 15px;
+                padding: 12px 15px;
+                border: 1px solid #ccc;
             }
+
             .btn-login {
-                border-radius: 20px;
-                padding: 10px 20px;
+                border-radius: 30px;
+                padding: 12px;
                 width: 100%;
-                background-color: #4CAF50;
+                background-color: #00a991;
+                color: white;
+                font-weight: bold;
                 border: none;
+                transition: 0.3s;
             }
+
             .btn-login:hover {
-                background-color: #45a049;
+                background-color: #008b76;
             }
-            .google-btn {
-                width: 100%;
-                margin: 10px 0;
-            }
+
             .forgot-password {
                 text-align: right;
                 margin: 10px 0;
             }
+
             .register-link {
                 text-align: center;
                 margin-top: 20px;
             }
-            .form-check {
-                margin: 15px 0;
-            }
+
+            /* Google Button */
             .google-btn {
                 text-align: center;
-                margin-top: 20px;
+                margin-top: 15px;
             }
 
             .google-login-btn {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: #ffffff; /* Nền trắng theo thiết kế Google */
-                color: #757575; /* Màu chữ xám */
+                background-color: #ffffff;
+                color: #757575;
                 font-size: 16px;
                 font-weight: bold;
-                padding: 10px 20px;
+                padding: 12px 20px;
                 border: 1px solid #d9d9d9;
-                border-radius: 5px;
+                border-radius: 30px;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-                width: 250px;
+                width: 100%;
             }
 
             .google-login-btn img {
@@ -96,11 +117,6 @@
                 background-color: #f1f1f1;
                 border-color: #c0c0c0;
             }
-
-            .google-btn a {
-                text-decoration: none;
-            }
-
         </style>
     </head>
     <body>
@@ -135,8 +151,8 @@
             </div>
             <div class="login-container">
                 <div class="login-header">
-                    <img src="assets/images/logo.png" alt="PawHouse Logo">
-                    <h2>Welcome to PawHouse</h2>
+                    <h2>🐾Chào mừng bạn🐾</h2>
+                     <h2>đến với PawHouse</h2>
                 </div>
 
                 <% if (request.getAttribute("error") != null) {%>
@@ -154,38 +170,35 @@
 
                 <form action="login" method="POST">
                     <div class="mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Email" required value="<%= savedEmail%>">
+                        <input type="email" class="form-control" name="email" placeholder="Tài khoản email" required value="<%= savedEmail%>">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required value="<%= savedPassword%>">
+                        <input type="password" class="form-control" name="password" placeholder="Mật khẩu" required value="<%= savedPassword%>">
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" <%= !savedEmail.isEmpty() ? "checked" : ""%>>
                         <label class="form-check-label" for="rememberMe">Lưu mật khẩu</label>
                     </div>
                     <div class="forgot-password">
-                        <a href="forgotPassword.jsp">Forgot Password?</a>
+                        <a href="forgotPassword.jsp">Quên mật khẩu?</a>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-login">Login</button>
+                    <button type="submit" class="btn btn-primary btn-login">Đăng nhập</button>
                 </form>
 
                 <div class="text-center my-3">
-                    <span>OR</span>
+                    <span>Hoặc</span>
                 </div>
                 <div class="google-btn">
                     <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile
                        &redirect_uri=http://localhost:8080/google-login&response_type=code
                        &client_id=1042966270361-g65nrjskukgb6r5n2b6tbjrkbi9qi9fp.apps.googleusercontent.com">
-                        <button class="google-login-btn">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" alt="Google Logo">
-                            Đăng nhập với Google
-                        </button>
+                        <button class="google-login-btn">🌍  Đăng nhập với Google </button>
                     </a>
                 </div>
 
 
                 <div class="register-link">
-                    <p>Don't have an account? <a href="register.jsp">Register here</a></p>
+                    <p>Bạn chưa có tài khoản? <a href="register.jsp">Đăng ký ngay tại đây</a></p>
                     <a href="index.jsp" class="btn btn-outline-secondary mt-3">
                         <i class="fas fa-arrow-left"></i> Quay Lại Trang Chủ
                     </a>

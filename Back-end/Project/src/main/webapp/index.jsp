@@ -463,13 +463,13 @@
                 </div>
                 <div class="col-md-4">
                     <div class="service-card card border-0 shadow">
-                        <a href="adoption.jsp">
+                        <a href="/AdoptionServlet">
                             <img src="./imgs/takecare.jpg" class="card-img-top" alt="Nhận nuôi">
                         </a>
                         <div class="card-body text-center">
                             <h5 class="card-title fw-bold">Nhận Nuôi</h5>
                             <p class="card-text">Giúp thú cưng tìm mái ấm yêu thương, mang đến niềm vui cho gia đình bạn.</p>
-                            <a href="adoption.jsp" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
+                            <a href="/AdoptionServlet" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
                 </div>

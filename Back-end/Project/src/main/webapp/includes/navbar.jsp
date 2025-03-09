@@ -26,8 +26,7 @@
                 <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
                 <li class="nav-item"><a class="nav-link" href="/Product">Sản Phẩm</a></li>
                 <li class="nav-item"><a class="nav-link" href="/Service">Dịch Vụ</a></li>
-                 <li class="nav-item"><a class="nav-link" href="about.jsp">Về Chúng Tôi</a></li>
-                <li class="nav-item"><a class="nav-link" href="adoption.jsp">Nhận Nuôi</a></li>
+              
                 <li class="nav-item"><a class="nav-link" href="/Cart"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
             </ul>
 
@@ -41,6 +40,8 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="profile.jsp"><i class="bi bi-person"></i> Hồ sơ</a></li>
                     <li><a class="dropdown-item" href="orders.jsp"><i class="bi bi-receipt"></i> Đơn hàng</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/MyPet"><i class="bi bi-house-heart"></i> Thú cưng của tôi</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="logout"><i class="bi bi-box-arrow-right"></i> Đăng Xuất</a></li>
                 </ul>

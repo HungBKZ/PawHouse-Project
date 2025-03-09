@@ -69,9 +69,8 @@
         <div class="container">
             <div class="forgot-container">
                 <div class="forgot-header">
-                    <img src="assets/images/logo.png" alt="PawHouse Logo">
-                    <h2>Forgot Password?</h2>
-                    <p class="text-muted">Don't worry! We'll help you recover your password.</p>
+                    <h2>Bạn quên mật khẩu?</h2>
+                    <p class="text-muted">Đừng lo nhé! Chúng mình sẽ giúp bạn khôi phục lại mật khẩu.</p>
                 </div>
 
                 <% if(request.getAttribute("error") != null) { %>
@@ -89,22 +88,22 @@
                 <form action="forgotPassword" method="POST" id="forgotForm">
                     <input type="hidden" name="action" value="checkEmail">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Enter your email address</label>
+                        <label for="email" class="form-label">Nhập địa chỉ email của bạn</label>
                         <input type="email" class="form-control" id="email" name="email" required
-                               placeholder="Enter your registered email">
+                               placeholder="Nhập địa chỉ email bạn đã đăng ký">
                     </div>
 
                     <ul class="steps">
-                        <li>Enter your registered email address</li>
-                        <li>Create your new password</li>
-                        <li>Start using your new password</li>
+                        <li>Nhập địa chỉ email bạn đã đăng ký</li>
+                        <li>Tạo mới mật khẩu</li>
+                        <li>Bắt đầu sử dụng mật khẩu mới</li>
                     </ul>
 
-                    <button type="submit" class="btn btn-submit">Continue</button>
+                    <button type="submit" class="btn btn-submit">Tiếp tục</button>
                 </form>
 
                 <div class="back-to-login">
-                    <a href="login.jsp">Back to Login</a>
+                    <a href="login.jsp">Đăng nhập</a>
                 </div>
             </div>
         </div>
