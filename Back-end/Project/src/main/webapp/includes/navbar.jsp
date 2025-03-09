@@ -26,7 +26,7 @@
                 <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
                 <li class="nav-item"><a class="nav-link" href="/Product">Sản Phẩm</a></li>
                 <li class="nav-item"><a class="nav-link" href="/Service">Dịch Vụ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/About">Thông Tin</a></li>
+              
                 <li class="nav-item"><a class="nav-link" href="/Cart"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
             </ul>
 
