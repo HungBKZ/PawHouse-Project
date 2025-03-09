@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model;
 
 import java.sql.Date;
 
-/**
- *
- * @author admin
- */
 public class Appointment {
 
     private int appointmentID;
@@ -20,13 +12,15 @@ public class Appointment {
     private Service service;
     private Date appointmentDate;
     private Date bookingDate;
+    private String appointmentStatus;  // 🆕 Thêm trạng thái cuộc hẹn
     private String notes;
     private double price;
 
     public Appointment() {
     }
 
-    public Appointment(int appointmentID, User customer, User staff, User doctor, Pet pet, Service service, Date appointmentDate, Date bookingDate, String notes, double price) {
+    public Appointment(int appointmentID, User customer, User staff, User doctor, Pet pet, Service service,
+            Date appointmentDate, Date bookingDate, String appointmentStatus, String notes, double price) {
         this.appointmentID = appointmentID;
         this.customer = customer;
         this.staff = staff;
@@ -35,6 +29,7 @@ public class Appointment {
         this.service = service;
         this.appointmentDate = appointmentDate;
         this.bookingDate = bookingDate;
+        this.appointmentStatus = appointmentStatus;  // 🆕 Thêm vào constructor
         this.notes = notes;
         this.price = price;
     }
@@ -103,6 +98,14 @@ public class Appointment {
         this.bookingDate = bookingDate;
     }
 
+    public String getAppointmentStatus() {  // 🆕 Getter cho trạng thái cuộc hẹn
+        return appointmentStatus;
+    }
+
+    public void setAppointmentStatus(String appointmentStatus) {  // 🆕 Setter cho trạng thái cuộc hẹn
+        this.appointmentStatus = appointmentStatus;
+    }
+
     public String getNotes() {
         return notes;
     }
@@ -118,5 +121,4 @@ public class Appointment {
     public void setPrice(double price) {
         this.price = price;
     }
-
 }

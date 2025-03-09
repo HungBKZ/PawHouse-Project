@@ -37,6 +37,7 @@ public class PetDAO extends DBContext {
                 pet.setGender(rs.getString("Gender"));
                 pet.setPetImage(rs.getString("PetImage"));
                 pet.setAdoptionStatus(rs.getString("AdoptionStatus"));
+                pet.setInUseService(rs.getString("InUseService"));
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
                 pet.setOwner(user);
@@ -48,11 +49,10 @@ public class PetDAO extends DBContext {
         return petList;
     }
 
-    // Phương thức thêm (insert) pet
-    public void insertPet(Pet pet) {
-        String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID) VALUES (?,?,?,?,?,?,?,?,?)";
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
+    public boolean insertPet(Pet pet) {
+        String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID, InUseService) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, pet.getCategory().getCategoryID());
             ps.setString(2, pet.getPetName());
             ps.setString(3, pet.getSpecies());
@@ -62,13 +62,16 @@ public class PetDAO extends DBContext {
             ps.setString(7, pet.getPetImage());
             ps.setString(8, pet.getAdoptionStatus());
             ps.setInt(9, pet.getOwner().getUserID());
-            ps.executeUpdate();
+            ps.setString(10, pet.getInUseService());
+
+            int rowsInserted = ps.executeUpdate();
+            return rowsInserted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
-    // Xóa Pet dựa trên ID (PetID)
     public void deletePet(int petID) {
         String query = "DELETE FROM Pets WHERE PetID=?";
         try {
@@ -103,6 +106,7 @@ public class PetDAO extends DBContext {
                 pet.setGender(rs.getString("Gender"));
                 pet.setPetImage(rs.getString("PetImage"));
                 pet.setAdoptionStatus(rs.getString("AdoptionStatus"));
+                pet.setInUseService(rs.getString("InUseService"));
 
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
@@ -116,9 +120,8 @@ public class PetDAO extends DBContext {
         return pet;
     }
 
-    // Phương thức cập nhật Pet theo tên
     public void updatePetByName(String petName, Pet pet) {
-        String query = "UPDATE Pets SET CategoryID = ?, PetName = ?, Species = ?, Breed = ?, Age = ?, Gender = ?, PetImage = ?, AdoptionStatus = ?, UserID = ? WHERE PetName = ?";
+        String query = "UPDATE Pets SET CategoryID = ?, PetName = ?, Species = ?, Breed = ?, Age = ?, Gender = ?, PetImage = ?, AdoptionStatus = ?, UserID = ?, InUseService = ? WHERE PetName = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, pet.getCategory().getCategoryID());
@@ -130,7 +133,8 @@ public class PetDAO extends DBContext {
             ps.setString(7, pet.getPetImage());
             ps.setString(8, pet.getAdoptionStatus());
             ps.setInt(9, pet.getOwner().getUserID());
-            ps.setString(10, petName);
+            ps.setString(10, pet.getInUseService());
+            ps.setString(11, petName);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -138,9 +142,8 @@ public class PetDAO extends DBContext {
         }
     }
 
-    // Cập nhật thông tin Pet theo ID (id được truyền riêng và đối tượng pet chứa dữ liệu mới)
     public void updatePetById(int petID, Pet pet) {
-        String query = "UPDATE Pets SET CategoryID=?, PetName=?, Species=?, Breed=?, Age=?, Gender=?, PetImage=?, AdoptionStatus=?, UserID=? WHERE PetID=?";
+        String query = "UPDATE Pets SET CategoryID=?, PetName=?, Species=?, Breed=?, Age=?, Gender=?, PetImage=?, AdoptionStatus=?, UserID=?, InUseService=? WHERE PetID=?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, pet.getCategory().getCategoryID());
@@ -152,7 +155,8 @@ public class PetDAO extends DBContext {
             ps.setString(7, pet.getPetImage());
             ps.setString(8, pet.getAdoptionStatus());
             ps.setInt(9, pet.getOwner().getUserID());
-            ps.setInt(10, petID);
+            ps.setString(10, pet.getInUseService());
+            ps.setInt(11, petID);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -160,7 +164,6 @@ public class PetDAO extends DBContext {
         }
     }
 
-    // Tìm kiếm pet theo tên (PetName)
     public List<Pet> searchPetByName(String petName) {
         List<Pet> petList = new ArrayList<>();
         String query = "SELECT * FROM Pets WHERE PetName LIKE ?";
@@ -183,6 +186,7 @@ public class PetDAO extends DBContext {
                 pet.setGender(rs.getString("Gender"));
                 pet.setPetImage(rs.getString("PetImage"));
                 pet.setAdoptionStatus(rs.getString("AdoptionStatus"));
+                pet.setInUseService(rs.getString("InUseService"));
 
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
@@ -197,5 +201,65 @@ public class PetDAO extends DBContext {
         }
         return petList;
     }
+
+    public List<Pet> getPetsByUserId(int userId) {
+        List<Pet> pets = new ArrayList<>();
+        String query = "SELECT * FROM Pets WHERE UserID = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Pet pet = new Pet(
+                        rs.getInt("PetID"),
+                        new PetCategories(rs.getInt("CategoryID"), "", ""),
+                        rs.getString("PetName"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age"),
+                        rs.getString("Gender"),
+                        rs.getString("PetImage"),
+                        rs.getString("AdoptionStatus"),
+                        new User(rs.getInt("UserID"), null, "", "", "", "", "", "", false, ""),
+                        rs.getString("InUseService")
+                );
+                pets.add(pet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pets;
+    }
+    
+   public List<Pet> getAllPetsForAdoption() {
+    List<Pet> pets = new ArrayList<>();
+    String query = "SELECT * FROM Pets"; // Lấy tất cả thú cưng, không giới hạn trạng thái
+
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement ps = conn.prepareStatement(query);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            pets.add(new Pet(
+                rs.getInt("PetID"),
+                new PetCategories(rs.getInt("CategoryID"), "", ""),
+                rs.getString("PetName"),
+                rs.getString("Species"),
+                rs.getString("Breed"),
+                rs.getInt("Age"),
+                rs.getString("Gender"),
+                rs.getString("PetImage"),
+                rs.getString("AdoptionStatus"),
+                null,
+                rs.getString("InUseService")
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return pets;
+}
 
 }

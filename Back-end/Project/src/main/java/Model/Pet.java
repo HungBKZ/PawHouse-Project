@@ -20,6 +20,7 @@ public class Pet {
     private String petImage;
     private String adoptionStatus;
     private User owner;
+    private String inUseService;
 
     public Pet() {
     }
@@ -35,6 +36,29 @@ public class Pet {
         this.petImage = petImage;
         this.adoptionStatus = adoptionStatus;
         this.owner = owner;
+        this.inUseService = null; // Default value
+    }
+
+    public Pet(int petID, PetCategories category, String petName, String species, String breed, int age, String gender, String petImage, String adoptionStatus, User owner, String inUseService) {
+        this.petID = petID;
+        this.category = category;
+        this.petName = petName;
+        this.species = species;
+        this.breed = breed;
+        this.age = age;
+        this.gender = gender;
+        this.petImage = petImage;
+        this.adoptionStatus = adoptionStatus;
+        this.owner = owner;
+        this.inUseService = inUseService;
+    }
+
+    public String getInUseService() {
+        return inUseService;
+    }
+
+    public void setInUseService(String inUseService) {
+        this.inUseService = inUseService;
     }
 
     public int getPetID() {
@@ -116,5 +140,4 @@ public class Pet {
     public void setOwner(User owner) {
         this.owner = owner;
     }
-
 }
