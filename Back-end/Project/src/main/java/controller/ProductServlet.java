@@ -20,7 +20,7 @@ import java.util.List;
  * @author admin
  */
 //@WebServlet("/RoomServlet")
-@WebServlet(name = "ProductServlet", urlPatterns = {"/Product"})
+@WebServlet(name = "ProductServlet", urlPatterns = {"/Product", "/product"})
 public class ProductServlet extends HttpServlet {
 
     /**
@@ -79,7 +79,38 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getServletPath();
+        
+        if (action.equals("/product")) {
+            // Handle product detail page
+            String productIdStr = request.getParameter("id");
+            if (productIdStr != null && !productIdStr.isEmpty()) {
+                try {
+                    int productId = Integer.parseInt(productIdStr);
+                    ProductDAO productDAO = new ProductDAO();
+                    
+                    // Get product details
+                    Product product = productDAO.getProductById(productId);
+                    
+                    if (product != null) {
+                        // Get related products from same category
+                        List<Product> relatedProducts = productDAO.getProductsByCategory(product.getCategory().getCategoryID());
+                        
+                        request.setAttribute("product", product);
+                        request.setAttribute("relatedProducts", relatedProducts);
+                        request.getRequestDispatcher("ProductDetail.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            // If product not found or invalid ID, redirect to products page
+            response.sendRedirect("products.jsp");
+        } else {
+            // Handle other product-related actions
+            processRequest(request, response);
+        }
     }
 
     /**

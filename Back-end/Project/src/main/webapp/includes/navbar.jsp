@@ -3,9 +3,9 @@
 <%
     User user = getAuthenticatedUser(request);
     String googleUsername = null;
-    Cookie[] cookies = request.getCookies();
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
+    // Sử dụng cookies đã được khai báo trong auth.jsp
+    if (request.getCookies() != null) {
+        for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals("username")) {
                 googleUsername = java.net.URLDecoder.decode(cookie.getValue(), "UTF-8");
                 break;

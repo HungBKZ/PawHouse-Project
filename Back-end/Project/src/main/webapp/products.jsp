@@ -110,14 +110,14 @@
                 margin-top: 2rem;
                 margin-bottom: 2rem;
             }
-            
+
             #pagination button {
                 margin: 0 5px;
                 padding: 8px 15px;
                 border-radius: 5px;
                 min-width: 45px;
             }
-            
+
             #pagination button:hover:not(:disabled) {
                 transform: translateY(-2px);
                 transition: transform 0.2s;
@@ -179,187 +179,192 @@
                             </c:when>
                             <c:otherwise>
                                 <c:forEach var="p" items="${listP}">
+
                                     <div class="col-md-4 mb-4 product-item" data-name="${p.productName}" data-price="${p.price}">
                                         <div class="product-card shadow">
-                                            <img src="${p.productImage}" class="card-img-top" alt="${p.productName}">
-                                            <div class="card-body text-center">
-                                                <h5 class="card-title">${p.productName}</h5>
-                                                <p class="card-text">${p.description}</p>
-                                                <p class="price">${p.price} VND</p>
-                                                <p class="stock">${p.stock} sản phẩm</p>
-                                                <button class="btn btn-success w-100">Mua Ngay</button>
-                                                <a href="addToCart.jsp?id=${p.productID}" class="btn btn-outline-primary w-100 mt-2">
-                                                    <i class="bi bi-cart"> Thêm vào Giỏ</i>
-                                                </a>
-                                            </div>
+                                            <a href="ProductDetail?id=${p.productID}">
+                                                <img src="${p.productImage}" class="card-img-top" alt="${p.productName}">
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">${p.productName}</h5>
+                                                    <p class="card-text">${p.description}</p>
+                                                    <p class="price">${p.price} VND</p>
+                                                    <p class="stock">${p.stock} sản phẩm</p>
+                                                    <button class="btn btn-success w-100">Mua Ngay</button>
+                                                    <a href="addToCart.jsp?id=${p.productID}" class="btn btn-outline-primary w-100 mt-2">
+                                                        <i class="bi bi-cart"> Thêm vào Giỏ</i>
+                                                    </a>
+                                            </a>
                                         </div>
                                     </div>
-                                </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                    <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+                                </div>
+
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
+                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <%@ include file="includes/footer.jsp" %>
+    <!-- Footer -->
+    <%@ include file="includes/footer.jsp" %>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const PRODUCTS_PER_PAGE = 9;
-                let currentPage = 1;
-                let currentProducts = Array.from(document.querySelectorAll(".product-item"));
-                let filteredProducts = [...currentProducts];
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const PRODUCTS_PER_PAGE = 9;
+            let currentPage = 1;
+            let currentProducts = Array.from(document.querySelectorAll(".product-item"));
+            let filteredProducts = [...currentProducts];
 
-                const searchBox = document.getElementById("searchBox");
-                const sortOptions = document.getElementById("sortOptions");
-                const paginationContainer = document.getElementById("pagination");
-                const productGrid = document.getElementById("productGrid");
+            const searchBox = document.getElementById("searchBox");
+            const sortOptions = document.getElementById("sortOptions");
+            const paginationContainer = document.getElementById("pagination");
+            const productGrid = document.getElementById("productGrid");
 
-                searchBox.addEventListener("input", handleSearch);
-                sortOptions.addEventListener("change", handleSort);
+            searchBox.addEventListener("input", handleSearch);
+            sortOptions.addEventListener("change", handleSort);
 
-                function handleSearch() {
-                    let searchQuery = searchBox.value.toLowerCase().trim();
-                    filteredProducts = currentProducts.filter(item =>
-                        item.getAttribute("data-name").toLowerCase().includes(searchQuery)
-                    );
+            function handleSearch() {
+                let searchQuery = searchBox.value.toLowerCase().trim();
+                filteredProducts = currentProducts.filter(item =>
+                    item.getAttribute("data-name").toLowerCase().includes(searchQuery)
+                );
 
-                    currentPage = 1;
-                    updateDisplay();
-                }
-
-                function handleSort() {
-                    let sortType = sortOptions.value;
-
-                    filteredProducts.sort((a, b) => {
-                        let nameA = a.getAttribute("data-name").toLowerCase();
-                        let nameB = b.getAttribute("data-name").toLowerCase();
-                        let priceA = parseFloat(a.getAttribute("data-price"));
-                        let priceB = parseFloat(b.getAttribute("data-price"));
-
-                        switch(sortType) {
-                            case "name_asc":
-                                return nameA.localeCompare(nameB);
-                            case "name_desc":
-                                return nameB.localeCompare(nameA);
-                            case "price_low":
-                                return priceA - priceB;
-                            case "price_high":
-                                return priceB - priceA;
-                            default:
-                                return 0;
-                        }
-                    });
-
-                    // Reorder elements in the DOM
-                    filteredProducts.forEach(product => {
-                        productGrid.appendChild(product);
-                    });
-
-                    currentPage = 1;
-                    updateDisplay();
-                }
-
-                function updateDisplay() {
-                    let noProductsMessage = document.getElementById("noProductsMessage");
-
-                    // Ẩn tất cả sản phẩm
-                    currentProducts.forEach(item => item.style.display = "none");
-
-                    if (filteredProducts.length === 0) {
-                        if (!noProductsMessage) {
-                            noProductsMessage = document.createElement("div");
-                            noProductsMessage.id = "noProductsMessage";
-                            noProductsMessage.className = "col-12 text-center no-products-found";
-                            noProductsMessage.innerHTML = `
-                                <i class="bi bi-search"></i>
-                                <h4>Không tìm thấy sản phẩm</h4>
-                                <p>Vui lòng thử tìm kiếm với từ khóa khác</p>
-                            `;
-                            productGrid.appendChild(noProductsMessage);
-                        }
-                        noProductsMessage.style.display = "block";
-                        paginationContainer.innerHTML = "";
-                        paginationContainer.style.display = "none";
-                        return;
-                    } else {
-                        if (noProductsMessage) noProductsMessage.style.display = "none";
-                    }
-
-                    showPage(currentPage);
-                    updatePagination();
-                }
-
-                function showPage(page) {
-                    let start = (page - 1) * PRODUCTS_PER_PAGE;
-                    let end = start + PRODUCTS_PER_PAGE;
-
-                    // Ẩn tất cả sản phẩm trước
-                    currentProducts.forEach(item => item.style.display = "none");
-
-                    // Hiển thị chỉ các sản phẩm trong trang hiện tại
-                    filteredProducts.slice(start, end).forEach(product => {
-                        product.style.display = "";
-                    });
-                }
-
-                function updatePagination() {
-                    paginationContainer.innerHTML = "";
-                    let totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-
-                    if (totalPages <= 1) {
-                        paginationContainer.style.display = "none";
-                        return;
-                    }
-
-                    paginationContainer.style.display = "flex";
-
-                    addPageButton("&laquo;", () => {
-                        if (currentPage > 1) {
-                            currentPage--;
-                            updateDisplay();
-                            scrollToTop();
-                        }
-                    }, currentPage === 1);
-
-                    for (let i = 1; i <= totalPages; i++) {
-                        addPageButton(i.toString(), () => {
-                            currentPage = i;
-                            updateDisplay();
-                            scrollToTop();
-                        }, currentPage === i);
-                    }
-
-                    addPageButton("&raquo;", () => {
-                        if (currentPage < totalPages) {
-                            currentPage++;
-                            updateDisplay();
-                            scrollToTop();
-                        }
-                    }, currentPage === totalPages);
-                }
-
-                function addPageButton(text, onClick, isActive) {
-                    let button = document.createElement("button");
-                    button.className = `btn ${isActive ? "btn-primary" : "btn-outline-primary"} mx-1`;
-                    button.innerHTML = text;
-                    button.disabled = isActive;
-                    button.onclick = onClick;
-                    paginationContainer.appendChild(button);
-                }
-
-                function scrollToTop() {
-                    document.querySelector('.section-title').scrollIntoView({ behavior: 'smooth' });
-                }
-
-                // Khởi tạo hiển thị ban đầu
+                currentPage = 1;
                 updateDisplay();
-            });
-        </script>
+            }
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+            function handleSort() {
+                let sortType = sortOptions.value;
+
+                filteredProducts.sort((a, b) => {
+                    let nameA = a.getAttribute("data-name").toLowerCase();
+                    let nameB = b.getAttribute("data-name").toLowerCase();
+                    let priceA = parseFloat(a.getAttribute("data-price"));
+                    let priceB = parseFloat(b.getAttribute("data-price"));
+
+                    switch (sortType) {
+                        case "name_asc":
+                            return nameA.localeCompare(nameB);
+                        case "name_desc":
+                            return nameB.localeCompare(nameA);
+                        case "price_low":
+                            return priceA - priceB;
+                        case "price_high":
+                            return priceB - priceA;
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Reorder elements in the DOM
+                filteredProducts.forEach(product => {
+                    productGrid.appendChild(product);
+                });
+
+                currentPage = 1;
+                updateDisplay();
+            }
+
+            function updateDisplay() {
+                let noProductsMessage = document.getElementById("noProductsMessage");
+
+                // Ẩn tất cả sản phẩm
+                currentProducts.forEach(item => item.style.display = "none");
+
+                if (filteredProducts.length === 0) {
+                    if (!noProductsMessage) {
+                        noProductsMessage = document.createElement("div");
+                        noProductsMessage.id = "noProductsMessage";
+                        noProductsMessage.className = "col-12 text-center no-products-found";
+                        noProductsMessage.innerHTML = `
+                            <i class="bi bi-search"></i>
+                            <h4>Không tìm thấy sản phẩm</h4>
+                            <p>Vui lòng thử tìm kiếm với từ khóa khác</p>
+                        `;
+                        productGrid.appendChild(noProductsMessage);
+                    }
+                    noProductsMessage.style.display = "block";
+                    paginationContainer.innerHTML = "";
+                    paginationContainer.style.display = "none";
+                    return;
+                } else {
+                    if (noProductsMessage)
+                        noProductsMessage.style.display = "none";
+                }
+
+                showPage(currentPage);
+                updatePagination();
+            }
+
+            function showPage(page) {
+                let start = (page - 1) * PRODUCTS_PER_PAGE;
+                let end = start + PRODUCTS_PER_PAGE;
+
+                // Ẩn tất cả sản phẩm trước
+                currentProducts.forEach(item => item.style.display = "none");
+
+                // Hiển thị chỉ các sản phẩm trong trang hiện tại
+                filteredProducts.slice(start, end).forEach(product => {
+                    product.style.display = "";
+                });
+            }
+
+            function updatePagination() {
+                paginationContainer.innerHTML = "";
+                let totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+
+                if (totalPages <= 1) {
+                    paginationContainer.style.display = "none";
+                    return;
+                }
+
+                paginationContainer.style.display = "flex";
+
+                addPageButton("&laquo;", () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        updateDisplay();
+                        scrollToTop();
+                    }
+                }, currentPage === 1);
+
+                for (let i = 1; i <= totalPages; i++) {
+                    addPageButton(i.toString(), () => {
+                        currentPage = i;
+                        updateDisplay();
+                        scrollToTop();
+                    }, currentPage === i);
+                }
+
+                addPageButton("&raquo;", () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        updateDisplay();
+                        scrollToTop();
+                    }
+                }, currentPage === totalPages);
+            }
+
+            function addPageButton(text, onClick, isActive) {
+                let button = document.createElement("button");
+                button.className = `btn ${isActive ? "btn-primary" : "btn-outline-primary"} mx-1`;
+                button.innerHTML = text;
+                button.disabled = isActive;
+                button.onclick = onClick;
+                paginationContainer.appendChild(button);
+            }
+
+            function scrollToTop() {
+                document.querySelector('.section-title').scrollIntoView({behavior: 'smooth'});
+            }
+
+            // Khởi tạo hiển thị ban đầu
+            updateDisplay();
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
