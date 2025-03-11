@@ -53,10 +53,10 @@ public class AdoptPetServlet extends HttpServlet {
                 return;
             }
 
-            // Cập nhật trạng thái thú cưng
+            // Update pet information
             pet.setAdoptionStatus("Đã nhận nuôi");
             pet.setOwner(user);
-            petDAO.updatePetById(petId, pet);
+            petDAO.updatePet(pet);
 
             // Lưu lịch sử nhận nuôi
             AdoptionHistory adoption = new AdoptionHistory(0, pet, Date.valueOf(LocalDate.now()), "Đã nhận nuôi", "Thú cưng đã được nhận nuôi");

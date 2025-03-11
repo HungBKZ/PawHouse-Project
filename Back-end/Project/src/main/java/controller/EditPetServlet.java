@@ -85,9 +85,9 @@ public class EditPetServlet extends HttpServlet {
             // Tạo đối tượng Pet
             Pet pet = new Pet(petId, new PetCategories(categoryId, "Loài tự động xác định", ""), petName, species, breed, age, gender, fileName, adoptionStatus, user);
 
-            // Gọi phương thức cập nhật theo ID
+            // Update pet information
             PetDAO petDAO = new PetDAO();
-            petDAO.updatePetById(petId, pet);
+            petDAO.updatePet(pet);
 
             response.sendRedirect("myPet.jsp?success=updated");
 

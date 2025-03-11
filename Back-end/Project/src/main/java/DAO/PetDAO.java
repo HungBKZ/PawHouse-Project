@@ -20,16 +20,19 @@ public class PetDAO extends DBContext {
 
     public List<Pet> getAll() {
         List<Pet> petList = new ArrayList<>();
-        String query = "SELECT * FROM Pets";
+        String query = "SELECT p.*, pc.CategoryName FROM Pets p LEFT JOIN PetCategories pc ON p.CategoryID = pc.CategoryID";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Pet pet = new Pet();
                 pet.setPetID(rs.getInt("PetID"));
+                
                 PetCategories category = new PetCategories();
                 category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
                 pet.setCategory(category);
+                
                 pet.setPetName(rs.getString("PetName"));
                 pet.setSpecies(rs.getString("Species"));
                 pet.setBreed(rs.getString("Breed"));
@@ -38,11 +41,15 @@ public class PetDAO extends DBContext {
                 pet.setPetImage(rs.getString("PetImage"));
                 pet.setAdoptionStatus(rs.getString("AdoptionStatus"));
                 pet.setInUseService(rs.getString("InUseService"));
+                
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
                 pet.setOwner(user);
+                
                 petList.add(pet);
             }
+            rs.close();
+            ps.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -51,8 +58,8 @@ public class PetDAO extends DBContext {
 
     public boolean insertPet(Pet pet) {
         String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID, InUseService) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, pet.getCategory().getCategoryID());
             ps.setString(2, pet.getPetName());
             ps.setString(3, pet.getSpecies());
@@ -62,9 +69,10 @@ public class PetDAO extends DBContext {
             ps.setString(7, pet.getPetImage());
             ps.setString(8, pet.getAdoptionStatus());
             ps.setInt(9, pet.getOwner().getUserID());
-            ps.setString(10, pet.getInUseService());
+            ps.setString(10, pet.getInUseService() != null ? pet.getInUseService() : "N");
 
             int rowsInserted = ps.executeUpdate();
+            ps.close();
             return rowsInserted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,21 +80,23 @@ public class PetDAO extends DBContext {
         }
     }
 
-    public void deletePet(int petID) {
+    public boolean deletePet(int petID) {
         String query = "DELETE FROM Pets WHERE PetID=?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, petID);
-            ps.executeUpdate();
+            int rowsDeleted = ps.executeUpdate();
             ps.close();
+            return rowsDeleted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     public Pet getById(int petID) {
         Pet pet = null;
-        String query = "SELECT * FROM Pets WHERE PetID = ?";
+        String query = "SELECT p.*, pc.CategoryName FROM Pets p LEFT JOIN PetCategories pc ON p.CategoryID = pc.CategoryID WHERE p.PetID = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, petID);
@@ -97,6 +107,7 @@ public class PetDAO extends DBContext {
 
                 PetCategories category = new PetCategories();
                 category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
                 pet.setCategory(category);
 
                 pet.setPetName(rs.getString("PetName"));
@@ -120,29 +131,7 @@ public class PetDAO extends DBContext {
         return pet;
     }
 
-    public void updatePetByName(String petName, Pet pet) {
-        String query = "UPDATE Pets SET CategoryID = ?, PetName = ?, Species = ?, Breed = ?, Age = ?, Gender = ?, PetImage = ?, AdoptionStatus = ?, UserID = ?, InUseService = ? WHERE PetName = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setInt(1, pet.getCategory().getCategoryID());
-            ps.setString(2, pet.getPetName());
-            ps.setString(3, pet.getSpecies());
-            ps.setString(4, pet.getBreed());
-            ps.setInt(5, pet.getAge());
-            ps.setString(6, pet.getGender());
-            ps.setString(7, pet.getPetImage());
-            ps.setString(8, pet.getAdoptionStatus());
-            ps.setInt(9, pet.getOwner().getUserID());
-            ps.setString(10, pet.getInUseService());
-            ps.setString(11, petName);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updatePetById(int petID, Pet pet) {
+    public boolean updatePet(Pet pet) {
         String query = "UPDATE Pets SET CategoryID=?, PetName=?, Species=?, Breed=?, Age=?, Gender=?, PetImage=?, AdoptionStatus=?, UserID=?, InUseService=? WHERE PetID=?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
@@ -155,18 +144,21 @@ public class PetDAO extends DBContext {
             ps.setString(7, pet.getPetImage());
             ps.setString(8, pet.getAdoptionStatus());
             ps.setInt(9, pet.getOwner().getUserID());
-            ps.setString(10, pet.getInUseService());
-            ps.setInt(11, petID);
-            ps.executeUpdate();
+            ps.setString(10, pet.getInUseService() != null ? pet.getInUseService() : "N");
+            ps.setInt(11, pet.getPetID());
+            
+            int rowsUpdated = ps.executeUpdate();
             ps.close();
+            return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
     public List<Pet> searchPetByName(String petName) {
         List<Pet> petList = new ArrayList<>();
-        String query = "SELECT * FROM Pets WHERE PetName LIKE ?";
+        String query = "SELECT p.*, pc.CategoryName FROM Pets p LEFT JOIN PetCategories pc ON p.CategoryID = pc.CategoryID WHERE p.PetName LIKE ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, "%" + petName + "%");
@@ -177,6 +169,7 @@ public class PetDAO extends DBContext {
 
                 PetCategories category = new PetCategories();
                 category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
                 pet.setCategory(category);
 
                 pet.setPetName(rs.getString("PetName"));

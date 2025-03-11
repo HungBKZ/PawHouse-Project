@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,6 +60,22 @@
             object-fit: cover;
             border-radius: 50%;
         }
+        .search-filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-available {
+            background-color: #28a745;
+        }
+        .status-pending {
+            background-color: #ffc107;
+        }
+        .status-adopted {
+            background-color: #dc3545;
+        }
         footer {
             background-color: #0056b3;
             color: white;
@@ -68,45 +85,37 @@
             bottom: 0;
             width: 100%;
         }
+        .alert {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="staffIndex.jsp"><i class="fas fa-paw"></i> PawHouse Staff</a>
+            <a class="navbar-brand" href="${pageContext.request.contextPath}/staffIndex.jsp"><i class="fas fa-paw"></i> PawHouse Staff</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="staffIndex.jsp"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="staffManagePet.jsp"><i class="fas fa-paw"></i> Pets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staffIndex.jsp"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/staff/pets"><i class="fas fa-paw"></i> Pets</a></li>
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staff/adoptions"><i class="fas fa-heart"></i> Adoptions</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManageProduct.jsp"><i class="fas fa-box"></i> Products</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManageDoctor.jsp"><i class="fas fa-user-md"></i> Doctors</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManageAppointments.jsp"><i class="fas fa-calendar-check"></i> Appointments</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffViewFeedback.jsp"><i class="fas fa-comments"></i> Feedback</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffReports.jsp"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staff/products"><i class="fas fa-box"></i> Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staff/doctors"><i class="fas fa-user-md"></i> Doctors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staff/appointments"><i class="fas fa-calendar-check"></i> Appointments</a></li>
                 </ul>
-                <div class="profile-dropdown">
-                    <button class="btn-profile">
-                        <i class="fas fa-user-circle"></i> ${loggedInUser.fullName}
-                    </button>
-                    <div class="profile-content">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="fas fa-user-circle fa-2x me-2"></i>
-                            <div>
-                                <strong>${loggedInUser.fullName}</strong>
-                                <div class="text-muted small">${loggedInUser.email}</div>
-                            </div>
-                        </div>
-                        <hr>
-                        <a href="staffUpdateProfile.jsp" class="btn btn-outline-primary w-100 mb-2">
-                            <i class="fas fa-user-edit"></i> Update Profile
-                        </a>
-                        <a href="logout" class="btn btn-outline-danger w-100">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> ${sessionScope.user.fullName}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/staff/profile"><i class="fas fa-user-edit"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -114,71 +123,117 @@
     </nav>
 
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-paw"></i> Manage Pets</h2>
-            <a href="staffAddPet.jsp" class="btn btn-success btn-action">
-                <i class="fas fa-plus"></i> Add New Pet
-            </a>
+        <!-- Success/Error Messages -->
+        <c:if test="${not empty successMessage}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                ${successMessage}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
+        <c:if test="${not empty errorMessage}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ${errorMessage}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
+
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <form action="${pageContext.request.contextPath}/staff/pets" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="search" placeholder="Search pets..." value="${param.search}">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="category">
+                        <option value="">All Categories</option>
+                        <c:forEach items="${categories}" var="category">
+                            <option value="${category.categoryID}" ${param.category == category.categoryID ? 'selected' : ''}>${category.categoryName}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="status">
+                        <option value="">All Status</option>
+                        <option value="Available" ${param.status == 'Available' ? 'selected' : ''}>Available</option>
+                        <option value="Pending" ${param.status == 'Pending' ? 'selected' : ''}>Pending Adoption</option>
+                        <option value="Adopted" ${param.status == 'Adopted' ? 'selected' : ''}>Adopted</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                <div class="col-md-3 text-end">
+                    <a href="${pageContext.request.contextPath}/staff/pets/add" class="btn btn-success w-100">
+                        <i class="fas fa-plus"></i> Add New Pet
+                    </a>
+                </div>
+            </form>
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Image</th>
-                                        <th>Name</th>
-                                        <th>Category</th>
-                                        <th>Age</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="align-middle">
-                                        <td>1</td>
-                                        <td>
-                                            <img src="path/to/pet1.jpg" alt="Bella" class="pet-image" style="width: 50px; height: 50px;">
-                                        </td>
-                                        <td>Bella</td>
-                                        <td><span class="badge bg-info">Dog</span></td>
-                                        <td>2 years</td>
-                                        <td><span class="badge bg-success">Available</span></td>
-                                        <td>
-                                            <a href="staffEditPet.jsp?id=1" class="btn btn-warning btn-sm btn-action me-2">
-                                                <i class="fas fa-edit"></i> Edit
+        <!-- Pets Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Species</th>
+                                <th>Breed</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${pets}" var="pet">
+                                <tr class="align-middle">
+                                    <td>${pet.petID}</td>
+                                    <td>
+                                        <img src="${pageContext.request.contextPath}/uploads/pets/${pet.petImage}" 
+                                             alt="${pet.petName}" 
+                                             class="pet-image" 
+                                             onerror="this.src='${pageContext.request.contextPath}/assets/images/default-pet.jpg'">
+                                    </td>
+                                    <td>${pet.petName}</td>
+                                    <td><span class="badge bg-info">${pet.category.categoryName}</span></td>
+                                    <td>${pet.species}</td>
+                                    <td>${pet.breed}</td>
+                                    <td>${pet.age} years</td>
+                                    <td>${pet.gender}</td>
+                                    <td>
+                                        <span class="badge status-${pet.adoptionStatus.toLowerCase()}">${pet.adoptionStatus}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="${pageContext.request.contextPath}/staff/pets/edit/${pet.petID}" 
+                                               class="btn btn-warning btn-sm me-1" 
+                                               title="Edit">
+                                                <i class="fas fa-edit"></i>
                                             </a>
-                                            <button class="btn btn-danger btn-sm btn-action" onclick="confirmDelete(1)">
-                                                <i class="fas fa-trash"></i> Delete
+                                            <button type="button" 
+                                                    class="btn btn-danger btn-sm" 
+                                                    onclick="confirmDelete(${pet.petID})" 
+                                                    title="Delete">
+                                                <i class="fas fa-trash"></i>
                                             </button>
-                                        </td>
-                                    </tr>
-                                    <tr class="align-middle">
-                                        <td>2</td>
-                                        <td>
-                                            <img src="path/to/pet2.jpg" alt="Whiskers" class="pet-image" style="width: 50px; height: 50px;">
-                                        </td>
-                                        <td>Whiskers</td>
-                                        <td><span class="badge bg-info">Cat</span></td>
-                                        <td>1 year</td>
-                                        <td><span class="badge bg-warning">Pending Adoption</span></td>
-                                        <td>
-                                            <a href="staffEditPet.jsp?id=2" class="btn btn-warning btn-sm btn-action me-2">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                            <button class="btn btn-danger btn-sm btn-action" onclick="confirmDelete(2)">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty pets}">
+                                <tr>
+                                    <td colspan="10" class="text-center">No pets found</td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -191,10 +246,25 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function confirmDelete(petId) {
-            if (confirm('Are you sure you want to delete this pet?')) {
-                window.location.href = 'staffDeletePet.jsp?id=' + petId;
+            if (confirm('Are you sure you want to delete this pet? This action cannot be undone.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '${pageContext.request.contextPath}/staff/pets/delete/' + petId;
+                document.body.appendChild(form);
+                form.submit();
             }
         }
+
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
     </script>
 </body>
 </html>
