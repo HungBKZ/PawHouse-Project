@@ -86,4 +86,70 @@ public class AdoptionDAO extends DBContext {
             System.err.println("⚠️ Lỗi khi lưu lịch sử nhận nuôi: " + e.getMessage());
         }
     }
+
+    public boolean updateAdoptionStatus(int adoptionId, String status, String notes) {
+        String query = "UPDATE AdoptionHistory SET Status = ?, Notes = ? WHERE AdoptionID = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, status);
+            ps.setString(2, notes);
+            ps.setInt(3, adoptionId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<AdoptionHistory> getPendingAdoptions() {
+        List<AdoptionHistory> pendingList = new ArrayList<>();
+        String query = "SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.Status, ah.Notes, " +
+                "p.CategoryID, pc.CategoryName, p.PetName, p.Species, p.Breed, p.Age, p.Gender, " +
+                "p.PetImage, p.AdoptionStatus, p.UserID, p.InUseService, " +
+                "u.FullName as CustomerName, u.Email as CustomerEmail " +
+                "FROM AdoptionHistory ah " +
+                "JOIN Pets p ON ah.PetID = p.PetID " +
+                "JOIN PetCategories pc ON p.CategoryID = pc.CategoryID " +
+                "JOIN Users u ON p.UserID = u.UserID " +
+                "WHERE ah.Status = 'Pending' ORDER BY ah.AdoptionDate DESC";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Pet pet = new Pet(
+                    rs.getInt("PetID"),
+                    new PetCategories(rs.getInt("CategoryID"), rs.getString("CategoryName"), ""),
+                    rs.getString("PetName"),
+                    rs.getString("Species"),
+                    rs.getString("Breed"),
+                    rs.getInt("Age"),
+                    rs.getString("Gender"),
+                    rs.getString("PetImage"),
+                    rs.getString("AdoptionStatus"),
+                    new User()
+                );
+
+                AdoptionHistory adoption = new AdoptionHistory();
+                adoption.setAdoptionID(rs.getInt("AdoptionID"));
+                adoption.setPet(pet);
+                adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
+                adoption.setAdoptionStatus(rs.getString("Status"));
+                adoption.setNotes(rs.getString("Notes"));
+                
+                // Add customer information
+                User customer = new User();
+                customer.setFullName(rs.getString("CustomerName"));
+                customer.setEmail(rs.getString("CustomerEmail"));
+                pet.setOwner(customer);
+                
+                pendingList.add(adoption);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pendingList;
+    }
 }
