@@ -102,6 +102,9 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <input type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()"> Hiển thị mật khẩu
+                    </div>
 
                     <div class="mb-3">
                         <label for="fullName" class="form-label required">Họ Và Tên</label>
@@ -126,15 +129,29 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            document.getElementById('registerForm').addEventListener('submit', function (event) {
-                var password = document.getElementById('password').value;
-                var confirmPassword = document.getElementById('confirmPassword').value;
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
 
-                if (password !== confirmPassword) {
-                    event.preventDefault();
-                    alert('Passwords do not match!');
-                }
-            });
+            if (password !== confirmPassword) {
+                event.preventDefault();
+                alert('Passwords do not match!');
+            }
+        });
+        
+        function togglePasswordVisibility() {
+    var passwordField = document.getElementById("password");
+    var confirmPasswordField = document.getElementById("confirmPassword");
+
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        confirmPasswordField.type = "text";
+    } else {
+        passwordField.type = "password";
+        confirmPasswordField.type = "password";
+    }
+}
+
         </script>
     </body>
 </html>

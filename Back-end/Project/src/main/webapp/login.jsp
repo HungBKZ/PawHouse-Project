@@ -118,6 +118,17 @@
                 border-color: #c0c0c0;
             }
         </style>
+        <script>
+            function togglePasswordVisibility() {
+            var passwordField = document.getElementById("password");
+            if (passwordField.type === "password") {
+            passwordField.type = "text";
+            } else {
+            passwordField.type = "password";
+            }
+            }
+        </script>
+
     </head>
     <body>
         <div class="container">
@@ -152,7 +163,7 @@
             <div class="login-container">
                 <div class="login-header">
                     <h2>🐾Chào mừng bạn🐾</h2>
-                     <h2>đến với PawHouse</h2>
+                    <h2>đến với PawHouse</h2>
                 </div>
 
                 <% if (request.getAttribute("error") != null) {%>
@@ -173,8 +184,13 @@
                         <input type="email" class="form-control" name="email" placeholder="Tài khoản email" required value="<%= savedEmail%>">
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Mật khẩu" required value="<%= savedPassword%>">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu" required value="<%= savedPassword%>">
                     </div>
+                    
+                    <div class="mb-3">
+                        <input type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()"> Hiển thị mật khẩu
+                    </div>
+
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" <%= !savedEmail.isEmpty() ? "checked" : ""%>>
                         <label class="form-check-label" for="rememberMe">Lưu mật khẩu</label>
@@ -208,12 +224,23 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            function handleCredentialResponse(response) {
-                // Handle Google Sign-In response
-                console.log("Google Sign-In Response:", response);
-                // You'll need to implement the backend handling for Google Sign-In
+                            function handleCredentialResponse(response) {
+                            // Handle Google Sign-In response
+                            console.log("Google Sign-In Response:", response);
+                            // You'll need to implement the backend handling for Google Sign-In
             }
-        </script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    </body>
+                            <script>
+                function togglePasswordVisibility() {
+                                    var passwordField = document.getElementById("password");
+                            if (passwordField.type === "password") {
+                            passwordField.type = "text";
+                            } else {
+                            passwordField.type = "password";
+                            }
+                }
+                </script>
+
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
 </html>
