@@ -132,6 +132,29 @@
                 text-decoration: none;
                 color: inherit;
             }
+            .custom-alert {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 1000;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                transition: opacity 0.5s ease;
+            }
+
+            .custom-alert.error {
+                background-color: #f44336;
+            }
+
+            .custom-alert.fade-out {
+                opacity: 0;
+            }
+
 
         </style>
     </head>
@@ -196,9 +219,9 @@
                                                     <p class="price">${p.price} VND</p>
                                                     <p class="stock">${p.stock} sản phẩm</p>
                                                     <button class="btn btn-success w-100">Mua Ngay</button>
-                                                    <a href="addToCart.jsp?id=${p.productID}" class="btn btn-outline-primary w-100 mt-2">
-                                                        <i class="bi bi-cart"> Thêm vào Giỏ</i>
-                                                    </a>
+                                                    <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">
+                                                        🛒 Thêm vào Giỏ
+                                                    </button>
                                             </a>
                                         </div>
                                     </div>
@@ -217,6 +240,42 @@
     <%@ include file="includes/footer.jsp" %>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Ngăn chặn điều hướng trang
+
+                    let productId = this.getAttribute("data-product-id");
+
+                    fetch("AddToCart?productId=" + productId + "&quantity=1", {
+                        method: "GET"
+                    }).then(response => {
+                        if (response.ok) {
+                            showCustomAlert("Đã thêm sản phẩm vào giỏ hàng!", "success");
+                        } else {
+                            showCustomAlert("Lỗi khi thêm vào giỏ hàng.", "error");
+                        }
+                    }).catch(error => {
+                        console.error("Error:", error);
+                        showCustomAlert("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                    });
+                });
+            });
+        });
+
+// Hàm hiển thị thông báo đẹp hơn
+        function showCustomAlert(message, type) {
+            let alertBox = document.createElement("div");
+            alertBox.className = `custom-alert ${type}`;
+            alertBox.innerText = message;
+
+            document.body.appendChild(alertBox);
+
+            setTimeout(() => {
+                alertBox.classList.add("fade-out");
+                setTimeout(() => alertBox.remove(), 500);
+            }, 2000);
+        }
         document.addEventListener("DOMContentLoaded", function () {
             const PRODUCTS_PER_PAGE = 9;
             let currentPage = 1;

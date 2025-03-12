@@ -13,14 +13,16 @@ public class ServiceCategories {
     private int categoryID;
     private String categoryName;
     private String description;
+    private String type;
 
     public ServiceCategories() {
     }
 
-    public ServiceCategories(int categoryID, String categoryName, String description) {
+    public ServiceCategories(int categoryID, String categoryName, String description, String type) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.description = description;
+        this.type = type;
     }
 
     public int getCategoryID() {
@@ -47,4 +49,12 @@ public class ServiceCategories {
         this.description = description;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
 }

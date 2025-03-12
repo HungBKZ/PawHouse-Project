@@ -25,6 +25,7 @@ public class OrderDAO extends DBContext {
                 order.setOrderID(rs.getInt("OrderID"));
                 order.setTotalAmount(rs.getDouble("TotalAmount"));
                 order.setOrderStatus(rs.getBoolean("Status"));
+                order.setNotes(rs.getString("Notes"));
 
                 orderList.add(order);
             }
