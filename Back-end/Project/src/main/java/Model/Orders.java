@@ -17,16 +17,18 @@ public class Orders {
     private Date orderDate;
     private double totalAmount;
     private boolean orderStatus;
+    private String notes;
 
     public Orders() {
     }
 
-    public Orders(int orderID, User user, Date orderDate, double totalAmount, boolean orderStatus) {
+    public Orders(int orderID, User user, Date orderDate, double totalAmount, boolean orderStatus, String notes) {
         this.orderID = orderID;
         this.user = user;
         this.orderDate = orderDate;
         this.totalAmount = totalAmount;
         this.orderStatus = orderStatus;
+        this.notes = notes;
     }
 
     public int getOrderID() {
@@ -68,5 +70,14 @@ public class Orders {
     public void setOrderStatus(boolean orderStatus) {
         this.orderStatus = orderStatus;
     }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+    
 
 }

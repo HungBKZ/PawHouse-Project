@@ -27,6 +27,7 @@ public class ServiceCategoriesDAO extends DBContext {
                 category.setCategoryID(rs.getInt("CategoryID"));
                 category.setCategoryName(rs.getString("CategoryName"));
                 category.setDescription(rs.getString("Description"));
+                category.setType(rs.getString("Type"));
                 categoryList.add(category);
             }
         } catch (SQLException e) {

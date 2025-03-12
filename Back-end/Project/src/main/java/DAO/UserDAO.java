@@ -129,6 +129,32 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+    
+        public User getUserByUsername(String username) throws SQLException {
+    String query = "SELECT * FROM Users WHERE Username = ?";
+    
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setString(1, username);
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getInt("userID"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setFullName(rs.getString("fullName"));
+                user.setPhone(rs.getString("phoneNumber"));
+                user.setAddress(rs.getString("address"));
+                Role role = new Role();
+                role.setRoleID(rs.getInt("RoleID"));
+                user.setRole(role);
+                
+                return user; // Trả về user nếu tìm thấy
+            }
+        }
+    }
+    return null; // Trả về null nếu không tìm thấy user
+}
 
     public boolean saveResetToken(String email, String token) throws SQLException {
         String query = "UPDATE Users SET ResetToken = ?, ResetTokenExpiry = DATEADD(HOUR, 24, GETDATE()) WHERE Email = ?";

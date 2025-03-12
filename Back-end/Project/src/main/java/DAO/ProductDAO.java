@@ -301,6 +301,7 @@ public class ProductDAO extends DBContext {
                 category.setCategoryID(rs.getInt("CategoryID"));
                 category.setCategoryName(rs.getString("CategoryName"));
                 category.setDescription(rs.getString("Description"));
+                category.setType(rs.getString("Type"));
                 categories.add(category);
             }
         } catch (SQLException e) {
@@ -310,12 +311,4 @@ public class ProductDAO extends DBContext {
         return categories;
     }
 
-    public static void main(String[] args) {
-        ProductDAO dao = new ProductDAO();
-        List<Product> list = dao.getAll();
-
-        for (Product o : list) {
-            System.out.println(o);
-        }
-    }
 }
