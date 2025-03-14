@@ -311,4 +311,57 @@ public class ProductDAO extends DBContext {
         return categories;
     }
 
+    public List<Product> getProductsByType(String Type) {
+        List<Product> productList = new ArrayList<>();
+        String query = "SELECT p.* FROM Products p "
+                + "JOIN ProductCategories c ON p.CategoryID = c.CategoryID "
+                + "WHERE c.Type = ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, Type);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProductID(rs.getInt("ProductID"));
+                product.setProductName(rs.getString("ProductName"));
+                product.setDescription(rs.getString("Description"));
+                product.setPrice(rs.getDouble("Price"));
+                product.setStock(rs.getInt("Stock"));
+                product.setProductImage(rs.getString("ProductImage"));
+                product.setProductStatus(rs.getBoolean("ProductStatus"));
+
+                productList.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+    }
+
+    public List<ProductCategories> getAllCategoriesByType(String type) {
+        List<ProductCategories> categories = new ArrayList<>();
+        String query = "SELECT * FROM ProductCategories WHERE Type = ?";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, type);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ProductCategories category = new ProductCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+                category.setDescription(rs.getString("Description"));
+                category.setType(rs.getString("Type"));
+                categories.add(category);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories;
+    }
+
 }

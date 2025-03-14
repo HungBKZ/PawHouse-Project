@@ -401,31 +401,31 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="card">
-                        <a href="food.jsp"><img src="./imgs/food.jpg" class="card-img-top" alt="Thức ăn"></a>
+                        <a href="/FoodProducts"><img src="./imgs/food.jpg" class="card-img-top" alt="Thức ăn"></a>
                         <div class="card-body text-center">
                             <h5 class="card-title">Thức Ăn Thú Cưng</h5>
                             <p class="card-text">Sản phẩm dinh dưỡng giúp thú cưng phát triển khỏe mạnh.</p>
-                            <a href="food.jsp" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
+                            <a href="/FoodProducts" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card">
-                        <a href="toy.jsp"><img src="./imgs/toy_.jpg" class="card-img-top" alt="Đồ chơi"></a>
+                        <a href="/SuppliesProduct"><img src="./imgs/toy_.jpg" class="card-img-top" alt="Đồ chơi"></a>
                         <div class="card-body text-center">
-                            <h5 class="card-title">Đồ Chơi Thú Cưng</h5>
-                            <p class="card-text">Giúp thú cưng vui chơi và rèn luyện sức khỏe.</p>
-                            <a href="toy.jsp" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
+                            <h5 class="card-title">Đồ Dùng Cho Thú Cưng</h5>
+                            <p class="card-text">Giúp thú cưng vui chơi và đảm bảo sức khỏe.</p>
+                            <a href="/SuppliesProduct" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card">
-                        <a href="accessory.jsp"><img src="./imgs/phukien.png" class="card-img-top" alt="Phụ kiện"></a>
+                        <a href="/AccessoryProducts"><img src="./imgs/phukien.png" class="card-img-top" alt="Phụ kiện"></a>
                         <div class="card-body text-center">
                             <h5 class="card-title">Phụ Kiện Thú Cưng</h5>
                             <p class="card-text">Những món đồ không thể thiếu để chăm sóc thú cưng tốt hơn.</p>
-                            <a href="accessory.jsp" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
+                            <a href="/AccessoryProducts" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
                 </div>

@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Thức Ăn Thú Cưng - PawHouse</title>
+        <title>Đồ Dùng Thú Cưng - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
         <style>
@@ -52,6 +52,46 @@
                 overflow: hidden;
             }
 
+            .product-card img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 10px;
+                transition: transform 0.3s;
+            }
+
+            .product-card:hover img {
+                transform: scale(1.1);
+            }
+
+            .product-card h5 {
+                font-weight: bold;
+                margin-top: 10px;
+                font-size: 1.1rem;
+            }
+
+            .product-card .price {
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: #ff6600;
+            }
+
+            .product-card .btn {
+                transition: 0.3s;
+                font-size: 0.9rem;
+            }
+
+            .product-card .btn:hover {
+                transform: scale(1.1);
+            }
+
+            /* Search & Sort */
+            .search-sort-container {
+                background: white;
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
             /* Banner Section */
             .pet-food-banner {
                 background: #f2f2f2;
@@ -85,7 +125,7 @@
 
             /* Hình ảnh thú cưng */
             .banner-image {
-                max-width: 100%;
+                max-width: 200%;
                 height: auto;
                 position: relative;
             }
@@ -93,13 +133,13 @@
             /* Nút ORDER NOW */
             .order-btn {
                 position: absolute;
-                top: 70%; /* Đưa lên giữa ảnh */
-                left: 10%; /* Đưa sang bên trái */
-                transform: translateY(-50%); /* Căn giữa theo chiều dọc */
-                background: #00a991;
+                bottom: 290px; /* Khoảng cách từ đáy */
+                left: 50%;
+                transform: translateX(-50%);
+                background: #0056b3;
                 color: white;
                 padding: 15px 40px; /* Kéo dài chiều ngang */
-                border-radius: 50px; /* Bo góc tròn */
+                border-radius: 50px; /* Bo góc tròn hơn */
                 font-size: 20px;
                 font-weight: bold;
                 text-decoration: none;
@@ -109,22 +149,20 @@
 
             /* Hiệu ứng hover */
             .order-btn:hover {
-                background: #008b76;
+                background: #f7dc6f;
                 box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.3); /* Đổ bóng mạnh hơn khi hover */
-                transform: translateY(-50%) translateX(5px); /* Hiệu ứng dịch chuyển nhẹ khi hover */
+                transform: translateX(-50%) translateY(-3px); /* Dịch chuyển nhẹ lên trên */
             }
 
             /* Responsive cho màn hình nhỏ */
             @media (max-width: 768px) {
                 .order-btn {
-                    top: 55%; /* Điều chỉnh vị trí trên mobile */
-                    left: 50%;
-                    transform: translateX(-50%) translateY(-50%); /* Căn giữa trên màn hình nhỏ */
+                    bottom: 10px;
                     font-size: 18px;
-                    padding: 12px 30px;
+                    padding: 12px 30px; /* Điều chỉnh kích thước nút nhỏ hơn */
                 }
             }
-
+            
             /* Tiêu đề */
             .section-title {
                 font-size: 2rem;
@@ -269,16 +307,20 @@
     <body>
         <%@ include file="includes/navbar.jsp" %>
 
-        <!-- Banner Thức Ăn Thú Cưng -->
-        <section class="pet-food-banner">
-            <div class="container text-center position-relative">
-                <img src="imgs/dog.jpg" alt="Pet Food" class="banner-image">
-                <div class="section-title"></div>
-                <a href="products.jsp" class="btn order-btn">ORDER NOW</a>
-            </div>
-        </section>
 
-        <!-- Danh sách sản phẩm -->
+        <section class="pet-food-banner">
+            <div class="container">
+                <!-- Hình ảnh thú cưng bên phải có nút ORDER NOW -->
+                <div class=" text-center position-relative">
+                    <img src="imgs/bannertoy.png" alt="Pet Food" class="banner-image w-100">
+                    <div class="section-title"></div>
+                    <a href="/Product" class="btn order-btn">ORDER NOW</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Danh sách sản phẩm -->
         <div class="container mt-4">
             <div class="row">
                 <!-- Sidebar Categories -->
@@ -286,10 +328,10 @@
                     <div class="category-sidebar">
                         <h5>Danh Mục</h5>
                         <ul class="list-unstyled">
-                            <li><a href="FoodProducts?category=">Tất cả danh mục</a></li>
+                            <li><a href="SuppliesProduct?category=">Tất cả danh mục</a></li>
                             <c:forEach var="category" items="${categoryList}">
                                 
-                                <li> <a href="FoodProducts?category=${category.categoryID}" 
+                                <li> <a href="SuppliesProduct?category=${category.categoryID}" 
                                         class="${category.categoryID == param.category ? 'active' : ''}">${category.categoryName}</a></li>
                                 </c:forEach>
                         </ul>
@@ -311,8 +353,8 @@
                     <!-- Product List -->
                     <div class="row" id="productGrid">
                         <c:choose>
-                            <c:when test="${not empty foodList}">
-                                <c:forEach var="p" items="${foodList}">
+                            <c:when test="${not empty suppliesList}">
+                                <c:forEach var="p" items="${suppliesList}">
 
                                     <div class="col-md-4 mb-4 product-item" data-name="${p.productName}" data-price="${p.price}">
                                         <div class="product-card shadow">
