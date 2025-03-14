@@ -69,7 +69,7 @@
             .star-input + label:hover ~ label {
                 color: #ffdb70;
             }
-            
+
             /* Review Stars Styling */
             .review-stars {
                 color: #ddd;
@@ -110,7 +110,7 @@
                 color: #4a5568;
                 line-height: 1.5;
             }
-            
+
             /* Star Rating Input Styles */
             .rating-group {
                 display: flex;
@@ -119,32 +119,32 @@
                 gap: 0.5rem;
                 padding: 1rem 0;
             }
-            
+
             .star-input {
                 display: none;
             }
-            
+
             .star-label {
                 cursor: pointer;
                 font-size: 2rem;
                 color: #ddd;
                 transition: all 0.2s ease;
             }
-            
+
             .star-input:checked ~ .star-label {
                 color: #ffc107;
             }
-            
+
             .star-label:hover,
             .star-label:hover ~ .star-label {
                 color: #ffdb70;
             }
-            
+
             /* Fix for the hover effect direction */
             .rating-group:hover .star-label {
                 color: #ddd;
             }
-            
+
             .rating-group:hover .star-label:hover,
             .rating-group:hover .star-label:hover ~ .star-label {
                 color: #ffdb70;
@@ -214,16 +214,16 @@
                                         <div class="rating-group">
                                             <input type="radio" name="star" value="5" id="star5" class="star-input">
                                             <label for="star5" class="star-label"><i class="far fa-star"></i></label>
-                                            
+
                                             <input type="radio" name="star" value="4" id="star4" class="star-input">
                                             <label for="star4" class="star-label"><i class="far fa-star"></i></label>
-                                            
+
                                             <input type="radio" name="star" value="3" id="star3" class="star-input">
                                             <label for="star3" class="star-label"><i class="far fa-star"></i></label>
-                                            
+
                                             <input type="radio" name="star" value="2" id="star2" class="star-input">
                                             <label for="star2" class="star-label"><i class="far fa-star"></i></label>
-                                            
+
                                             <input type="radio" name="star" value="1" id="star1" class="star-input">
                                             <label for="star1" class="star-label"><i class="far fa-star"></i></label>
                                         </div>
@@ -301,63 +301,65 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            function incrementQuantity() {
-                const input = document.getElementById('quantity');
-                const max = parseInt(input.getAttribute('max'));
-                const currentValue = parseInt(input.value);
-                if (currentValue < max) {
-                    input.value = currentValue + 1;
-                }
-            }
+                                                    function incrementQuantity() {
+                                                        const input = document.getElementById('quantity');
+                                                        const max = parseInt(input.getAttribute('max'));
+                                                        const currentValue = parseInt(input.value);
+                                                        if (currentValue < max) {
+                                                            input.value = currentValue + 1;
+                                                        }
+                                                    }
 
-            function decrementQuantity() {
-                const input = document.getElementById('quantity');
-                const currentValue = parseInt(input.value);
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                }
-            }
-            // Comment form submission
-            $(document).ready(function () {
-                $('#commentForm').on('submit', function (e) {
-                    e.preventDefault();
+                                                    function decrementQuantity() {
+                                                        const input = document.getElementById('quantity');
+                                                        const currentValue = parseInt(input.value);
+                                                        if (currentValue > 1) {
+                                                            input.value = currentValue - 1;
+                                                        }
+                                                    }
+                                                    // Comment form submission
+                                                    $(document).ready(function () {
+                                                        $('#commentForm').on('submit', function (e) {
+                                                            e.preventDefault();
 
-                    $.ajax({
-                        url: 'comment',
-                        type: 'POST',
-                        data: $(this).serialize(),
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.success) {
-                                // Reload the page to show the new comment
-                                location.reload();
-                            } else {
-                                alert(response.message);
-                            }
-                        },
-                        error: function () {
-                            alert('Có lỗi xảy ra khi gửi đánh giá');
-                        }
-                    });
-                });
-            });
+                                                            $.ajax({
+                                                                url: 'comment',
+                                                                type: 'POST',
+                                                                data: $(this).serialize(),
+                                                                dataType: 'json',
+                                                                success: function (response) {
+                                                                    if (response.success) {
+                                                                        // Reload the page to show the new comment
+                                                                        location.reload();
+                                                                    } else {
+                                                                        alert(response.message);
+                                                                    }
+                                                                },
+                                                                error: function () {
+                                                                    alert('Có lỗi xảy ra khi gửi đánh giá');
+                                                                }
+                                                            });
+                                                        });
+                                                    });
         </script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const ratingInputs = document.querySelectorAll('.star-input');
                 const ratingLabels = document.querySelectorAll('.star-label');
-                
+
                 ratingInputs.forEach((input, index) => {
-                    input.addEventListener('change', function() {
-                        // Update stars when radio button is clicked
+                    input.addEventListener('change', function () {
+                        // Lặp qua tất cả các sao và cập nhật trạng thái
                         ratingLabels.forEach((label, i) => {
                             const star = label.querySelector('i');
-                            if (i >= 4 - index) {
+                            if (i >= index) {
                                 star.classList.remove('far');
-                                star.classList.add('fas');
+                                star.classList.add('fas'); // Sao đầy
+                                star.style.color = "#FFD700"; // Màu vàng sáng
                             } else {
                                 star.classList.remove('fas');
-                                star.classList.add('far');
+                                star.classList.add('far'); // Sao rỗng
+                                star.style.color = ""; // Trả về màu mặc định
                             }
                         });
                     });
