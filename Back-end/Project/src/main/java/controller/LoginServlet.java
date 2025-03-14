@@ -17,6 +17,8 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             String savedEmail = null;
@@ -36,8 +38,18 @@ public class LoginServlet extends HttpServlet {
                 try {
                     User user = userDAO.checkLogin(savedEmail, savedPassword);
                     if (user != null) {
+                        Role role = userDAO.checkRole(user.getUserID());
+                        user.setRole(role);
+                        session.setAttribute("user", user);
                         authenticateUser(response, user);
-                        response.sendRedirect("index.jsp");
+                        
+                        String redirectUrl = (String) session.getAttribute("redirectUrl");
+                        if (redirectUrl != null) {
+                            session.removeAttribute("redirectUrl");
+                            response.sendRedirect(redirectUrl);
+                        } else {
+                            handleUserLogin(user, response);
+                        }
                         return;
                     }
                 } catch (Exception e) {
@@ -54,13 +66,14 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
+        HttpSession session = request.getSession();
         String error = "";
 
         // Validate input
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             error = "Vui lòng nhập email và mật khẩu!";
-            request.setAttribute("error", error);
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            session.setAttribute("error", error);
+            response.sendRedirect("login.jsp");
             return;
         }
 
@@ -72,12 +85,13 @@ public class LoginServlet extends HttpServlet {
                 Role role = userDAO.checkRole(user.getUserID());
                 if (role == null) {
                     error = "Tài khoản của bạn chưa được cấp quyền. Vui lòng liên hệ quản trị viên!";
-                    request.setAttribute("error", error);
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    session.setAttribute("error", error);
+                    response.sendRedirect("login.jsp");
                     return;
                 }
 
                 user.setRole(role);
+                session.setAttribute("user", user);
                 authenticateUser(response, user);
 
                 // Handle remember me
@@ -87,17 +101,24 @@ public class LoginServlet extends HttpServlet {
                     clearLoginCookies(response);
                 }
 
-                // Redirect based on role
-                handleUserLogin(user, response);
+                // Check for redirect URL
+                String redirectUrl = (String) session.getAttribute("redirectUrl");
+                if (redirectUrl != null) {
+                    session.removeAttribute("redirectUrl");
+                    response.sendRedirect(redirectUrl);
+                } else {
+                    // Redirect based on role if no specific redirect URL
+                    handleUserLogin(user, response);
+                }
             } else {
                 error = "Email hoặc mật khẩu không đúng!";
-                request.setAttribute("error", error);
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                session.setAttribute("error", error);
+                response.sendRedirect("login.jsp");
             }
         } catch (Exception e) {
             error = "Có lỗi xảy ra: " + e.getMessage();
-            request.setAttribute("error", error);
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            session.setAttribute("error", error);
+            response.sendRedirect("login.jsp");
         }
     }
 

@@ -170,6 +170,7 @@ public class StaffPetServlet extends HttpServlet {
     private void addPet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Validate input
             String petName = request.getParameter("petName");
             if (petName == null || petName.trim().isEmpty()) {
                 throw new IllegalArgumentException("Tên thú cưng không được để trống!");
@@ -180,48 +181,74 @@ public class StaffPetServlet extends HttpServlet {
             String breed = request.getParameter("breed");
             int age = Integer.parseInt(request.getParameter("age"));
             String gender = request.getParameter("gender");
-
-            // Xử lý tải ảnh
-            Part filePart = request.getPart("petImage");
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String uploadPath = request.getServletContext().getRealPath("") + File.separator + "uploads" + File.separator + "pets";
-
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String filePath = uploadPath + File.separator + fileName;
-            filePart.write(filePath);
-
-            String petImage = "uploads/pets/" + fileName; // Đường dẫn lưu vào database
-
             String adoptionStatus = request.getParameter("adoptionStatus");
 
-            // Xử lý chủ sở hữu bằng email
+            // Handle image upload
+            Part filePart = request.getPart("petImage");
+            String fileName = "";
+            String petImage = "";
+
+            if (filePart != null && filePart.getSize() > 0) {
+                fileName = System.currentTimeMillis() + "_" + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                String uploadPath = request.getServletContext().getRealPath("") + "imgs" + File.separator + "pet";
+
+                // Create directories if they don't exist
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+
+                // Write file
+                String filePath = uploadPath + File.separator + fileName;
+                filePart.write(filePath);
+                petImage = "imgs/pet/" + fileName; // Store relative path in database
+            } else {
+                petImage = "imgs/pet/default-pet.jpg"; // Default image path
+            }
+
+            // Handle owner email
             String userEmail = request.getParameter("ownerEmail");
             Integer userID = null;
             if (userEmail != null && !userEmail.trim().isEmpty()) {
                 UserDAO userDAO = new UserDAO();
                 userID = userDAO.getUserIDByEmail(userEmail);
                 if (userID == null) {
-                    throw new IllegalArgumentException("Không tìm thấy tài khoản với email này.");
+                    throw new IllegalArgumentException("Không tìm thấy tài khoản với email này!");
                 }
             }
 
-            // Xử lý dịch vụ sử dụng
+            // Handle service
             String inUseService = request.getParameter("inUseService");
-            inUseService = (inUseService != null && !inUseService.equals("NULL")) ? inUseService : null;
+            if (inUseService != null && inUseService.equals("NULL")) {
+                inUseService = null;
+            }
 
-            // Thêm thú cưng vào database
-            Pet newPet = new Pet(0, new PetCategories(categoryID, "", ""), petName, species, breed, age, gender,
-                    petImage, adoptionStatus, userID != null ? new User(userID) : null, inUseService);
+            // Create and save pet
+            Pet newPet = new Pet();
+            newPet.setCategory(new PetCategories(categoryID, "", ""));
+            newPet.setPetName(petName);
+            newPet.setSpecies(species);
+            newPet.setBreed(breed);
+            newPet.setAge(age);
+            newPet.setGender(gender);
+            newPet.setPetImage(petImage);
+            newPet.setAdoptionStatus(adoptionStatus);
+            newPet.setOwner(userID != null ? new User(userID) : null);
+            newPet.setInUseService(inUseService);
 
-            petDAO.insertPet(newPet);
-            response.sendRedirect("StaffPetServlet?action=list&success=added");
+            if (petDAO.insertPet(newPet)) {
+                request.getSession().setAttribute("successMessage", "Thêm thú cưng thành công!");
+                response.sendRedirect(request.getContextPath() + "/StaffPetServlet?action=list");
+            } else {
+                throw new Exception("Không thể thêm thú cưng vào cơ sở dữ liệu!");
+            }
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Lỗi thêm thú cưng: " + e.getMessage());
-            request.getRequestDispatcher("addStaffPet.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "Lỗi: " + e.getMessage());
+            // Reload the form with services
+            ServiceDAO serviceDAO = new ServiceDAO();
+            List<Service> services = serviceDAO.getAll();
+            request.setAttribute("services", services);
+            request.getRequestDispatcher("/addStaffPet.jsp").forward(request, response);
         }
     }
 

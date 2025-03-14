@@ -75,6 +75,25 @@
             border-radius: 8px;
             margin-bottom: 15px;
         }
+        .pet-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        .status-available {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: black;
+        }
+        .status-adopted {
+            background-color: #6c757d;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -86,18 +105,6 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="staffManagePet.jsp"><i class="fas fa-paw"></i> Manage Pets</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/staff/adoptions"><i class="fas fa-heart"></i> Manage Adoptions</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManageProduct.jsp"><i class="fas fa-box"></i> Manage Products</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManageDoctor.jsp"><i class="fas fa-user-md"></i> Manage Doctors</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManageAppointments.jsp"><i class="fas fa-calendar-check"></i> Appointments</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffReports.jsp"><i class="fas fa-chart-bar"></i> Reports</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffUpdateProfile.jsp"><i class="fas fa-user-edit"></i> Profile</a></li>
-                    <li class="nav-item"><a class="nav-link" href="logout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </div>
         </div>
     </nav>
         
@@ -112,13 +119,13 @@
             </div>
         </div>
             
-        <c:if test="${empty pendingAdoptions}">
+        <c:if test="${empty adoptions}">
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i> Không có yêu cầu nhận nuôi nào đang chờ xử lý.
             </div>
         </c:if>
             
-        <c:forEach items="${pendingAdoptions}" var="adoption">
+        <c:forEach items="${adoptions}" var="adoption">
             <div class="adoption-card p-4" data-status="${adoption.adoptionStatus.toLowerCase()}">
                 <div class="row">
                     <div class="col-md-3">
@@ -132,6 +139,15 @@
                             <p><i class="fas fa-info-circle"></i> <strong>Loài:</strong> ${adoption.pet.species}</p>
                             <p><i class="fas fa-dog"></i> <strong>Giống:</strong> ${adoption.pet.breed}</p>
                             <p><i class="fas fa-birthday-cake"></i> <strong>Tuổi:</strong> ${adoption.pet.age} tuổi</p>
+                            <p><i class="fas fa-paw"></i> <strong>Trạng thái thú cưng:</strong> 
+                                <span class="pet-status ${adoption.pet.adoptionStatus == 'Available' ? 'status-available' : 
+                                                       adoption.pet.adoptionStatus == 'Pending' ? 'status-pending' : 
+                                                       'status-adopted'}">
+                                    ${adoption.pet.adoptionStatus == 'Available' ? 'Chưa nhận nuôi' : 
+                                     adoption.pet.adoptionStatus == 'Pending' ? 'Đang chờ duyệt' : 
+                                     'Đã nhận nuôi'}
+                                </span>
+                            </p>
                         </div>
                         <div class="customer-info">
                             <h5><i class="fas fa-user"></i> Thông tin người yêu cầu</h5>
@@ -173,24 +189,22 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function filterAdoptions(status) {
-            const cards = document.querySelectorAll('.adoption-card');
-            cards.forEach(card => {
-                if (status === 'all' || card.dataset.status === status) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            
-            // Update active button state
-            const buttons = document.querySelectorAll('.btn-group .btn');
-            buttons.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(status)) {
-                    btn.classList.add('active');
-                }
-            });
+            let url = '${pageContext.request.contextPath}/staffManageAdoption';
+            if (status && status !== 'all') {
+                url += '?status=' + status;
+            }
+            window.location.href = url;
         }
+
+        // Show success/error messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                alert('Yêu cầu nhận nuôi đã được cập nhật thành công!');
+            } else if (urlParams.get('error') === 'true') {
+                alert('Có lỗi xảy ra khi cập nhật yêu cầu nhận nuôi.');
+            }
+        });
     </script>
 </body>
 </html>

@@ -45,8 +45,10 @@ public class PetDAO extends DBContext {
     }
 
     public boolean insertPet(Pet pet) {
-        String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID, InUseService) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID, InUseService) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
+            // Set required fields
             ps.setInt(1, pet.getCategory().getCategoryID());
             ps.setString(2, pet.getPetName());
             ps.setString(3, pet.getSpecies());
@@ -54,22 +56,31 @@ public class PetDAO extends DBContext {
             ps.setInt(5, pet.getAge());
             ps.setString(6, pet.getGender());
             ps.setString(7, pet.getPetImage());
-            ps.setString(8, pet.getAdoptionStatus());
-
-            if (pet.getOwner() != null) {
+            
+            // Handle AdoptionStatus
+            String status = pet.getAdoptionStatus();
+            if (status == null || status.trim().isEmpty()) {
+                status = "Available"; // Default status
+            }
+            ps.setString(8, status);
+            
+            // Handle nullable fields
+            if (pet.getOwner() != null && pet.getOwner().getUserID() > 0) {
                 ps.setInt(9, pet.getOwner().getUserID());
             } else {
                 ps.setNull(9, java.sql.Types.INTEGER);
             }
-
-            if (pet.getInUseService() != null) {
+            
+            if (pet.getInUseService() != null && !pet.getInUseService().trim().isEmpty()) {
                 ps.setString(10, pet.getInUseService());
             } else {
                 ps.setNull(10, java.sql.Types.VARCHAR);
             }
 
-            return ps.executeUpdate() > 0;
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
+            System.err.println("Error inserting pet: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
