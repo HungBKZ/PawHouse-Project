@@ -120,12 +120,12 @@
         </style>
         <script>
             function togglePasswordVisibility() {
-            var passwordField = document.getElementById("password");
-            if (passwordField.type === "password") {
-            passwordField.type = "text";
-            } else {
-            passwordField.type = "password";
-            }
+                var passwordField = document.getElementById("password");
+                if (passwordField.type === "password") {
+                    passwordField.type = "text";
+                } else {
+                    passwordField.type = "password";
+                }
             }
         </script>
 
@@ -166,10 +166,11 @@
                     <h2>đến với PawHouse</h2>
                 </div>
 
-                <% if (request.getAttribute("error") != null) {%>
+                <% if (session.getAttribute("error") != null) {%>
                 <div class="alert alert-danger" role="alert">
-                    <%= request.getAttribute("error")%>
+                    <%= session.getAttribute("error")%>
                 </div>
+                <% session.removeAttribute("error"); %>
                 <% } %>
 
                 <% if (session.getAttribute("success") != null) {%>
@@ -186,7 +187,7 @@
                     <div class="mb-3">
                         <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu" required value="<%= savedPassword%>">
                     </div>
-                    
+
                     <div class="mb-3">
                         <input type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()"> Hiển thị mật khẩu
                     </div>
@@ -225,22 +226,12 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
                             function handleCredentialResponse(response) {
-                            // Handle Google Sign-In response
-                            console.log("Google Sign-In Response:", response);
-                            // You'll need to implement the backend handling for Google Sign-In
-            }
-                            <script>
-                function togglePasswordVisibility() {
-                                    var passwordField = document.getElementById("password");
-                            if (passwordField.type === "password") {
-                            passwordField.type = "text";
-                            } else {
-                            passwordField.type = "password";
+                                // Handle Google Sign-In response
+                                console.log("Google Sign-In Response:", response);
+                                // Send the response.credential to your backend
+                                window.location.href = "googleLogin?credential=" + response.credential;
                             }
-                }
-                </script>
-
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</body>
+        </script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    </body>
 </html>
