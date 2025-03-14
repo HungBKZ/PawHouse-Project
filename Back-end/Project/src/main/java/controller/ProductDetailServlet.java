@@ -1,7 +1,9 @@
 package controller;
 
 import DAO.ProductDAO;
+import DAO.ProductCommentDAO;
 import Model.Product;
+import Model.ProductComment;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,6 +23,7 @@ public class ProductDetailServlet extends HttpServlet {
             try {
                 int productId = Integer.parseInt(productIdStr);
                 ProductDAO productDAO = new ProductDAO();
+                ProductCommentDAO commentDAO = new ProductCommentDAO();
                 
                 // Get product details
                 Product product = productDAO.getProductById(productId);
@@ -33,8 +36,14 @@ public class ProductDetailServlet extends HttpServlet {
                     // Remove current product from related products
                     relatedProducts.removeIf(p -> p.getProductID() == productId);
                     
+                    // Get product comments
+                    List<ProductComment> comments = commentDAO.getCommentsByProductId(productId);
+                    int reviewCount = comments.size();
+                    
                     request.setAttribute("product", product);
                     request.setAttribute("relatedProducts", relatedProducts);
+                    request.setAttribute("comments", comments);
+                    request.setAttribute("reviewCount", reviewCount);
                     request.getRequestDispatcher("ProductDetail.jsp").forward(request, response);
                     return;
                 }

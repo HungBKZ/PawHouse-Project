@@ -63,7 +63,7 @@ public class ProductCommentDAO extends DBContext {
 
     public List<ProductComment> getCommentsByProductId(int productId) {
         List<ProductComment> comments = new ArrayList<>();
-        String query = "SELECT pc.*, u.Username, u.Avatar FROM ProductComment pc "
+        String query = "SELECT pc.*, u.Username, u.FullName, u.Avatar FROM ProductComment pc "
                 + "JOIN Users u ON pc.UserID = u.UserID "
                 + "WHERE pc.ProductID = ? AND pc.ProductCommentStatus = 1 "
                 + "ORDER BY pc.Date_Comment DESC";
@@ -80,8 +80,13 @@ public class ProductCommentDAO extends DBContext {
 
                 User user = new User();
                 user.setUsername(rs.getString("Username"));
+                user.setFullName(rs.getString("FullName"));
                 user.setAvatar(rs.getString("Avatar"));
                 comment.setUser(user);
+
+                Product product = new Product();
+                product.setProductID(productId);
+                comment.setProduct(product);
 
                 comments.add(comment);
             }

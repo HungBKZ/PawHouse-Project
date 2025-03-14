@@ -17,6 +17,12 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Store return URL in session if provided
+        String returnUrl = request.getParameter("returnUrl");
+        if (returnUrl != null && !returnUrl.isEmpty()) {
+            request.getSession().setAttribute("returnUrl", returnUrl);
+        }
+        
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             String savedEmail = null;
@@ -37,6 +43,13 @@ public class LoginServlet extends HttpServlet {
                     User user = userDAO.checkLogin(savedEmail, savedPassword);
                     if (user != null) {
                         authenticateUser(response, user);
+                        // Check for return URL
+                        String storedReturnUrl = (String) request.getSession().getAttribute("returnUrl");
+                        if (storedReturnUrl != null) {
+                            request.getSession().removeAttribute("returnUrl");
+                            response.sendRedirect(storedReturnUrl);
+                            return;
+                        }
                         response.sendRedirect("index.jsp");
                         return;
                     }
@@ -87,7 +100,15 @@ public class LoginServlet extends HttpServlet {
                     clearLoginCookies(response);
                 }
 
-                // Redirect based on role
+                // Check for return URL before role-based redirect
+                String returnUrl = (String) request.getSession().getAttribute("returnUrl");
+                if (returnUrl != null) {
+                    request.getSession().removeAttribute("returnUrl");
+                    response.sendRedirect(returnUrl);
+                    return;
+                }
+
+                // Redirect based on role if no return URL
                 handleUserLogin(user, response);
             } else {
                 error = "Email hoặc mật khẩu không đúng!";
