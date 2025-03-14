@@ -53,6 +53,12 @@ public class Pet {
         this.inUseService = inUseService;
     }
 
+    public Pet(int petID, String petName, User owner) {
+        this.petID = petID;
+        this.petName = petName;
+        this.owner = owner;
+    }
+
     public String getInUseService() {
         return inUseService;
     }

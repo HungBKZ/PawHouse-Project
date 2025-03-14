@@ -31,6 +31,12 @@ public class Service {
         this.serviceStatus = serviceStatus;
     }
 
+    public Service(int serviceID, String serviceName, double price) {
+        this.serviceID = serviceID;
+        this.serviceName = serviceName;
+        this.price = price;
+    }
+
     public int getServiceID() {
         return serviceID;
     }

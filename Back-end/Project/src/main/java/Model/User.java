@@ -43,6 +43,12 @@ public class User {
         this.userStatus = userStatus;
     }
 
+    public User(int userID, String username, String fullName) {
+        this.userID = userID;
+        this.username = username;
+        this.fullName = fullName;
+    }
+
     public User() {
     }
 

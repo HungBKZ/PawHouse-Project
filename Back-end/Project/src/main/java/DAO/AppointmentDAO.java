@@ -36,44 +36,44 @@ public class AppointmentDAO extends DBContext {
     }
 
     public Appointment getLatestAppointmentByPetId(int petId) {
-        String query = "SELECT TOP 1 a.*, p.PetName, p.Species, p.Breed, p.Age, p.Gender, p.PetImage, " +
-                      "p.AdoptionStatus, p.UserID, p.InUseService, pc.CategoryName " +
-                      "FROM Appointments a " +
-                      "INNER JOIN Pets p ON a.PetID = p.PetID " +
-                      "INNER JOIN PetCategories pc ON p.CategoryID = pc.CategoryID " +
-                      "WHERE a.PetID = ? " +
-                      "ORDER BY a.AppointmentDate DESC";
+        String query = "SELECT TOP 1 a.*, p.PetName, p.Species, p.Breed, p.Age, p.Gender, p.PetImage, "
+                + "p.AdoptionStatus, p.UserID, p.InUseService, pc.CategoryName "
+                + "FROM Appointments a "
+                + "INNER JOIN Pets p ON a.PetID = p.PetID "
+                + "INNER JOIN PetCategories pc ON p.CategoryID = pc.CategoryID "
+                + "WHERE a.PetID = ? "
+                + "ORDER BY a.AppointmentDate DESC";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, petId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Pet pet = new Pet(
-                    rs.getInt("PetID"),
-                    new PetCategories(rs.getInt("CategoryID"), rs.getString("CategoryName"), ""),
-                    rs.getString("PetName"),
-                    rs.getString("Species"),
-                    rs.getString("Breed"),
-                    rs.getInt("Age"),
-                    rs.getString("Gender"),
-                    rs.getString("PetImage"),
-                    rs.getString("AdoptionStatus"),
-                    new User(rs.getInt("UserID"), null, "", "", "", "", "", "", true, ""),
-                    rs.getString("InUseService")
+                        rs.getInt("PetID"),
+                        new PetCategories(rs.getInt("CategoryID"), rs.getString("CategoryName"), ""),
+                        rs.getString("PetName"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age"),
+                        rs.getString("Gender"),
+                        rs.getString("PetImage"),
+                        rs.getString("AdoptionStatus"),
+                        new User(rs.getInt("UserID"), null, "", "", "", "", "", "", true, ""),
+                        rs.getString("InUseService")
                 );
 
                 return new Appointment(
-                    rs.getInt("AppointmentID"),
-                    null, // Customer (chưa lấy)
-                    null, // Staff (chưa lấy)
-                    null, // Doctor (chưa lấy)
-                    pet,
-                    null, // Service (chưa lấy)
-                    rs.getDate("AppointmentDate"),
-                    rs.getDate("BookingDate"),
-                    rs.getString("AppointmentStatus"),
-                    rs.getString("Notes"),
-                    rs.getDouble("Price")
+                        rs.getInt("AppointmentID"),
+                        null, // Customer (chưa lấy)
+                        null, // Staff (chưa lấy)
+                        null, // Doctor (chưa lấy)
+                        pet,
+                        null, // Service (chưa lấy)
+                        rs.getDate("AppointmentDate"),
+                        rs.getDate("BookingDate"),
+                        rs.getString("AppointmentStatus"),
+                        rs.getString("Notes"),
+                        rs.getDouble("Price")
                 );
             }
         } catch (SQLException e) {
@@ -84,84 +84,66 @@ public class AppointmentDAO extends DBContext {
     }
 
     public List<Appointment> getAllAppointments() {
-        List<Appointment> appointmentList = new ArrayList<>();
-        String query = "SELECT a.*, " +
-                      "c.UserID as CustomerID, c.Username as CustomerName, " +
-                      "s.UserID as StaffID, s.Username as StaffName, " +
-                      "d.UserID as DoctorID, d.Username as DoctorName, " +
-                      "p.PetID, p.PetName, p.Species, p.Breed, p.Age, p.Gender, p.PetImage, " +
-                      "sv.ServiceID, sv.ServiceName, sv.Description as ServiceDesc, sv.Price as ServicePrice " +
-                      "FROM Appointments a " +
-                      "LEFT JOIN Users c ON a.CustomerID = c.UserID " +
-                      "LEFT JOIN Users s ON a.StaffID = s.UserID " +
-                      "LEFT JOIN Users d ON a.DoctorID = d.UserID " +
-                      "LEFT JOIN Pets p ON a.PetID = p.PetID " +
-                      "LEFT JOIN Services sv ON a.ServiceID = sv.ServiceID " +
-                      "ORDER BY a.AppointmentDate DESC";
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "SELECT a.*, "
+                + "c.FullName AS CustomerName, c.Username AS CustomerUsername, "
+                + "s.FullName AS StaffName, d.FullName AS DoctorName, "
+                + "p.PetName, p.UserID, u.Username AS OwnerUsername, "
+                + "svc.ServiceName, svc.Price "
+                + "FROM Appointments a "
+                + "JOIN Users c ON a.CustomerID = c.UserID "
+                + "LEFT JOIN Users s ON a.StaffID = s.UserID "
+                + "LEFT JOIN Users d ON a.DoctorID = d.UserID "
+                + "JOIN Pets p ON a.PetID = p.PetID "
+                + "LEFT JOIN Users u ON p.UserID = u.UserID " // Chủ sở hữu thú cưng
+                + "JOIN Services svc ON a.ServiceID = svc.ServiceID";
 
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                User customer = new User();
-                customer.setUserID(rs.getInt("CustomerID"));
-                customer.setUsername(rs.getString("CustomerName"));
+                // Khách hàng
+                User customer = new User(rs.getInt("CustomerID"), rs.getString("CustomerUsername"), rs.getString("CustomerName"));
 
-                User staff = new User();
-                staff.setUserID(rs.getInt("StaffID"));
-                staff.setUsername(rs.getString("StaffName"));
+                // Chủ sở hữu thú cưng
+                User owner = rs.getInt("UserID") != 0 ? new User(rs.getInt("UserID"), rs.getString("OwnerUsername"), "") : null;
 
-                User doctor = new User();
-                doctor.setUserID(rs.getInt("DoctorID"));
-                doctor.setUsername(rs.getString("DoctorName"));
+                // Nhân viên & bác sĩ
+                User staff = rs.getInt("StaffID") != 0 ? new User(rs.getInt("StaffID"), rs.getString("StaffName"), "") : null;
+                User doctor = rs.getInt("DoctorID") != 0 ? new User(rs.getInt("DoctorID"), rs.getString("DoctorName"), "") : null;
 
-                Pet pet = new Pet();
-                pet.setPetID(rs.getInt("PetID"));
-                pet.setPetName(rs.getString("PetName"));
-                pet.setSpecies(rs.getString("Species"));
-                pet.setBreed(rs.getString("Breed"));
-                pet.setAge(rs.getInt("Age"));
-                pet.setGender(rs.getString("Gender"));
-                pet.setPetImage(rs.getString("PetImage"));
+                // Thông tin thú cưng
+                Pet pet = new Pet(rs.getInt("PetID"), rs.getString("PetName"), owner);
 
-                Service service = new Service();
-                service.setServiceID(rs.getInt("ServiceID"));
-                service.setServiceName(rs.getString("ServiceName"));
-                service.setDescription(rs.getString("ServiceDesc"));
-                service.setPrice(rs.getDouble("ServicePrice"));
+                // Dịch vụ
+                Service service = new Service(rs.getInt("ServiceID"), rs.getString("ServiceName"), rs.getDouble("Price"));
 
+                // Tạo đối tượng Appointment
                 Appointment appointment = new Appointment(
-                    rs.getInt("AppointmentID"),
-                    customer,
-                    staff,
-                    doctor,
-                    pet,
-                    service,
-                    rs.getDate("AppointmentDate"),
-                    rs.getDate("BookingDate"),
-                    rs.getString("AppointmentStatus"),
-                    rs.getString("Notes"),
-                    rs.getDouble("Price")
+                        rs.getInt("AppointmentID"),
+                        customer, staff, doctor, pet, service,
+                        rs.getDate("AppointmentDate"),
+                        rs.getDate("BookingDate"),
+                        rs.getString("AppointmentStatus"),
+                        rs.getString("Notes"),
+                        rs.getDouble("Price")
                 );
 
-                appointmentList.add(appointment);
+                appointments.add(appointment);
             }
+
         } catch (SQLException e) {
-            System.out.println("Error getting appointments: " + e.getMessage());
             e.printStackTrace();
         }
-        return appointmentList;
+        return appointments;
     }
 
-    public boolean updateAppointmentStatus(int appointmentId, String status, String notes) {
-        String query = "UPDATE Appointments SET AppointmentStatus = ?, Notes = ? WHERE AppointmentID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, status);
-            ps.setString(2, notes);
-            ps.setInt(3, appointmentId);
-            return ps.executeUpdate() > 0;
+    public boolean updateAppointmentStatus(int appointmentID, int status) {
+        String sql = "UPDATE Appointments SET AppointmentStatus = ? WHERE AppointmentID = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, status);
+            stmt.setInt(2, appointmentID);
+            return stmt.executeUpdate() > 0; // Trả về true nếu cập nhật thành công
         } catch (SQLException e) {
-            System.out.println("Error updating appointment status: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
