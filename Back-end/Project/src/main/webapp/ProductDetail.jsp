@@ -43,40 +43,111 @@
             .alert {
                 margin-top: 1rem;
             }
-            /* Star Rating Styles */
+            /* Enhanced Star Rating Styles */
             .star-rating {
                 margin-bottom: 1rem;
             }
             .rating-group {
-                display: flex;
+                display: inline-flex;
                 flex-direction: row-reverse;
                 justify-content: flex-end;
+                gap: 0.25rem;
             }
             .star-input {
                 display: none;
             }
             .star-input + label {
                 font-size: 1.5rem;
-                padding: 0.1rem;
                 cursor: pointer;
+                color: #ddd;
+                transition: all 0.2s ease;
+            }
+            .star-input:checked ~ label {
                 color: #ffc107;
             }
-            .star-input:checked ~ label i.far.fa-star:before {
-                content: "\f005";
-                font-weight: 900;
+            .star-input + label:hover,
+            .star-input + label:hover ~ label {
+                color: #ffdb70;
             }
-            .star-input + label:hover i.far.fa-star:before,
-            .star-input + label:hover ~ label i.far.fa-star:before {
-                content: "\f005";
-                font-weight: 900;
+            
+            /* Review Stars Styling */
+            .review-stars {
+                color: #ddd;
+                font-size: 1rem;
+            }
+            .review-stars i {
+                margin-right: 2px;
+            }
+            .review-stars i.fas {
+                color: #ffc107;
             }
             .review {
                 background-color: #f8f9fa;
-                transition: transform 0.2s;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                margin-bottom: 1rem;
+                border: 1px solid #e9ecef;
             }
             .review:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .review-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .review-username {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+            .review-date {
+                color: #6c757d;
+                font-size: 0.875rem;
+            }
+            .review-content {
+                color: #4a5568;
+                line-height: 1.5;
+            }
+            
+            /* Star Rating Input Styles */
+            .rating-group {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: flex-start;
+                gap: 0.5rem;
+                padding: 1rem 0;
+            }
+            
+            .star-input {
+                display: none;
+            }
+            
+            .star-label {
+                cursor: pointer;
+                font-size: 2rem;
+                color: #ddd;
+                transition: all 0.2s ease;
+            }
+            
+            .star-input:checked ~ .star-label {
+                color: #ffc107;
+            }
+            
+            .star-label:hover,
+            .star-label:hover ~ .star-label {
+                color: #ffdb70;
+            }
+            
+            /* Fix for the hover effect direction */
+            .rating-group:hover .star-label {
+                color: #ddd;
+            }
+            
+            .rating-group:hover .star-label:hover,
+            .rating-group:hover .star-label:hover ~ .star-label {
+                color: #ffdb70;
             }
         </style>
     </head>
@@ -139,16 +210,22 @@
                                 <form action="AddProductComment" method="post" class="mb-4">
                                     <input type="hidden" name="productId" value="${product.productID}">
                                     <div class="mb-3">
-                                        <label for="star" class="form-label">Đánh giá của bạn:</label>
-                                        <div class="star-rating">
-                                            <div class="rating-group">
-                                                <c:forEach begin="1" end="5" var="i">
-                                                    <div class="star-input">
-                                                        <input type="radio" name="star" value="${i}" id="star${i}" ${i == 5 ? 'checked' : ''}>
-                                                        <label for="star${i}"><i class="far fa-star"></i></label>
-                                                    </div>
-                                                </c:forEach>
-                                            </div>
+                                        <label for="rating" class="form-label">Đánh giá của bạn:</label>
+                                        <div class="rating-group">
+                                            <input type="radio" name="star" value="5" id="star5" class="star-input">
+                                            <label for="star5" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="4" id="star4" class="star-input">
+                                            <label for="star4" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="3" id="star3" class="star-input">
+                                            <label for="star3" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="2" id="star2" class="star-input">
+                                            <label for="star2" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="1" id="star1" class="star-input">
+                                            <label for="star1" class="star-label"><i class="far fa-star"></i></label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -169,22 +246,17 @@
 
                         <h4>Các đánh giá (${reviewCount})</h4>
                         <c:forEach var="review" items="${comments}">
-                            <div class="review border p-3 mb-3 rounded">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div>
-                                        <strong class="text-primary">${review.user.username}</strong>
-                                        <div class="text-warning">
-                                            <c:forEach begin="1" end="${review.star}">
-                                                <i class="fas fa-star"></i>
-                                            </c:forEach>
-                                            <c:forEach begin="${review.star + 1}" end="5">
-                                                <i class="far fa-star"></i>
-                                            </c:forEach>
-                                        </div>
+                            <div class="review p-3">
+                                <div class="review-header">
+                                    <strong class="review-username">${review.user.username}</strong>
+                                    <div class="review-stars">
+                                        <c:forEach begin="1" end="5" var="i">
+                                            <i class="${i <= review.star ? 'fas' : 'far'} fa-star"></i>
+                                        </c:forEach>
                                     </div>
-                                    <small class="text-muted">${review.dateComment}</small>
+                                    <span class="review-date">${review.dateComment}</span>
                                 </div>
-                                <p class="mb-0">${review.content}</p>
+                                <p class="review-content mb-0">${review.content}</p>
                             </div>
                         </c:forEach>
                     </div>
@@ -266,6 +338,28 @@
                         error: function () {
                             alert('Có lỗi xảy ra khi gửi đánh giá');
                         }
+                    });
+                });
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const ratingInputs = document.querySelectorAll('.star-input');
+                const ratingLabels = document.querySelectorAll('.star-label');
+                
+                ratingInputs.forEach((input, index) => {
+                    input.addEventListener('change', function() {
+                        // Update stars when radio button is clicked
+                        ratingLabels.forEach((label, i) => {
+                            const star = label.querySelector('i');
+                            if (i >= 4 - index) {
+                                star.classList.remove('far');
+                                star.classList.add('fas');
+                            } else {
+                                star.classList.remove('fas');
+                                star.classList.add('far');
+                            }
+                        });
                     });
                 });
             });
