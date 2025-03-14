@@ -5,6 +5,7 @@
    version="5.0">
     
     <!-- Add static resource handling -->
+
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/imgs/*</url-pattern>
