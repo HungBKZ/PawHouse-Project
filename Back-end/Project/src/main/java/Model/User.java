@@ -33,15 +33,15 @@ public class User {
         this.userStatus = userStatus;
         this.address = address;
     }
-    public User(String username, String password, String email, String fullName, String phone, boolean userStatus) {
-    this.username = username;
-    this.password = password;
-    this.email = email;
-    this.fullName = fullName;
-    this.phone = phone;
-    this.userStatus = userStatus;
-}
 
+    public User(String username, String password, String email, String fullName, String phone, boolean userStatus) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.userStatus = userStatus;
+    }
 
     public User() {
     }
@@ -124,6 +124,10 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public User(int userID) {
+        this.userID = userID;
     }
 
 }

@@ -129,32 +129,32 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-    
-        public User getUserByUsername(String username) throws SQLException {
-    String query = "SELECT * FROM Users WHERE Username = ?";
-    
-    try (PreparedStatement ps = connection.prepareStatement(query)) {
-        ps.setString(1, username);
-        
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                User user = new User();
-                user.setUserID(rs.getInt("userID"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setFullName(rs.getString("fullName"));
-                user.setPhone(rs.getString("phoneNumber"));
-                user.setAddress(rs.getString("address"));
-                Role role = new Role();
-                role.setRoleID(rs.getInt("RoleID"));
-                user.setRole(role);
-                
-                return user; // Trả về user nếu tìm thấy
+
+    public User getUserByUsername(String username) throws SQLException {
+        String query = "SELECT * FROM Users WHERE Username = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("userID"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setFullName(rs.getString("fullName"));
+                    user.setPhone(rs.getString("phoneNumber"));
+                    user.setAddress(rs.getString("address"));
+                    Role role = new Role();
+                    role.setRoleID(rs.getInt("RoleID"));
+                    user.setRole(role);
+
+                    return user; // Trả về user nếu tìm thấy
+                }
             }
         }
+        return null; // Trả về null nếu không tìm thấy user
     }
-    return null; // Trả về null nếu không tìm thấy user
-}
 
     public boolean saveResetToken(String email, String token) throws SQLException {
         String query = "UPDATE Users SET ResetToken = ?, ResetTokenExpiry = DATEADD(HOUR, 24, GETDATE()) WHERE Email = ?";
@@ -266,18 +266,27 @@ public class UserDAO extends DBContext {
         }
     }
 
-//    public boolean updateUserProfile(User user) throws SQLException {
-//        String query = "UPDATE Users SET FullName = ?, Phone = ? WHERE UserID = ?";
-//
-//        try (PreparedStatement ps = connection.prepareStatement(query)) {
-//            ps.setString(1, user.getFullName());
-//            ps.setString(2, user.getPhone());
-//            ps.setInt(3, user.getUserID());
-//
-//            int rowsAffected = ps.executeUpdate();
-//            return rowsAffected > 0;
-//        }
-//    }
+    public List<User> getAllUsers() {
+        List<User> userList = new ArrayList<>();
+        String query = "SELECT UserID, FullName FROM Users";
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setFullName(rs.getString("FullName"));
+
+                userList.add(user);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userList;
+    }
+
     public boolean updateUserProfile(User user) {
         String sql = "UPDATE Users SET FullName = ?, Phone = ?, Avatar = ? WHERE UserID = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -323,4 +332,20 @@ public class UserDAO extends DBContext {
             return rowsAffected > 0;
         }
     }
+
+    public Integer getUserIDByEmail(String email) {
+        String query = "SELECT UserID FROM Users WHERE Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("UserID");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

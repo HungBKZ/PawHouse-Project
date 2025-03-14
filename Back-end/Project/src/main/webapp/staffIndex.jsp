@@ -108,7 +108,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="staffManagePet.jsp"><i class="fas fa-paw"></i> Pets</a></li>
+                    <li class="nav-item"><a class="nav-link" href="StaffPetServlet"><i class="fas fa-paw"></i> Pets</a></li>
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staff/adoptions"><i class="fas fa-heart"></i> Adoptions</a></li>
                     <li class="nav-item"><a class="nav-link" href="staffManageProduct.jsp"><i class="fas fa-box"></i> Products</a></li>
                     <li class="nav-item"><a class="nav-link" href="staffManageDoctor.jsp"><i class="fas fa-user-md"></i> Doctors</a></li>
