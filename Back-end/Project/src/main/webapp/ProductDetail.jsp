@@ -43,6 +43,41 @@
             .alert {
                 margin-top: 1rem;
             }
+            /* Star Rating Styles */
+            .star-rating {
+                margin-bottom: 1rem;
+            }
+            .rating-group {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: flex-end;
+            }
+            .star-input {
+                display: none;
+            }
+            .star-input + label {
+                font-size: 1.5rem;
+                padding: 0.1rem;
+                cursor: pointer;
+                color: #ffc107;
+            }
+            .star-input:checked ~ label i.far.fa-star:before {
+                content: "\f005";
+                font-weight: 900;
+            }
+            .star-input + label:hover i.far.fa-star:before,
+            .star-input + label:hover ~ label i.far.fa-star:before {
+                content: "\f005";
+                font-weight: 900;
+            }
+            .review {
+                background-color: #f8f9fa;
+                transition: transform 0.2s;
+            }
+            .review:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
         </style>
     </head>
     <body>
@@ -101,35 +136,55 @@
                         <h3>Đánh giá sản phẩm</h3>
                         <c:choose>
                             <c:when test="${not empty sessionScope.user}">
-                                <form action="AddProductComment" method="post">
+                                <form action="AddProductComment" method="post" class="mb-4">
                                     <input type="hidden" name="productId" value="${product.productID}">
-                                    <label for="star">Số sao:</label>
-                                    <select name="star" id="star">
-                                        <option value="1">1 sao</option>
-                                        <option value="2">2 sao</option>
-                                        <option value="3">3 sao</option>
-                                        <option value="4">4 sao</option>
-                                        <option value="5">5 sao</option>
-                                    </select>
-                                    <br>
-                                    <label for="content">Nội dung:</label>
-                                    <textarea name="content" id="content" rows="4"></textarea>
-                                    <br>
-                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                    <div class="mb-3">
+                                        <label for="star" class="form-label">Đánh giá của bạn:</label>
+                                        <div class="star-rating">
+                                            <div class="rating-group">
+                                                <c:forEach begin="1" end="5" var="i">
+                                                    <div class="star-input">
+                                                        <input type="radio" name="star" value="${i}" id="star${i}" ${i == 5 ? 'checked' : ''}>
+                                                        <label for="star${i}"><i class="far fa-star"></i></label>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="content" class="form-label">Nội dung đánh giá:</label>
+                                        <textarea name="content" id="content" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                                    </button>
                                 </form>
                             </c:when>
                             <c:otherwise>
                                 <div class="alert alert-info">
-                                    Vui lòng <a href="login.jsp">đăng nhập</a> để đánh giá sản phẩm.
+                                    <i class="fas fa-info-circle me-2"></i>Vui lòng <a href="login.jsp" class="alert-link">đăng nhập</a> để đánh giá sản phẩm.
                                 </div>
                             </c:otherwise>
                         </c:choose>
 
                         <h4>Các đánh giá (${reviewCount})</h4>
                         <c:forEach var="review" items="${comments}">
-                            <div class="review border p-2 mb-2">
-                                <strong>${review.user.username}</strong> - ${review.dateComment}
-                                <p>${review.content}</p>
+                            <div class="review border p-3 mb-3 rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <strong class="text-primary">${review.user.username}</strong>
+                                        <div class="text-warning">
+                                            <c:forEach begin="1" end="${review.star}">
+                                                <i class="fas fa-star"></i>
+                                            </c:forEach>
+                                            <c:forEach begin="${review.star + 1}" end="5">
+                                                <i class="far fa-star"></i>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">${review.dateComment}</small>
+                                </div>
+                                <p class="mb-0">${review.content}</p>
                             </div>
                         </c:forEach>
                     </div>
@@ -174,46 +229,46 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                    function incrementQuantity() {
-                                                        const input = document.getElementById('quantity');
-                                                        const max = parseInt(input.getAttribute('max'));
-                                                        const currentValue = parseInt(input.value);
-                                                        if (currentValue < max) {
-                                                            input.value = currentValue + 1;
-                                                        }
-                                                    }
+            function incrementQuantity() {
+                const input = document.getElementById('quantity');
+                const max = parseInt(input.getAttribute('max'));
+                const currentValue = parseInt(input.value);
+                if (currentValue < max) {
+                    input.value = currentValue + 1;
+                }
+            }
 
-                                                    function decrementQuantity() {
-                                                        const input = document.getElementById('quantity');
-                                                        const currentValue = parseInt(input.value);
-                                                        if (currentValue > 1) {
-                                                            input.value = currentValue - 1;
-                                                        }
-                                                    }
-                                                    // Comment form submission
-                                                    $(document).ready(function () {
-                                                        $('#commentForm').on('submit', function (e) {
-                                                            e.preventDefault();
+            function decrementQuantity() {
+                const input = document.getElementById('quantity');
+                const currentValue = parseInt(input.value);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            }
+            // Comment form submission
+            $(document).ready(function () {
+                $('#commentForm').on('submit', function (e) {
+                    e.preventDefault();
 
-                                                            $.ajax({
-                                                                url: 'comment',
-                                                                type: 'POST',
-                                                                data: $(this).serialize(),
-                                                                dataType: 'json',
-                                                                success: function (response) {
-                                                                    if (response.success) {
-                                                                        // Reload the page to show the new comment
-                                                                        location.reload();
-                                                                    } else {
-                                                                        alert(response.message);
-                                                                    }
-                                                                },
-                                                                error: function () {
-                                                                    alert('Có lỗi xảy ra khi gửi đánh giá');
-                                                                }
-                                                            });
-                                                        });
-                                                    }};
+                    $.ajax({
+                        url: 'comment',
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                // Reload the page to show the new comment
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi gửi đánh giá');
+                        }
+                    });
+                });
+            });
         </script>
     </body>
 </html>
