@@ -24,8 +24,12 @@ public class AddProductCommentServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         
         if (user == null) {
-            response.sendRedirect("login.jsp");
-            return;
+            // Try to get the Google logged-in user if system user is not found
+            user = (User) session.getAttribute("loggedInUser");
+            if (user == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
         }
         
         try {
