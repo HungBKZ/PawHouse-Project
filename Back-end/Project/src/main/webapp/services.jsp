@@ -15,65 +15,47 @@
                 font-family: Arial, sans-serif;
                 background: #f9f9f9;
             }
-
-            /* Banner */
-            .banner img {
-                max-height: 400px;
-                object-fit: cover;
-            }
-
-            /* Tiêu đề */
             .section-title {
                 font-size: 2rem;
                 font-weight: bold;
-                color: #333;
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                color: #ff6600;
+                text-align: center;
+                margin-bottom: 20px;
             }
-
-            /* Service Card */
+            .service-category {
+                margin-bottom: 40px;
+            }
             .service-card {
                 background: white;
                 padding: 15px;
                 border-radius: 12px;
                 text-align: center;
-                transition: 0.3s;
-                position: relative;
-                overflow: hidden;
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+                transition: 0.3s;
             }
-
             .service-card:hover {
                 transform: translateY(-5px);
                 box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
             }
-
             .service-card img {
                 max-width: 100%;
                 height: 250px;
                 object-fit: cover;
                 border-radius: 12px;
             }
-
-            .service-card h5 {
-                font-weight: bold;
-                margin-top: 10px;
-                font-size: 1.2rem;
-            }
-
-            .service-card .price {
+            .price {
                 font-size: 1.3rem;
                 font-weight: bold;
                 color: #ff6600;
             }
-
-            .service-card .btn {
-                font-size: 1rem;
-                transition: 0.3s;
+            .btn-custom {
+                background: #ff6600;
+                color: white;
+                border: none;
             }
-
-            .service-card .btn:hover {
-                transform: scale(1.05);
+            .btn-custom:hover {
+                background: #e65c00;
             }
 
             /* Lợi ích */
@@ -112,30 +94,36 @@
         </section>
 
         <section class="container py-5">
-            <h2 class="section-title text-center mb-4">Dịch Vụ Chăm Sóc Thú Cưng</h2>
+            <h2 class="section-title">Dịch Vụ Y Tế</h2>
             <div class="row">
-                <c:choose>
-                    <c:when test="${not empty serviceList}">
-                        <c:forEach var="service" items="${serviceList}">
-                            <div class="col-md-4 mb-4">
-                                <div class="service-card shadow">
-                                    <img src="${service.serviceImage}" class="card-img-top" alt="${service.serviceName}">
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title">${service.serviceName}</h5>
-                                        <p class="card-text">${service.description}</p>
-                                        <p class="price">${service.price} VND</p>
-                                        <a href="bookService.jsp?id=${service.serviceID}" class="btn btn-success w-100">Đặt Lịch</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="col-12 text-center">
-                            <p class="text-muted">Không có dịch vụ nào.</p>
+                <c:forEach var="service" items="${medicalList}">
+                    <div class="col-md-4 mb-4">
+                        <div class="service-card">
+                            <img src="${service.serviceImage}" alt="${service.serviceName}">
+                            <h5>${service.serviceName}</h5>
+                            <p>${service.description}</p>
+                            <p class="price">${service.price} VND</p>
+                            <a href="bookService.jsp?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
                         </div>
-                    </c:otherwise>
-                </c:choose>
+                    </div>
+                </c:forEach>
+            </div>
+        </section>
+
+        <section class="container py-5">
+            <h2 class="section-title">Dịch Vụ Spa</h2>
+            <div class="row">
+                <c:forEach var="service" items="${spaList}">
+                    <div class="col-md-4 mb-4">
+                        <div class="service-card">
+                            <img src="${service.serviceImage}" alt="${service.serviceName}">
+                            <h5>${service.serviceName}</h5>
+                            <p>${service.description}</p>
+                            <p class="price">${service.price} VND</p>
+                            <a href="bookService.jsp?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
         </section>
 
