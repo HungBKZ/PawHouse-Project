@@ -24,8 +24,26 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/Product">Sản Phẩm</a></li>
-                <li class="nav-item"><a class="nav-link" href="/Service">Dịch Vụ</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="/Product" id="productDropdown" role="button">
+                        Sản Phẩm
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="productDropdown">
+                        <li><a class="dropdown-item" href="/FoodProducts">Thực phẩm</a></li>
+                        <li><a class="dropdown-item" href="/SuppliesProduct">Dụng cụ</a></li>
+                        <li><a class="dropdown-item" href="/AccessoryProducts">Phụ kiện</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="/Service" id="productDropdown" role="button">
+                        Dịch vụ
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="productDropdown">
+                        <li><a class="dropdown-item" href="/MedicalServlet">Thú y</a></li>
+                        <li><a class="dropdown-item" href="/SpaServlet">Spa & Grooming</a></li>
+                        <li><a class="dropdown-item" href="/AdoptionServlet">Nhận nuôi</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="about.jsp">Thông tin</a></li>
                 <li class="nav-item"><a class="nav-link" href="/Cart"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
             </ul>
@@ -84,7 +102,13 @@
         margin: 0 10px;
         transition: all 0.3s;
     }
-
+    
+     /* Dropdown khi hover */
+    .dropdown:hover .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+    
     /* Hover cho Navbar */
     .navbar-nav .nav-link:hover {
         color: #2e2e2e !important; /* Đổi thành màu xám đậm khi hover */

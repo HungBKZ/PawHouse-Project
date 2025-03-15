@@ -58,52 +58,6 @@
             }
 
         </style>
-        <script>
-            function filterPets() {
-                let searchValue = document.getElementById("searchPet").value.toLowerCase();
-                let categoryValue = document.getElementById("categoryFilter").value.toLowerCase();
-                let statusValue = document.getElementById("statusFilter").value.toLowerCase();
-                let petContainer = document.getElementById("petList");
-                let petCards = document.querySelectorAll(".pet-card-container");
-
-                let visiblePets = 0;
-                petCards.forEach(card => {
-                    let petCard = card.querySelector(".pet-card");
-                    let petName = petCard.getAttribute("data-name").toLowerCase();
-                    let petCategory = petCard.getAttribute("data-category").toLowerCase();
-                    let petStatus = petCard.getAttribute("data-status").toLowerCase();
-
-                    let matchSearch = petName.includes(searchValue);
-                    let matchCategory = (categoryValue === "all" || petCategory === categoryValue);
-                    let matchStatus = (statusValue === "all" || petStatus === statusValue);
-
-                    if (matchSearch && matchCategory && matchStatus) {
-                        card.style.display = "block";
-                        visiblePets++;
-                    } else {
-                        card.style.display = "none";
-                    }
-                });
-
-                // 🟢 Hiển thị thông báo nếu không tìm thấy kết quả
-                let noResultsMessage = document.getElementById("noResultsMessage");
-                if (!noResultsMessage) {
-                    noResultsMessage = document.createElement("div");
-                    noResultsMessage.id = "noResultsMessage";
-                    noResultsMessage.classList.add("alert", "alert-warning", "text-center");
-                    noResultsMessage.innerText = "Không có thú cưng nào phù hợp.";
-                    petContainer.parentElement.appendChild(noResultsMessage);
-                }
-                noResultsMessage.style.display = (visiblePets === 0) ? "block" : "none";
-
-                // 🟢 Cập nhật bố cục flexbox sau khi lọc
-                setTimeout(() => {
-                    petContainer.style.display = "none";  // Ẩn tạm
-                    petContainer.offsetHeight;  // Kích hoạt reflow
-                    petContainer.style.display = "flex"; // Hiển thị lại
-                }, 10);
-            }
-        </script>
     </head>
     <body>
 
@@ -149,7 +103,7 @@
                                 <h5 class="card-title"><%= pet.getPetName()%></h5>
                                 <p><strong>Loài:</strong> <%= pet.getSpecies()%></p>
                                 <p><strong>Trạng thái:</strong> <%= pet.getAdoptionStatus()%></p>
-                                <a href="PetDetailServlet?petId=<%= pet.getPetID() %>" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                                <a href="PetDetailServlet?petId=<%= pet.getPetID()%>" class="btn btn-primary btn-sm">Xem chi tiết</a>
                             </div>
                         </div>
                     </div>
@@ -207,7 +161,52 @@
         </section>
         <!-- Footer -->
         <%@ include file="includes/footer.jsp" %>
+        <script>
+            function filterPets() {
+                let searchValue = document.getElementById("searchPet").value.toLowerCase();
+                let categoryValue = document.getElementById("categoryFilter").value.toLowerCase();
+                let statusValue = document.getElementById("statusFilter").value.toLowerCase();
+                let petContainer = document.getElementById("petList");
+                let petCards = document.querySelectorAll(".pet-card-container");
 
+                let visiblePets = 0;
+                petCards.forEach(card => {
+                    let petCard = card.querySelector(".pet-card");
+                    let petName = petCard.getAttribute("data-name").toLowerCase();
+                    let petCategory = petCard.getAttribute("data-category").toLowerCase();
+                    let petStatus = petCard.getAttribute("data-status").toLowerCase();
+
+                    let matchSearch = petName.includes(searchValue);
+                    let matchCategory = (categoryValue === "all" || petCategory === categoryValue);
+                    let matchStatus = (statusValue === "all" || petStatus === statusValue);
+
+                    if (matchSearch && matchCategory && matchStatus) {
+                        card.style.display = "block";
+                        visiblePets++;
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
+                // 🟢 Hiển thị thông báo nếu không tìm thấy kết quả
+                let noResultsMessage = document.getElementById("noResultsMessage");
+                if (!noResultsMessage) {
+                    noResultsMessage = document.createElement("div");
+                    noResultsMessage.id = "noResultsMessage";
+                    noResultsMessage.classList.add("alert", "alert-warning", "text-center");
+                    noResultsMessage.innerText = "Không có thú cưng nào phù hợp.";
+                    petContainer.parentElement.appendChild(noResultsMessage);
+                }
+                noResultsMessage.style.display = (visiblePets === 0) ? "block" : "none";
+
+                // 🟢 Cập nhật bố cục flexbox sau khi lọc
+                setTimeout(() => {
+                    petContainer.style.display = "none";  // Ẩn tạm
+                    petContainer.offsetHeight;  // Kích hoạt reflow
+                    petContainer.style.display = "flex"; // Hiển thị lại
+                }, 10);
+            }
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

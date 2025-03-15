@@ -439,25 +439,25 @@
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="service-card card border-0 shadow">
-                        <a href="doctor.jsp">
+                        <a href="/MedicalServlet">
                             <img src="./imgs/thuy.png" class="card-img-top" alt="Thú y">
                         </a>
                         <div class="card-body text-center">
                             <h5 class="card-title fw-bold">Thú Y</h5>
                             <p class="card-text">Dịch vụ khám chữa bệnh chuyên nghiệp giúp thú cưng khỏe mạnh.</p>
-                            <a href="doctor.jsp" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
+                            <a href="/MedicalServlet" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="service-card card border-0 shadow">
-                        <a href="spa.jsp">
+                        <a href="/SpaServlet">
                             <img src="./imgs/spapet.jpg" class="card-img-top" alt="Spa">
                         </a>
                         <div class="card-body text-center">
                             <h5 class="card-title fw-bold">Spa & Grooming</h5>
                             <p class="card-text">Dịch vụ tắm, cắt tỉa lông, giúp thú cưng luôn sạch sẽ và đáng yêu.</p>
-                            <a href="spa.jsp" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
+                            <a href="/SpaServlet" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List" %>
-<%@ page import="Model.Service" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -101,27 +100,30 @@
         <img src="./imgs/banner.png" class="w-100" alt="Dịch Vụ Thú Y" />
     </section>
 
-    <!-- Danh sách dịch vụ thú y -->
+     <!-- Danh sách dịch vụ thú y -->
     <section class="container py-5">
         <h2 class="section-title text-center mb-4">Dịch Vụ Thú Y Chuyên Nghiệp</h2>
         <div class="row">
-            <% List<Service> doctorServices = (List<Service>) request.getAttribute("doctorServices");
-               if (doctorServices != null) {
-                   for (Service service : doctorServices) { %>
-            <div class="col-md-4 mb-4">
-                <div class="service-card shadow">
-                    <img src="<%= service.getServiceImage() %>" class="card-img-top" alt="<%= service.getServiceName() %>">
-                    <div class="card-body text-center">
-                        <h5 class="card-title"><%= service.getServiceName() %></h5>
-                        <p class="card-text"><%= service.getDescription() %></p>
-                        <p class="price"><%= service.getPrice() %> VND</p>
-                        <a href="bookAppointment.jsp?id=<%= service.getServiceID() %>" class="btn btn-success w-100">Đặt Lịch</a>
-                    </div>
-                </div>
-            </div>
-            <% } } else { %>
-            <p class="text-center">Không có dịch vụ nào.</p>
-            <% } %>
+            <c:choose>
+                <c:when test="${not empty medicalList}">
+                    <c:forEach var="service" items="${medicalList}">
+                        <div class="col-md-4 mb-4">
+                            <div class="service-card shadow">
+                                <img src="${service.serviceImage}" class="card-img-top" alt="${service.serviceName}">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">${service.serviceName}</h5>
+                                    <p class="card-text">${service.description}</p>
+                                    <p class="price">${service.price} VND</p>
+                                    <a href="bookAppointment.jsp?id=${service.serviceID}" class="btn btn-success w-100">Đặt Lịch</a>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <p class="text-center">Không có dịch vụ nào.</p>
+                </c:otherwise>
+            </c:choose>
         </div>
     </section>
 
