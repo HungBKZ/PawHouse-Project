@@ -206,7 +206,7 @@
                     <div class="card p-3">
                         <h3>Đánh giá sản phẩm</h3>
                         <c:choose>
-                            <c:when test="${not empty sessionScope.user}">
+                            <c:when test="${not empty sessionScope.user || not empty sessionScope.loggedInUser}">
                                 <form action="AddProductComment" method="post" class="mb-4">
                                     <input type="hidden" name="productId" value="${product.productID}">
                                     <div class="mb-3">
@@ -301,46 +301,46 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                    function incrementQuantity() {
-                                                        const input = document.getElementById('quantity');
-                                                        const max = parseInt(input.getAttribute('max'));
-                                                        const currentValue = parseInt(input.value);
-                                                        if (currentValue < max) {
-                                                            input.value = currentValue + 1;
-                                                        }
-                                                    }
+            function incrementQuantity() {
+                const input = document.getElementById('quantity');
+                const max = parseInt(input.getAttribute('max'));
+                const currentValue = parseInt(input.value);
+                if (currentValue < max) {
+                    input.value = currentValue + 1;
+                }
+            }
 
-                                                    function decrementQuantity() {
-                                                        const input = document.getElementById('quantity');
-                                                        const currentValue = parseInt(input.value);
-                                                        if (currentValue > 1) {
-                                                            input.value = currentValue - 1;
-                                                        }
-                                                    }
-                                                    // Comment form submission
-                                                    $(document).ready(function () {
-                                                        $('#commentForm').on('submit', function (e) {
-                                                            e.preventDefault();
+            function decrementQuantity() {
+                const input = document.getElementById('quantity');
+                const currentValue = parseInt(input.value);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            }
+            // Comment form submission
+            $(document).ready(function () {
+                $('#commentForm').on('submit', function (e) {
+                    e.preventDefault();
 
-                                                            $.ajax({
-                                                                url: 'comment',
-                                                                type: 'POST',
-                                                                data: $(this).serialize(),
-                                                                dataType: 'json',
-                                                                success: function (response) {
-                                                                    if (response.success) {
-                                                                        // Reload the page to show the new comment
-                                                                        location.reload();
-                                                                    } else {
-                                                                        alert(response.message);
-                                                                    }
-                                                                },
-                                                                error: function () {
-                                                                    alert('Có lỗi xảy ra khi gửi đánh giá');
-                                                                }
-                                                            });
-                                                        });
-                                                    });
+                    $.ajax({
+                        url: 'comment',
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                // Reload the page to show the new comment
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi gửi đánh giá');
+                        }
+                    });
+                });
+            });
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
