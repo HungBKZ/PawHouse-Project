@@ -29,6 +29,7 @@ public class Orders {
         this.totalAmount = totalAmount;
         this.orderStatus = orderStatus;
         this.notes = notes;
+
     }
 
     public int getOrderID() {
@@ -78,6 +79,5 @@ public class Orders {
     public void setNotes(String notes) {
         this.notes = notes;
     }
-    
 
 }

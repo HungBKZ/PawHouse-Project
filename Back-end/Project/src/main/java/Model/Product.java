@@ -33,6 +33,11 @@ public class Product {
         this.productStatus = productStatus;
     }
 
+    public Product(int productID, String productName) {
+        this.productID = productID;
+        this.productName = productName;
+    }
+
     public int getProductID() {
         return productID;
     }
