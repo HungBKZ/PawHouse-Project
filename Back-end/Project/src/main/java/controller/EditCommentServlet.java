@@ -4,6 +4,7 @@ import DAO.ProductCommentDAO;
 import Model.User;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.io.InputStream;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,8 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @WebServlet(name = "EditCommentServlet", urlPatterns = {"/EditComment"})
@@ -69,32 +72,34 @@ public class EditCommentServlet extends HttpServlet {
             String imagePath = null;
             Part filePart = request.getPart("image");
             if (filePart != null && filePart.getSize() > 0) {
-                String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
+                String fileName = "comment_" + UUID.randomUUID().toString() + getFileExtension(filePart);
                 
-                // Get the project's root directory path
-                String projectPath = new File(getServletContext().getRealPath("")).getParentFile().getParentFile().getParentFile().getPath();
-                
-                // Create path to upload directory in project structure
-                Path uploadPath = Paths.get(projectPath, "src", "main", "webapp", UPLOAD_DIR);
-                File uploadDir = uploadPath.toFile();
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdirs();
-                }
-                
-                // Save the file to project directory
-                String filePath = uploadPath.resolve(fileName).toString();
-                filePart.write(filePath);
-                
-                // Also save to the deployed directory for immediate access
+                // Get the deployed directory path
                 String deployedPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
                 File deployedDir = new File(deployedPath);
                 if (!deployedDir.exists()) {
                     deployedDir.mkdirs();
                 }
-                filePart.write(deployedPath + File.separator + fileName);
+
+                // Save file using NIO
+                Path targetPath = Paths.get(deployedPath, fileName);
+                try (InputStream fileContent = filePart.getInputStream()) {
+                    Files.copy(fileContent, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                }
                 
                 // Store the web-accessible path
                 imagePath = request.getContextPath() + "/" + UPLOAD_DIR + "/" + fileName;
+
+                // Also save to the project directory for persistence
+                try {
+                    String projectPath = new File(getServletContext().getRealPath("")).getParentFile().getParentFile().getParentFile().getPath();
+                    Path projectUploadPath = Paths.get(projectPath, "Project", "src", "main", "webapp", UPLOAD_DIR);
+                    Files.createDirectories(projectUploadPath);
+                    Files.copy(targetPath, projectUploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    // Log the error but continue, as the file is already saved in the deployed directory
+                    e.printStackTrace();
+                }
             }
             
             ProductCommentDAO commentDAO = new ProductCommentDAO();
@@ -129,9 +134,9 @@ public class EditCommentServlet extends HttpServlet {
             if (token.trim().startsWith("filename")) {
                 String fileName = token.substring(token.indexOf("=") + 2, token.length() - 1);
                 int dotIndex = fileName.lastIndexOf(".");
-                return dotIndex > 0 ? fileName.substring(dotIndex) : "";
+                return dotIndex > 0 ? fileName.substring(dotIndex) : ".jpg"; // Default to .jpg if no extension
             }
         }
-        return "";
+        return ".jpg";
     }
 }
