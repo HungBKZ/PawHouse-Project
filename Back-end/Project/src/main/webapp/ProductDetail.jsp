@@ -166,6 +166,24 @@
                 <% session.removeAttribute("cartMessage");%>
             </c:if>
 
+            <!-- Display error message if any -->
+            <c:if test="${not empty sessionScope.error}">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${sessionScope.error}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% session.removeAttribute("error"); %>
+            </c:if>
+
+            <!-- Display success message if any -->
+            <c:if test="${not empty sessionScope.message}">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ${sessionScope.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% session.removeAttribute("message"); %>
+            </c:if>
+
             <div class="row">
                 <!-- Product Details -->
                 <div class="col-lg-8">
@@ -210,25 +228,35 @@
                             <c:when test="${not empty sessionScope.user || not empty sessionScope.loggedInUser}">
                                 <form action="AddProductComment" method="post" class="mb-4" enctype="multipart/form-data">
                                     <input type="hidden" name="productId" value="${product.productID}">
-                                    <div class="rating-group mb-3">
-                                        <input type="radio" class="star-input" id="star5" name="star" value="5" required>
-                                        <label class="star-label" for="star5"><i class="fas fa-star"></i></label>
-                                        <input type="radio" class="star-input" id="star4" name="star" value="4">
-                                        <label class="star-label" for="star4"><i class="fas fa-star"></i></label>
-                                        <input type="radio" class="star-input" id="star3" name="star" value="3">
-                                        <label class="star-label" for="star3"><i class="fas fa-star"></i></label>
-                                        <input type="radio" class="star-input" id="star2" name="star" value="2">
-                                        <label class="star-label" for="star2"><i class="fas fa-star"></i></label>
-                                        <input type="radio" class="star-input" id="star1" name="star" value="1">
-                                        <label class="star-label" for="star1"><i class="fas fa-star"></i></label>
+                                    <div class="mb-3">
+                                        <label class="form-label">Đánh giá của bạn:</label>
+                                        <div class="star-rating">
+                                            <input type="radio" name="star" value="1" class="star-input" id="star1">
+                                            <label for="star1" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="2" class="star-input" id="star2">
+                                            <label for="star2" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="3" class="star-input" id="star3">
+                                            <label for="star3" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="4" class="star-input" id="star4">
+                                            <label for="star4" class="star-label"><i class="far fa-star"></i></label>
+                                            
+                                            <input type="radio" name="star" value="5" class="star-input" id="star5">
+                                            <label for="star5" class="star-label"><i class="far fa-star"></i></label>
+                                        </div>
                                     </div>
                                     <div class="mb-3">
-                                        <textarea class="form-control" name="content" rows="3" placeholder="Viết đánh giá của bạn..." required></textarea>
+                                        <label for="content" class="form-label">Nội dung:</label>
+                                        <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="image" class="form-label">Thêm hình ảnh (không bắt buộc)</label>
+                                        <label for="image" class="form-label">Hình ảnh (không bắt buộc):</label>
                                         <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                        <div id="imagePreview" class="mt-2"></div>
+                                        <div id="imagePreview" class="mt-2" style="display: none;">
+                                            <img src="" alt="Preview" class="img-fluid" style="max-width: 200px;">
+                                        </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
                                 </form>
@@ -604,6 +632,144 @@
                 });
             });
 
+         
+        </script>
+         <script>
+            $(document).ready(function () {
+                // Star rating functionality
+                function initializeStarRating(container) {
+                    const stars = container.querySelectorAll('.star-label');
+                    stars.forEach(star => {
+                        star.addEventListener('click', function () {
+                            const input = this.previousElementSibling;
+                            input.checked = true;
+                            updateStars(container, input.value);
+                        });
+
+                        star.addEventListener('mouseover', function () {
+                            const value = this.previousElementSibling.value;
+                            updateStars(container, value);
+                        });
+
+                        star.addEventListener('mouseout', function () {
+                            const checkedInput = container.querySelector('.star-input:checked');
+                            updateStars(container, checkedInput ? checkedInput.value : 0);
+                        });
+                    });
+                }
+
+                function updateStars(container, value) {
+                    const stars = container.querySelectorAll('.star-label i');
+                    stars.forEach((star, index) => {
+                        if (index < value) {
+                            star.classList.remove('far');
+                            star.classList.add('fas');
+                        } else {
+                            star.classList.remove('fas');
+                            star.classList.add('far');
+                        }
+                    });
+                }
+
+                // Initialize star rating for both forms
+                initializeStarRating(document.querySelector('form.mb-4'));
+                initializeStarRating(document.querySelector('#editCommentForm'));
+
+                // Xử lý form đánh giá sản phẩm
+                $('form[action="AddProductComment"]').on('submit', function (e) {
+                    e.preventDefault();
+                    
+                    var star = $('input[name="star"]:checked').val();
+                    if (!star) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Thông báo',
+                            text: 'Vui lòng chọn số sao đánh giá!'
+                        });
+                        return false;
+                    }
+                    
+                    // Nếu đã chọn sao thì submit form
+                    this.submit();
+                });
+
+                // Xử lý form chỉnh sửa đánh giá
+                $('#editCommentForm').on('submit', function (e) {
+                    e.preventDefault();
+                    
+                    var star = $('#editStar input[name="star"]:checked').val();
+                    if (!star) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Thông báo',
+                            text: 'Vui lòng chọn số sao đánh giá!'
+                        });
+                        return false;
+                    }
+
+                    var formData = new FormData(this);
+                    $.ajax({
+                        url: 'EditComment',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: response.message
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Có lỗi xảy ra khi cập nhật đánh giá'
+                            });
+                        }
+                    });
+                });
+
+                // Preview ảnh trước khi upload
+                function readURL(input, previewId) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $(previewId).attr('src', e.target.result);
+                            $(previewId).show();
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+
+                $("#image").change(function () {
+                    readURL(this, "#imagePreview");
+                });
+
+                $("#editImage").change(function () {
+                    readURL(this, "#editImagePreview");
+                });
+
+                // Auto-hide alerts after 3 seconds
+                setTimeout(function() {
+                    $('.alert').fadeOut('slow');
+                }, 3000);
+            });
+        </script>
+        <script>
             document.addEventListener("DOMContentLoaded", function () {
                 // Xử lý sự kiện submit form đánh giá mới
                 document.querySelector("form.mb-4").addEventListener("submit", function (event) {
