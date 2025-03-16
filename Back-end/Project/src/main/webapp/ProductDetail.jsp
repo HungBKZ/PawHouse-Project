@@ -208,34 +208,29 @@
                         <h3>Đánh giá sản phẩm</h3>
                         <c:choose>
                             <c:when test="${not empty sessionScope.user || not empty sessionScope.loggedInUser}">
-                                <form action="AddProductComment" method="post" class="mb-4">
+                                <form action="AddProductComment" method="post" class="mb-4" enctype="multipart/form-data">
                                     <input type="hidden" name="productId" value="${product.productID}">
-                                    <div class="mb-3">
-                                        <label for="rating" class="form-label">Đánh giá của bạn:</label>
-                                        <div class="rating-group">
-                                            <input type="radio" name="star" value="5" id="star5" class="star-input">
-                                            <label for="star5" class="star-label"><i class="far fa-star"></i></label>
-
-                                            <input type="radio" name="star" value="4" id="star4" class="star-input">
-                                            <label for="star4" class="star-label"><i class="far fa-star"></i></label>
-
-                                            <input type="radio" name="star" value="3" id="star3" class="star-input">
-                                            <label for="star3" class="star-label"><i class="far fa-star"></i></label>
-
-                                            <input type="radio" name="star" value="2" id="star2" class="star-input">
-                                            <label for="star2" class="star-label"><i class="far fa-star"></i></label>
-
-                                            <input type="radio" name="star" value="1" id="star1" class="star-input">
-                                            <label for="star1" class="star-label"><i class="far fa-star"></i></label>
-                                        </div>
+                                    <div class="rating-group mb-3">
+                                        <input type="radio" class="star-input" id="star5" name="star" value="5" required>
+                                        <label class="star-label" for="star5"><i class="fas fa-star"></i></label>
+                                        <input type="radio" class="star-input" id="star4" name="star" value="4">
+                                        <label class="star-label" for="star4"><i class="fas fa-star"></i></label>
+                                        <input type="radio" class="star-input" id="star3" name="star" value="3">
+                                        <label class="star-label" for="star3"><i class="fas fa-star"></i></label>
+                                        <input type="radio" class="star-input" id="star2" name="star" value="2">
+                                        <label class="star-label" for="star2"><i class="fas fa-star"></i></label>
+                                        <input type="radio" class="star-input" id="star1" name="star" value="1">
+                                        <label class="star-label" for="star1"><i class="fas fa-star"></i></label>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="content" class="form-label">Nội dung đánh giá:</label>
-                                        <textarea name="content" id="content" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm..." required></textarea>
+                                        <textarea class="form-control" name="content" rows="3" placeholder="Viết đánh giá của bạn..." required></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
-                                    </button>
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Thêm hình ảnh (không bắt buộc)</label>
+                                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                        <div id="imagePreview" class="mt-2"></div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
                                 </form>
                             </c:when>
                             <c:otherwise>
@@ -289,7 +284,12 @@
                                         </div>
                                     </c:if>
                                 </div>
-                                <p class="review-content mt-2 mb-0">${review.content}</p>
+                                <div class="review-content mt-2">
+                                    <p>${review.content}</p>
+                                    <c:if test="${not empty review.image}">
+                                        <img src="${review.image}" alt="Review image" class="img-fluid mt-2" style="max-width: 200px;">
+                                    </c:if>
+                                </div>
                             </div>
                         </c:forEach>
                     </div>
@@ -338,32 +338,34 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="editCommentForm" action="EditComment" method="POST">
+                        <form id="editCommentForm" enctype="multipart/form-data">
                             <input type="hidden" id="editCommentId" name="commentId">
-                            <div class="mb-3">
-                                <label class="form-label">Đánh giá:</label>
-                                <div class="rating-group">
-                                    <input type="radio" name="star" value="5" id="editStar5" class="star-input">
-                                    <label for="editStar5" class="star-label"><i class="far fa-star"></i></label>
-                                    <input type="radio" name="star" value="4" id="editStar4" class="star-input">
-                                    <label for="editStar4" class="star-label"><i class="far fa-star"></i></label>
-                                    <input type="radio" name="star" value="3" id="editStar3" class="star-input">
-                                    <label for="editStar3" class="star-label"><i class="far fa-star"></i></label>
-                                    <input type="radio" name="star" value="2" id="editStar2" class="star-input">
-                                    <label for="editStar2" class="star-label"><i class="far fa-star"></i></label>
-                                    <input type="radio" name="star" value="1" id="editStar1" class="star-input">
-                                    <label for="editStar1" class="star-label"><i class="far fa-star"></i></label>
-                                </div>
+                            <div class="rating-group mb-3">
+                                <input type="radio" class="star-input" id="editStar5" name="star" value="5">
+                                <label class="star-label" for="editStar5"><i class="fas fa-star"></i></label>
+                                <input type="radio" class="star-input" id="editStar4" name="star" value="4">
+                                <label class="star-label" for="editStar4"><i class="fas fa-star"></i></label>
+                                <input type="radio" class="star-input" id="editStar3" name="star" value="3">
+                                <label class="star-label" for="editStar3"><i class="fas fa-star"></i></label>
+                                <input type="radio" class="star-input" id="editStar2" name="star" value="2">
+                                <label class="star-label" for="editStar2"><i class="fas fa-star"></i></label>
+                                <input type="radio" class="star-input" id="editStar1" name="star" value="1">
+                                <label class="star-label" for="editStar1"><i class="fas fa-star"></i></label>
                             </div>
                             <div class="mb-3">
-                                <label for="editContent" class="form-label">Nội dung đánh giá:</label>
-                                <textarea name="content" id="editContent" class="form-control" rows="4" required></textarea>
+                                <label for="editContent" class="form-label">Nội dung đánh giá</label>
+                                <textarea class="form-control" id="editContent" name="content" rows="3" required></textarea>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <div class="mb-3">
+                                <label for="editImage" class="form-label">Thay đổi hình ảnh (không bắt buộc)</label>
+                                <input type="file" class="form-control" id="editImage" name="image" accept="image/*">
+                                <div id="editImagePreview" class="mt-2"></div>
                             </div>
                         </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" form="editCommentForm" class="btn btn-primary">Lưu thay đổi</button>
                     </div>
                 </div>
             </div>
@@ -375,208 +377,233 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-                                                    function incrementQuantity() {
-                                                        const input = document.getElementById('quantity');
-                                                        const max = parseInt(input.getAttribute('max'));
-                                                        const currentValue = parseInt(input.value);
-                                                        if (currentValue < max) {
-                                                            input.value = currentValue + 1;
-                                                        }
-                                                    }
+            function incrementQuantity() {
+                const input = document.getElementById('quantity');
+                const max = parseInt(input.getAttribute('max'));
+                const currentValue = parseInt(input.value);
+                if (currentValue < max) {
+                    input.value = currentValue + 1;
+                }
+            }
 
-                                                    function decrementQuantity() {
-                                                        const input = document.getElementById('quantity');
-                                                        const currentValue = parseInt(input.value);
-                                                        if (currentValue > 1) {
-                                                            input.value = currentValue - 1;
-                                                        }
-                                                    }
+            function decrementQuantity() {
+                const input = document.getElementById('quantity');
+                const currentValue = parseInt(input.value);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            }
 
-                                                    // Initialize star rating functionality
-                                                    function initializeStarRating(container) {
-                                                        const stars = container.querySelectorAll('.star-label');
-                                                        stars.forEach(star => {
-                                                            star.addEventListener('click', function () {
-                                                                const input = this.previousElementSibling;
-                                                                input.checked = true;
-                                                                updateStars(container, input.value);
-                                                            });
+            // Initialize star rating functionality
+            function initializeStarRating(container) {
+                const stars = container.querySelectorAll('.star-label');
+                stars.forEach(star => {
+                    star.addEventListener('click', function () {
+                        const input = this.previousElementSibling;
+                        input.checked = true;
+                        updateStars(container, input.value);
+                    });
 
-                                                            star.addEventListener('mouseover', function () {
-                                                                const value = this.previousElementSibling.value;
-                                                                updateStars(container, value);
-                                                            });
+                    star.addEventListener('mouseover', function () {
+                        const value = this.previousElementSibling.value;
+                        updateStars(container, value);
+                    });
 
-                                                            star.addEventListener('mouseout', function () {
-                                                                const checkedInput = container.querySelector('.star-input:checked');
-                                                                updateStars(container, checkedInput ? checkedInput.value : 0);
-                                                            });
-                                                        });
-                                                    }
+                    star.addEventListener('mouseout', function () {
+                        const checkedInput = container.querySelector('.star-input:checked');
+                        updateStars(container, checkedInput ? checkedInput.value : 0);
+                    });
+                });
+            }
 
-                                                    function updateStars(container, value) {
-                                                        const stars = container.querySelectorAll('.star-label i');
-                                                        stars.forEach((star, index) => {
-                                                            if (index < value) {
-                                                                star.classList.remove('far');
-                                                                star.classList.add('fas');
-                                                            } else {
-                                                                star.classList.remove('fas');
-                                                                star.classList.add('far');
-                                                            }
-                                                        });
-                                                    }
+            function updateStars(container, value) {
+                const stars = container.querySelectorAll('.star-label i');
+                stars.forEach((star, index) => {
+                    if (index < value) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
 
-                                                    // Initialize star rating for new comment form
-                                                    initializeStarRating(document.querySelector('form.mb-4'));
+            // Initialize star rating for new comment form
+            initializeStarRating(document.querySelector('form.mb-4'));
 
-                                                    // Initialize star rating for edit modal
-                                                    initializeStarRating(document.querySelector('#editCommentForm'));
+            // Initialize star rating for edit modal
+            initializeStarRating(document.querySelector('#editCommentForm'));
 
-                                                    // Handle edit button click
-                                                    $('.edit-comment').click(function () {
-                                                        const commentId = $(this).data('comment-id');
-                                                        const content = $(this).data('content');
-                                                        const star = $(this).data('star');
+            // Handle edit button click
+            $('.edit-comment').click(function () {
+                const commentId = $(this).data('comment-id');
+                const content = $(this).data('content');
+                const star = $(this).data('star');
 
-                                                        $('#editCommentId').val(commentId);
-                                                        $('#editContent').val(content);
+                $('#editCommentId').val(commentId);
+                $('#editContent').val(content);
 
-                                                        // Set star rating
-                                                        const editForm = document.querySelector('#editCommentForm');
-                                                        const starInput = editForm.querySelector(`input[value="${star}"]`);
-                                                        if (starInput) {
-                                                            starInput.checked = true;
-                                                            updateStars(editForm, star);
-                                                        }
+                // Set star rating
+                const editForm = document.querySelector('#editCommentForm');
+                const starInput = editForm.querySelector(`input[value="${star}"]`);
+                if (starInput) {
+                    starInput.checked = true;
+                    updateStars(editForm, star);
+                }
 
-                                                        $('#editCommentModal').modal('show');
-                                                    });
+                $('#editCommentModal').modal('show');
+            });
 
-                                                    // Handle edit form submission
-                                                    $('#editCommentForm').on('submit', function (e) {
-                                                        e.preventDefault();
-                                                        const form = $(this);
-                                                        const commentId = $('#editCommentId').val();
+            // Handle edit form submission
+            $('#editCommentForm').on('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const commentId = $('#editCommentId').val();
 
-                                                        if (!form.find('[name="content"]').val().trim()) {
-                                                            alert('Vui lòng nhập nội dung đánh giá');
-                                                            return;
-                                                        }
+                $.ajax({
+                    url: 'EditComment',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            const reviewDiv = $(`#review-${commentId}`);
+                            const stars = formData.get('star');
+                            const content = formData.get('content');
+                            
+                            // Update stars
+                            let starsHtml = '';
+                            for (let i = 1; i <= 5; i++) {
+                                starsHtml += `<i class="${i <= stars ? 'fas' : 'far'} fa-star"></i>`;
+                            }
+                            reviewDiv.find('.review-stars').html(starsHtml);
+                            
+                            // Update content
+                            reviewDiv.find('.review-content p').text(content);
+                            
+                            // Update image if a new one was uploaded
+                            const imageFile = formData.get('image');
+                            if (imageFile && imageFile.size > 0) {
+                                // The actual image URL will be set after page reload
+                                location.reload();
+                            }
 
-                                                        if (!form.find('[name="star"]:checked').val()) {
-                                                            alert('Vui lòng chọn số sao đánh giá');
-                                                            return;
-                                                        }
-
-                                                        $.ajax({
-                                                            url: form.attr('action'),
-                                                            type: form.attr('method'),
-                                                            data: form.serialize(),
-                                                            dataType: 'json',
-                                                            success: function (response) {
-                                                                if (response && response.success) {
-                                                                    $('#editCommentModal').modal('hide');
-                                                                    const reviewDiv = $(`#review-${commentId}`);
-                                                                    const content = form.find('[name="content"]').val();
-                                                                    const star = form.find('[name="star"]:checked').val();
-
-                                                                    // Update content
-                                                                    reviewDiv.find('.review-content').text(content);
-
-                                                                    // Update stars
-                                                                    const stars = reviewDiv.find('.review-stars i');
-                                                                    stars.each(function (index) {
-                                                                        if (index < star) {
-                                                                            $(this).removeClass('far').addClass('fas');
-                                                                        } else {
-                                                                            $(this).removeClass('fas').addClass('far');
-                                                                        }
-                                                                    });
-
-                                                                    // Show success message
-                                                                    const alertDiv = $('<div>')
-                                                                            .addClass('alert alert-success alert-dismissible fade show mt-3')
-                                                                            .html(`
-                                    Đã cập nhật đánh giá thành công
+                            // Close modal and show success message
+                            $('#editCommentModal').modal('hide');
+                            const alertDiv = $(`
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    ${response.message}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                `);
-                                                                    reviewDiv.after(alertDiv);
-                                                                    setTimeout(() => alertDiv.alert('close'), 3000);
+                                </div>
+                            `);
+                            reviewDiv.after(alertDiv);
+                            setTimeout(() => alertDiv.alert('close'), 3000);
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi cập nhật đánh giá');
+                    }
+                });
+            });
 
-                                                                    // Reset form
-                                                                    form[0].reset();
-                                                                } else {
-                                                                    alert(response ? response.message : 'Có lỗi xảy ra khi cập nhật đánh giá');
-                                                                }
-                                                            },
-                                                            error: function (xhr, status, error) {
-                                                                console.error('Error:', error);
-                                                                alert('Có lỗi xảy ra khi cập nhật đánh giá. Vui lòng thử lại sau.');
-                                                            }
-                                                        });
-                                                    });
+            // Image preview for new comment
+            document.getElementById('image').addEventListener('change', function(e) {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = '';
+                
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '200px';
+                        img.classList.add('img-fluid');
+                        preview.appendChild(img);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
 
-                                                    // Delete Comment
-                                                    $('.delete-comment').click(function (e) {
-                                                        e.preventDefault();
-                                                        const form = $(this).closest('form');
-                                                        const commentId = form.find('[name="commentId"]').val();
-                                                        const reviewDiv = $(`#review-${commentId}`);
+            // Image preview for edit comment
+            document.getElementById('editImage').addEventListener('change', function(e) {
+                const preview = document.getElementById('editImagePreview');
+                preview.innerHTML = '';
+                
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '200px';
+                        img.classList.add('img-fluid');
+                        preview.appendChild(img);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
 
-                                                        const confirmModal = $(`
-        <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Xác nhận xóa</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            // Delete Comment
+            $('.delete-comment').click(function (e) {
+                e.preventDefault();
+                const form = $(this).closest('form');
+                const commentId = form.find('[name="commentId"]').val();
+                const reviewDiv = $(`#review-${commentId}`);
+
+                const confirmModal = $(`
+                    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Xác nhận xóa</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).appendTo('body');
+                `).appendTo('body');
 
-                                                        const modal = new bootstrap.Modal(confirmModal);
-                                                        modal.show();
+                const modal = new bootstrap.Modal(confirmModal);
+                modal.show();
 
-                                                        $('#confirmDelete').click(function () {
-                                                            $.ajax({
-                                                                url: form.attr('action'),
-                                                                type: 'POST',
-                                                                data: form.serialize(),
-                                                                dataType: 'json',
-                                                                success: function (response) {
-                                                                    if (response && response.success) {
-                                                                        modal.hide();
-                                                                        confirmModal.remove();
-                                                                        // Load lại trang sau khi xóa thành công
-                                                                        location.reload();
-                                                                    } else {
-                                                                        alert(response ? response.message : 'Có lỗi xảy ra khi xóa đánh giá');
-                                                                    }
-                                                                },
-                                                                error: function (xhr, status, error) {
-                                                                    console.error('Error:', error);
-                                                                    alert('Có lỗi xảy ra khi xóa đánh giá. Vui lòng thử lại sau.');
-                                                                }
-                                                            });
-                                                        });
+                $('#confirmDelete').click(function () {
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        data: form.serialize(),
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response && response.success) {
+                                modal.hide();
+                                confirmModal.remove();
+                                // Load lại trang sau khi xóa thành công
+                                location.reload();
+                            } else {
+                                alert(response ? response.message : 'Có lỗi xảy ra khi xóa đánh giá');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra khi xóa đánh giá. Vui lòng thử lại sau.');
+                        }
+                    });
+                });
 
-                                                        confirmModal.on('hidden.bs.modal', function () {
-                                                            confirmModal.remove();
-                                                        });
-                                                    });
+                confirmModal.on('hidden.bs.modal', function () {
+                    confirmModal.remove();
+                });
+            });
 
-        </script>
-        <script>
             document.addEventListener("DOMContentLoaded", function () {
                 // Xử lý sự kiện submit form đánh giá mới
                 document.querySelector("form.mb-4").addEventListener("submit", function (event) {

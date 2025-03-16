@@ -10,6 +10,12 @@
         <url-pattern>/imgs/*</url-pattern>
     </servlet-mapping>
 
+    <!-- Configure static resource serving for uploaded files -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/uploads/*</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>OrderServlet</servlet-name>
         <servlet-class>controller.OrderServlet</servlet-class>

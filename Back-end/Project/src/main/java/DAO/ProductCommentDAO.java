@@ -44,13 +44,14 @@ public class ProductCommentDAO extends DBContext {
     }
 
     public boolean addComment(ProductComment comment) {
-        String query = "INSERT INTO ProductComment (UserID, ProductID, Star, Content, Date_Comment, ProductCommentStatus) VALUES (?, ?, ?, ?, ?, 1)";
+        String query = "INSERT INTO ProductComment (UserID, ProductID, Star, Content, Date_Comment, Image, ProductCommentStatus) VALUES (?, ?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, comment.getUser().getUserID());
             ps.setInt(2, comment.getProduct().getProductID());
             ps.setInt(3, comment.getStar());
             ps.setString(4, comment.getContent());
             ps.setDate(5, comment.getDateComment());
+            ps.setString(6, comment.getImage());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -74,6 +75,7 @@ public class ProductCommentDAO extends DBContext {
                 comment.setStar(rs.getInt("Star"));
                 comment.setContent(rs.getString("Content"));
                 comment.setDateComment(rs.getDate("Date_Comment"));
+                comment.setImage(rs.getString("Image"));
                 comment.setProductCommentStatus(rs.getBoolean("ProductCommentStatus"));
 
                 User user = new User();
@@ -94,12 +96,13 @@ public class ProductCommentDAO extends DBContext {
         return comments;
     }
 
-    public boolean updateComment(int commentId, String content, int star) {
-        String query = "UPDATE ProductComment SET Content = ?, Star = ? WHERE CommentID = ? AND ProductCommentStatus = 1";
+    public boolean updateComment(int commentId, String content, int star, String image) {
+        String query = "UPDATE ProductComment SET Content = ?, Star = ?, Image = ? WHERE CommentID = ? AND ProductCommentStatus = 1";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, content);
             ps.setInt(2, star);
-            ps.setInt(3, commentId);
+            ps.setString(3, image);
+            ps.setInt(4, commentId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
