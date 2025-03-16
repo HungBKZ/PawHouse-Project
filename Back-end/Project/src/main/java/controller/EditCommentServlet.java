@@ -5,14 +5,25 @@ import Model.User;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.util.UUID;
 
 @WebServlet(name = "EditCommentServlet", urlPatterns = {"/EditComment"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1 MB
+    maxFileSize = 1024 * 1024 * 10,  // 10 MB
+    maxRequestSize = 1024 * 1024 * 15 // 15 MB
+)
 public class EditCommentServlet extends HttpServlet {
+    private static final String UPLOAD_DIR = "uploads/comments";
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,12 +63,37 @@ public class EditCommentServlet extends HttpServlet {
                 return;
             }
             
+            // Handle image upload
+            String imagePath = null;
+            Part filePart = request.getPart("image");
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
+                
+                // Create upload directory in web root
+                String webRootPath = getServletContext().getRealPath("");
+                String uploadPath = webRootPath + File.separator + UPLOAD_DIR;
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+                
+                // Save the file
+                String filePath = uploadPath + File.separator + fileName;
+                filePart.write(filePath);
+                
+                // Store the web-accessible path
+                imagePath = request.getContextPath() + "/" + UPLOAD_DIR + "/" + fileName;
+            }
+            
             ProductCommentDAO commentDAO = new ProductCommentDAO();
-            boolean success = commentDAO.updateComment(commentId, content, star);
+            boolean success = commentDAO.updateComment(commentId, content, star, imagePath);
             
             jsonResponse.addProperty("success", success);
             if (success) {
                 jsonResponse.addProperty("message", "Đã cập nhật đánh giá thành công");
+                if (imagePath != null) {
+                    jsonResponse.addProperty("imagePath", imagePath);
+                }
             } else {
                 jsonResponse.addProperty("message", "Không thể cập nhật đánh giá. Vui lòng thử lại sau");
             }
@@ -72,5 +108,18 @@ public class EditCommentServlet extends HttpServlet {
         }
         
         response.getWriter().write(jsonResponse.toString());
+    }
+    
+    private String getFileExtension(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                String fileName = token.substring(token.indexOf("=") + 2, token.length() - 1);
+                int dotIndex = fileName.lastIndexOf(".");
+                return dotIndex > 0 ? fileName.substring(dotIndex) : "";
+            }
+        }
+        return "";
     }
 }
