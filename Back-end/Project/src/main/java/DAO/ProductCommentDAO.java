@@ -44,15 +44,13 @@ public class ProductCommentDAO extends DBContext {
     }
 
     public boolean addComment(ProductComment comment) {
-        String query = "INSERT INTO ProductComment (UserID, ProductID, Star, Content, Date_Comment, Image, ProductCommentStatus) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO ProductComment (UserID, ProductID, Star, Content, Date_Comment, ProductCommentStatus) VALUES (?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, comment.getUser().getUserID());
             ps.setInt(2, comment.getProduct().getProductID());
             ps.setInt(3, comment.getStar());
             ps.setString(4, comment.getContent());
             ps.setDate(5, comment.getDateComment());
-            ps.setString(6, comment.getImage());
-            ps.setBoolean(7, comment.isProductCommentStatus());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -63,7 +61,7 @@ public class ProductCommentDAO extends DBContext {
 
     public List<ProductComment> getCommentsByProductId(int productId) {
         List<ProductComment> comments = new ArrayList<>();
-        String query = "SELECT pc.*, u.Username, u.Avatar FROM ProductComment pc "
+        String query = "SELECT pc.*, u.UserID, u.Username, u.Avatar FROM ProductComment pc "
                 + "JOIN Users u ON pc.UserID = u.UserID "
                 + "WHERE pc.ProductID = ? AND pc.ProductCommentStatus = 1 "
                 + "ORDER BY pc.Date_Comment DESC";
@@ -79,9 +77,14 @@ public class ProductCommentDAO extends DBContext {
                 comment.setProductCommentStatus(rs.getBoolean("ProductCommentStatus"));
 
                 User user = new User();
+                user.setUserID(rs.getInt("UserID"));
                 user.setUsername(rs.getString("Username"));
                 user.setAvatar(rs.getString("Avatar"));
                 comment.setUser(user);
+
+                Product product = new Product();
+                product.setProductID(productId);
+                comment.setProduct(product);
 
                 comments.add(comment);
             }
@@ -89,5 +92,29 @@ public class ProductCommentDAO extends DBContext {
             e.printStackTrace();
         }
         return comments;
+    }
+
+    public boolean updateComment(int commentId, String content, int star) {
+        String query = "UPDATE ProductComment SET Content = ?, Star = ? WHERE CommentID = ? AND ProductCommentStatus = 1";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, content);
+            ps.setInt(2, star);
+            ps.setInt(3, commentId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteComment(int commentId) {
+        String query = "DELETE FROM ProductComment WHERE CommentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, commentId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

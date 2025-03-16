@@ -1,6 +1,7 @@
 <%@page import="Model.ProductComment"%>
 <%@page import="java.util.List"%>
 <%@page import="DAO.ProductCommentDAO"%>
+<%@page import="Model.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -246,17 +247,49 @@
 
                         <h4>Các đánh giá (${reviewCount})</h4>
                         <c:forEach var="review" items="${comments}">
-                            <div class="review p-3">
-                                <div class="review-header">
-                                    <strong class="review-username">${review.user.username}</strong>
-                                    <div class="review-stars">
-                                        <c:forEach begin="1" end="5" var="i">
-                                            <i class="${i <= review.star ? 'fas' : 'far'} fa-star"></i>
-                                        </c:forEach>
+                            <div class="review p-3" id="review-${review.commentID}">
+                                <div class="review-header d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <strong class="review-username">${review.user.username}</strong>
+                                        <div class="review-stars">
+                                            <c:forEach begin="1" end="5" var="i">
+                                                <i class="${i <= review.star ? 'fas' : 'far'} fa-star"></i>
+                                            </c:forEach>
+                                        </div>
+                                        <span class="review-date">${review.dateComment}</span>
                                     </div>
-                                    <span class="review-date">${review.dateComment}</span>
+                                    
+                                    <%-- Debug information --%>
+                                    <%
+                                        User currentUser = (User) session.getAttribute("user");
+                                        if (currentUser == null) {
+                                            currentUser = (User) session.getAttribute("loggedInUser");
+                                        }
+                                        if (currentUser != null) {
+                                            pageContext.setAttribute("currentUserId", currentUser.getUserID());
+                                        }
+                                    %>
+                                    
+                                    <c:if test="${not empty currentUserId && currentUserId == review.user.userID}">
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-primary edit-comment" 
+                                                    data-comment-id="${review.commentID}" 
+                                                    data-content="${review.content}"
+                                                    data-star="${review.star}"
+                                                    title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <form action="DeleteComment" method="POST" class="d-inline delete-form">
+                                                <input type="hidden" name="commentId" value="${review.commentID}">
+                                                <button type="button" class="btn btn-sm btn-outline-danger delete-comment" 
+                                                        title="Xóa">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </c:if>
                                 </div>
-                                <p class="review-content mb-0">${review.content}</p>
+                                <p class="review-content mt-2 mb-0">${review.content}</p>
                             </div>
                         </c:forEach>
                     </div>
@@ -296,10 +329,51 @@
             </div>
         </div>
 
+        <!-- Edit Comment Modal -->
+        <div class="modal fade" id="editCommentModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chỉnh sửa đánh giá</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editCommentForm" action="EditComment" method="POST">
+                            <input type="hidden" id="editCommentId" name="commentId">
+                            <div class="mb-3">
+                                <label class="form-label">Đánh giá:</label>
+                                <div class="rating-group">
+                                    <input type="radio" name="star" value="5" id="editStar5" class="star-input">
+                                    <label for="editStar5" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="star" value="4" id="editStar4" class="star-input">
+                                    <label for="editStar4" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="star" value="3" id="editStar3" class="star-input">
+                                    <label for="editStar3" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="star" value="2" id="editStar2" class="star-input">
+                                    <label for="editStar2" class="star-label"><i class="far fa-star"></i></label>
+                                    <input type="radio" name="star" value="1" id="editStar1" class="star-input">
+                                    <label for="editStar1" class="star-label"><i class="far fa-star"></i></label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editContent" class="form-label">Nội dung đánh giá:</label>
+                                <textarea name="content" id="editContent" class="form-control" rows="4" required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Include Footer -->
         <%@ include file="includes/footer.jsp" %>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             function incrementQuantity() {
                 const input = document.getElementById('quantity');
@@ -317,52 +391,202 @@
                     input.value = currentValue - 1;
                 }
             }
-            // Comment form submission
-            $(document).ready(function () {
-                $('#commentForm').on('submit', function (e) {
-                    e.preventDefault();
 
+            // Initialize star rating functionality
+            function initializeStarRating(container) {
+                const stars = container.querySelectorAll('.star-label');
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const input = this.previousElementSibling;
+                        input.checked = true;
+                        updateStars(container, input.value);
+                    });
+
+                    star.addEventListener('mouseover', function() {
+                        const value = this.previousElementSibling.value;
+                        updateStars(container, value);
+                    });
+
+                    star.addEventListener('mouseout', function() {
+                        const checkedInput = container.querySelector('.star-input:checked');
+                        updateStars(container, checkedInput ? checkedInput.value : 0);
+                    });
+                });
+            }
+
+            function updateStars(container, value) {
+                const stars = container.querySelectorAll('.star-label i');
+                stars.forEach((star, index) => {
+                    if (index < value) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                    } else {
+                        star.classList.remove('fas');
+                        star.classList.add('far');
+                    }
+                });
+            }
+
+            // Initialize star rating for new comment form
+            initializeStarRating(document.querySelector('form.mb-4'));
+
+            // Initialize star rating for edit modal
+            initializeStarRating(document.querySelector('#editCommentForm'));
+
+            // Handle edit button click
+            $('.edit-comment').click(function() {
+                const commentId = $(this).data('comment-id');
+                const content = $(this).data('content');
+                const star = $(this).data('star');
+                
+                $('#editCommentId').val(commentId);
+                $('#editContent').val(content);
+                
+                // Set star rating
+                const editForm = document.querySelector('#editCommentForm');
+                const starInput = editForm.querySelector(`input[value="${star}"]`);
+                if (starInput) {
+                    starInput.checked = true;
+                    updateStars(editForm, star);
+                }
+                
+                $('#editCommentModal').modal('show');
+            });
+
+            // Handle edit form submission
+            $('#editCommentForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const commentId = $('#editCommentId').val();
+                
+                if (!form.find('[name="content"]').val().trim()) {
+                    alert('Vui lòng nhập nội dung đánh giá');
+                    return;
+                }
+
+                if (!form.find('[name="star"]:checked').val()) {
+                    alert('Vui lòng chọn số sao đánh giá');
+                    return;
+                }
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && response.success) {
+                            $('#editCommentModal').modal('hide');
+                            const reviewDiv = $(`#review-${commentId}`);
+                            const content = form.find('[name="content"]').val();
+                            const star = form.find('[name="star"]:checked').val();
+                            
+                            // Update content
+                            reviewDiv.find('.review-content').text(content);
+                            
+                            // Update stars
+                            const stars = reviewDiv.find('.review-stars i');
+                            stars.each(function(index) {
+                                if (index < star) {
+                                    $(this).removeClass('far').addClass('fas');
+                                } else {
+                                    $(this).removeClass('fas').addClass('far');
+                                }
+                            });
+                            
+                            // Show success message
+                            const alertDiv = $('<div>')
+                                .addClass('alert alert-success alert-dismissible fade show mt-3')
+                                .html(`
+                                    Đã cập nhật đánh giá thành công
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                `);
+                            reviewDiv.after(alertDiv);
+                            setTimeout(() => alertDiv.alert('close'), 3000);
+                            
+                            // Reset form
+                            form[0].reset();
+                        } else {
+                            alert(response ? response.message : 'Có lỗi xảy ra khi cập nhật đánh giá');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('Có lỗi xảy ra khi cập nhật đánh giá. Vui lòng thử lại sau.');
+                    }
+                });
+            });
+
+            // Delete Comment
+            $('.delete-comment').click(function(e) {
+                e.preventDefault();
+                const form = $(this).closest('form');
+                const commentId = form.find('[name="commentId"]').val();
+                const reviewDiv = $(`#review-${commentId}`);
+                
+                const confirmModal = $(`
+                    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Xác nhận xóa</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).appendTo('body');
+                
+                const modal = new bootstrap.Modal(confirmModal);
+                modal.show();
+                
+                $('#confirmDelete').click(function() {
                     $.ajax({
-                        url: 'comment',
+                        url: form.attr('action'),
                         type: 'POST',
-                        data: $(this).serialize(),
+                        data: form.serialize(),
                         dataType: 'json',
-                        success: function (response) {
-                            if (response.success) {
-                                // Reload the page to show the new comment
-                                location.reload();
+                        success: function(response) {
+                            if (response && response.success) {
+                                modal.hide();
+                                confirmModal.remove();
+                                
+                                reviewDiv.fadeOut(400, function() {
+                                    const alertDiv = $('<div>')
+                                        .addClass('alert alert-success alert-dismissible fade show')
+                                        .html(`
+                                            Đã xóa đánh giá thành công
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        `);
+                                    $(this).after(alertDiv);
+                                    $(this).remove();
+                                    setTimeout(() => alertDiv.alert('close'), 3000);
+                                    
+                                    // Update review count
+                                    const countText = $('.card.p-3 h4').text();
+                                    const count = parseInt(countText.match(/\d+/)[0]);
+                                    $('.card.p-3 h4').text(`Các đánh giá (${count - 1})`);
+                                });
                             } else {
-                                alert(response.message);
+                                alert(response ? response.message : 'Có lỗi xảy ra khi xóa đánh giá');
                             }
                         },
-                        error: function () {
-                            alert('Có lỗi xảy ra khi gửi đánh giá');
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            alert('Có lỗi xảy ra khi xóa đánh giá. Vui lòng thử lại sau.');
                         }
                     });
                 });
-            });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const ratingInputs = document.querySelectorAll('.star-input');
-                const ratingLabels = document.querySelectorAll('.star-label');
-
-                ratingInputs.forEach((input, index) => {
-                    input.addEventListener('change', function () {
-                        // Lặp qua tất cả các sao và cập nhật trạng thái
-                        ratingLabels.forEach((label, i) => {
-                            const star = label.querySelector('i');
-                            if (i >= index) {
-                                star.classList.remove('far');
-                                star.classList.add('fas'); // Sao đầy
-                                star.style.color = "#FFD700"; // Màu vàng sáng
-                            } else {
-                                star.classList.remove('fas');
-                                star.classList.add('far'); // Sao rỗng
-                                star.style.color = ""; // Trả về màu mặc định
-                            }
-                        });
-                    });
+                
+                confirmModal.on('hidden.bs.modal', function() {
+                    confirmModal.remove();
                 });
             });
         </script>
