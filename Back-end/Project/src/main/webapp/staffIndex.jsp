@@ -111,7 +111,7 @@
                         <li class="nav-item"><a class="nav-link" href="StaffPetServlet"><i class="fas fa-paw"></i> Pets</a></li>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staffManageAdoption"><i class="fas fa-heart"></i> Adoptions</a></li>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/StaffAppointmentServlet?action=list"><i class="fas fa-calendar-check"></i> Appointments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/StaffManageOrderServlet"><i class="fas fa-shopping-cart"></i> Orders</a></li> <!-- Thêm quản lý đơn hàng -->
+                        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staffManageOrder"><i class="fas fa-shopping-cart"></i> Orders</a></li>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staff/report"><i class="fas fa-chart-bar"></i> Reports</a></li>
                     </ul>
 

@@ -10,15 +10,16 @@
         <url-pattern>/imgs/*</url-pattern>
     </servlet-mapping>
 
-    <!-- Order Management Servlet -->
     <servlet>
         <servlet-name>OrderServlet</servlet-name>
         <servlet-class>controller.OrderServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>OrderServlet</servlet-name>
         <url-pattern>/staffManageOrder</url-pattern>
     </servlet-mapping>
+
 
     <error-page>
         <error-code>404</error-code>

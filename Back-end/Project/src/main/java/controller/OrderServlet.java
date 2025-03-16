@@ -9,6 +9,7 @@ import Model.Orders;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet; // Thêm thư viện này
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@WebServlet(name = "OrderServlet", urlPatterns = {"/staffManageOrder"}) // Thêm annotation này
 public class OrderServlet extends HttpServlet {
+
     private static final Logger LOGGER = Logger.getLogger(OrderServlet.class.getName());
     private OrderDAO orderDAO;
 
@@ -52,18 +55,18 @@ public class OrderServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/plain;charset=UTF-8");
         String action = request.getParameter("action");
-        
+
         try {
             if (orderDAO == null) {
                 orderDAO = new OrderDAO();
             }
-            
+
             if (action != null && action.equals("updateStatus")) {
                 int orderID = Integer.parseInt(request.getParameter("orderID"));
                 boolean status = Boolean.parseBoolean(request.getParameter("status"));
-                
+
                 LOGGER.info("Updating order ID: " + orderID + " to status: " + status);
-                
+
                 boolean success = orderDAO.updateOrderStatus(orderID, status);
                 if (success) {
                     response.getWriter().write("success");
@@ -81,7 +84,7 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().write("error: " + e.getMessage());
             return;
         }
-        
+
         response.sendRedirect("staffManageOrder");
     }
 }
