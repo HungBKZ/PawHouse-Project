@@ -9,6 +9,7 @@ import Model.Pet;
 import Model.PetCategories;
 import Model.User;
 import Utils.DBContext;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,18 @@ import java.util.List;
  *
  * @author hungv
  */
-public class AdoptionDAO extends DBContext {
+public class AdoptionDAO {
+    private Connection connection;
+
+    public AdoptionDAO() {
+        try {
+            connection = DBContext.getConnection();
+            System.out.println("Database connection established successfully");
+        } catch (SQLException e) {
+            System.out.println("Error connecting to database: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     public List<AdoptionHistory> getAdoptionHistoryByPetId(int petId) {
         List<AdoptionHistory> historyList = new ArrayList<>();
@@ -88,12 +100,36 @@ public class AdoptionDAO extends DBContext {
     }
 
     public boolean updateAdoptionStatus(int adoptionId, String status, String notes) {
+        // Convert English status to Vietnamese
+        if (status.equals("Approved")) {
+            status = "Hoàn thành";
+        } else if (status.equals("Rejected")) {
+            status = "Từ chối";
+        } else if (status.equals("Pending")) {
+            status = "Đang chờ";
+        }
+
         String query = "UPDATE AdoptionHistory SET AdoptionStatus = ?, Notes = ? WHERE AdoptionID = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, status);
             ps.setString(2, notes);
             ps.setInt(3, adoptionId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating adoption status: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updatePetAdoptionStatus(int adoptionId, String status) {
+        String query = "UPDATE Pets SET AdoptionStatus = ? WHERE PetID = (SELECT PetID FROM AdoptionHistory WHERE AdoptionID = ?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, status);
+            ps.setInt(2, adoptionId);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -155,7 +191,7 @@ public class AdoptionDAO extends DBContext {
 
     public List<AdoptionHistory> getAllAdoptions() {
         List<AdoptionHistory> adoptionList = new ArrayList<>();
-        String query = "SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.AdoptionStatus as RequestStatus, ah.Notes, "
+        String query = "SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.AdoptionStatus, ah.Notes, "
                 + "p.CategoryID, pc.CategoryName, p.PetName, p.Species, p.Breed, p.Age, p.Gender, "
                 + "p.PetImage, p.AdoptionStatus as PetStatus, p.UserID, p.InUseService, "
                 + "u.FullName as CustomerName, u.Email as CustomerEmail, "
@@ -165,18 +201,21 @@ public class AdoptionDAO extends DBContext {
                 + "JOIN PetCategories pc ON p.CategoryID = pc.CategoryID "
                 + "LEFT JOIN Users u ON p.UserID = u.UserID "
                 + "ORDER BY CASE ah.AdoptionStatus "
-                + "    WHEN 'Pending' THEN 1 "
-                + "    WHEN 'Approved' THEN 2 "
-                + "    WHEN 'Rejected' THEN 3 "
+                + "    WHEN N'Đang chờ' THEN 1 "
+                + "    WHEN N'Hoàn thành' THEN 2 "
+                + "    WHEN N'Từ chối' THEN 3 "
                 + "    ELSE 4 END, "
                 + "ah.AdoptionDate DESC";
 
         try {
+            System.out.println("Executing query: " + query);
             PreparedStatement ps = connection.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
-
+            
+            int count = 0;
             while (rs.next()) {
-                // Tạo đối tượng User cho khách hàng
+                count++;
+                
                 User customer = new User();
                 customer.setUserID(rs.getInt("UserID"));
                 customer.setFullName(rs.getString("CustomerName"));
@@ -184,7 +223,6 @@ public class AdoptionDAO extends DBContext {
                 customer.setPhone(rs.getString("CustomerPhone"));
                 customer.setAddress(rs.getString("CustomerAddress"));
 
-                // Tạo đối tượng Pet
                 Pet pet = new Pet(
                     rs.getInt("PetID"),
                     new PetCategories(rs.getInt("CategoryID"), rs.getString("CategoryName"), ""),
@@ -194,23 +232,29 @@ public class AdoptionDAO extends DBContext {
                     rs.getInt("Age"),
                     rs.getString("Gender"),
                     rs.getString("PetImage"),
-                    rs.getString("PetStatus"), // Sử dụng trạng thái từ bảng Pets
+                    rs.getString("PetStatus"),
                     customer,
                     rs.getString("InUseService")
                 );
 
-                // Tạo đối tượng AdoptionHistory
                 AdoptionHistory adoption = new AdoptionHistory();
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setPet(pet);
                 adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
-                adoption.setAdoptionStatus(rs.getString("RequestStatus")); // Sử dụng trạng thái từ bảng AdoptionHistory
+                adoption.setAdoptionStatus(rs.getString("AdoptionStatus"));
                 adoption.setNotes(rs.getString("Notes"));
                 
                 adoptionList.add(adoption);
+                
+                System.out.println("Found adoption: ID=" + adoption.getAdoptionID() 
+                    + ", Pet=" + pet.getPetName()
+                    + ", Status=" + adoption.getAdoptionStatus()
+                    + ", User=" + customer.getFullName());
             }
+            System.out.println("Total adoptions found: " + count);
+            
         } catch (SQLException e) {
-            System.out.println("Error in getAllAdoptions: " + e.getMessage());
+            System.out.println("Error executing query: " + e.getMessage());
             e.printStackTrace();
         }
         return adoptionList;
@@ -218,45 +262,50 @@ public class AdoptionDAO extends DBContext {
 
     public List<AdoptionHistory> getFilteredAdoptions(String status, String dateStr) {
         List<AdoptionHistory> adoptionList = new ArrayList<>();
-        StringBuilder query = new StringBuilder(
-            "SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.AdoptionStatus as RequestStatus, ah.Notes, "
-            + "p.CategoryID, pc.CategoryName, p.PetName, p.Species, p.Breed, p.Age, p.Gender, "
-            + "p.PetImage, p.AdoptionStatus as PetStatus, p.UserID, p.InUseService, "
-            + "u.FullName as CustomerName, u.Email as CustomerEmail, "
-            + "u.Phone as CustomerPhone, u.Address as CustomerAddress "
-            + "FROM AdoptionHistory ah "
-            + "JOIN Pets p ON ah.PetID = p.PetID "
-            + "JOIN PetCategories pc ON p.CategoryID = pc.CategoryID "
-            + "LEFT JOIN Users u ON p.UserID = u.UserID "
-            + "WHERE 1=1"
-        );
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.AdoptionStatus, ah.Notes, ")
+             .append("p.CategoryID, pc.CategoryName, p.PetName, p.Species, p.Breed, p.Age, p.Gender, ")
+             .append("p.PetImage, p.AdoptionStatus as PetStatus, p.UserID, p.InUseService, ")
+             .append("u.FullName as CustomerName, u.Email as CustomerEmail, ")
+             .append("u.Phone as CustomerPhone, u.Address as CustomerAddress ")
+             .append("FROM AdoptionHistory ah ")
+             .append("JOIN Pets p ON ah.PetID = p.PetID ")
+             .append("JOIN PetCategories pc ON p.CategoryID = pc.CategoryID ")
+             .append("LEFT JOIN Users u ON p.UserID = u.UserID ")
+             .append("WHERE 1=1 ");
 
         List<Object> params = new ArrayList<>();
-        
         if (status != null && !status.isEmpty()) {
-            query.append(" AND ah.AdoptionStatus = ?");
+            if (status.equals("Pending")) {
+                status = "Đang chờ";
+            } else if (status.equals("Approved")) {
+                status = "Hoàn thành";
+            } else if (status.equals("Rejected")) {
+                status = "Từ chối";
+            }
+            query.append("AND ah.AdoptionStatus = ? ");
             params.add(status);
         }
-        
         if (dateStr != null && !dateStr.isEmpty()) {
-            query.append(" AND CAST(ah.AdoptionDate AS DATE) = ?");
+            query.append("AND CAST(ah.AdoptionDate AS DATE) = ? ");
             params.add(Date.valueOf(dateStr));
         }
-        
-        query.append(" ORDER BY CASE ah.AdoptionStatus "
-                + "    WHEN 'Pending' THEN 1 "
-                + "    WHEN 'Approved' THEN 2 "
-                + "    WHEN 'Rejected' THEN 3 "
-                + "    ELSE 4 END, "
-                + "ah.AdoptionDate DESC");
+
+        query.append("ORDER BY CASE ah.AdoptionStatus ")
+             .append("    WHEN N'Đang chờ' THEN 1 ")
+             .append("    WHEN N'Hoàn thành' THEN 2 ")
+             .append("    WHEN N'Từ chối' THEN 3 ")
+             .append("    ELSE 4 END, ")
+             .append("ah.AdoptionDate DESC");
 
         try {
+            System.out.println("Executing filtered query with status: " + status);
             PreparedStatement ps = connection.prepareStatement(query.toString());
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
-            
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
                 User customer = new User();
                 customer.setUserID(rs.getInt("UserID"));
@@ -283,7 +332,7 @@ public class AdoptionDAO extends DBContext {
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setPet(pet);
                 adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
-                adoption.setAdoptionStatus(rs.getString("RequestStatus"));
+                adoption.setAdoptionStatus(rs.getString("AdoptionStatus"));
                 adoption.setNotes(rs.getString("Notes"));
                 
                 adoptionList.add(adoption);
@@ -293,22 +342,5 @@ public class AdoptionDAO extends DBContext {
             e.printStackTrace();
         }
         return adoptionList;
-    }
-
-    public boolean updatePetAdoptionStatus(int adoptionId, String status) {
-        String query = "UPDATE Pets p " +
-                      "JOIN AdoptionHistory ah ON p.PetID = ah.PetID " +
-                      "SET p.AdoptionStatus = ? " +
-                      "WHERE ah.AdoptionID = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setString(1, status);
-            ps.setInt(2, adoptionId);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }

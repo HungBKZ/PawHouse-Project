@@ -114,24 +114,41 @@
             <div class="btn-group">
                 <button class="btn btn-outline-primary" onclick="filterAdoptions('all')">Tất cả</button>
                 <button class="btn btn-outline-warning" onclick="filterAdoptions('pending')">Đang chờ</button>
-                <button class="btn btn-outline-success" onclick="filterAdoptions('approved')">Đã duyệt</button>
-                <button class="btn btn-outline-danger" onclick="filterAdoptions('rejected')">Đã từ chối</button>
+                <button class="btn btn-outline-success" onclick="filterAdoptions('approved')">Hoàn thành</button>
+                <button class="btn btn-outline-danger" onclick="filterAdoptions('rejected')">Từ chối</button>
             </div>
         </div>
+
+        <!-- Success Message -->
+        <c:if test="${not empty successMessage}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> ${successMessage}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+
+        <!-- Error Message -->
+        <c:if test="${not empty errorMessage}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> ${errorMessage}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
             
         <c:if test="${empty adoptions}">
             <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Không có yêu cầu nhận nuôi nào đang chờ xử lý.
+                <i class="fas fa-info-circle"></i> Không có yêu cầu nhận nuôi nào.
             </div>
         </c:if>
             
         <c:forEach items="${adoptions}" var="adoption">
-            <div class="adoption-card p-4" data-status="${adoption.adoptionStatus.toLowerCase()}">
+            <div class="adoption-card p-4 mb-4 border rounded shadow-sm" data-status="${adoption.adoptionStatus.toLowerCase()}">
                 <div class="row">
                     <div class="col-md-3">
                         <img src="${pageContext.request.contextPath}/${adoption.pet.petImage}" 
                              alt="${adoption.pet.petName}" 
-                             class="pet-image img-fluid mb-3">
+                             class="img-fluid rounded mb-3"
+                             style="max-height: 200px; width: 100%; object-fit: cover;">
                     </div>
                     <div class="col-md-6">
                         <div class="pet-info">
@@ -139,43 +156,45 @@
                             <p><i class="fas fa-info-circle"></i> <strong>Loài:</strong> ${adoption.pet.species}</p>
                             <p><i class="fas fa-dog"></i> <strong>Giống:</strong> ${adoption.pet.breed}</p>
                             <p><i class="fas fa-birthday-cake"></i> <strong>Tuổi:</strong> ${adoption.pet.age} tuổi</p>
-                            <p><i class="fas fa-paw"></i> <strong>Trạng thái thú cưng:</strong> 
-                                <span class="pet-status ${adoption.pet.adoptionStatus == 'Available' ? 'status-available' : 
-                                                       adoption.pet.adoptionStatus == 'Pending' ? 'status-pending' : 
-                                                       'status-adopted'}">
-                                    ${adoption.pet.adoptionStatus == 'Available' ? 'Chưa nhận nuôi' : 
-                                     adoption.pet.adoptionStatus == 'Pending' ? 'Đang chờ duyệt' : 
-                                     'Đã nhận nuôi'}
-                                </span>
-                            </p>
+                            <p><i class="fas fa-venus-mars"></i> <strong>Giới tính:</strong> ${adoption.pet.gender}</p>
                         </div>
-                        <div class="customer-info">
+                        <div class="customer-info mt-3">
                             <h5><i class="fas fa-user"></i> Thông tin người yêu cầu</h5>
                             <p><i class="fas fa-user-tag"></i> <strong>Họ tên:</strong> ${adoption.pet.owner.fullName}</p>
                             <p><i class="fas fa-envelope"></i> <strong>Email:</strong> ${adoption.pet.owner.email}</p>
                             <p><i class="fas fa-calendar-alt"></i> <strong>Ngày yêu cầu:</strong> ${adoption.adoptionDate}</p>
-                            <p class="status-${adoption.adoptionStatus.toLowerCase()}">
-                                <i class="fas fa-info-circle"></i> <strong>Trạng thái:</strong> ${adoption.adoptionStatus}
+                            <p>
+                                <i class="fas fa-info-circle"></i> <strong>Trạng thái:</strong>
+                                <span class="badge ${adoption.adoptionStatus == 'Đang chờ' ? 'bg-warning' : 
+                                                    adoption.adoptionStatus == 'Hoàn thành' ? 'bg-success' : 
+                                                    'bg-danger'}">
+                                    ${adoption.adoptionStatus}
+                                </span>
                             </p>
+                            <c:if test="${not empty adoption.notes}">
+                                <p><i class="fas fa-comment"></i> <strong>Ghi chú:</strong> ${adoption.notes}</p>
+                            </c:if>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <form action="${pageContext.request.contextPath}/staff/adoptions" method="POST" class="adoption-form">
-                            <input type="hidden" name="adoptionId" value="${adoption.adoptionID}">
-                            <div class="mb-3">
-                                <label for="notes" class="form-label"><i class="fas fa-comment"></i> Ghi chú:</label>
-                                <textarea class="form-control" name="notes" rows="3" required 
-                                          placeholder="Nhập ghi chú về quyết định của bạn..."></textarea>
-                            </div>
-                            <button type="submit" name="action" value="approve" 
-                                    class="btn btn-success btn-action mb-2 w-100">
-                                <i class="fas fa-check"></i> Chấp nhận
-                            </button>
-                            <button type="submit" name="action" value="reject" 
-                                    class="btn btn-danger btn-action w-100">
-                                <i class="fas fa-times"></i> Từ chối
-                            </button>
-                        </form>
+                        <c:if test="${adoption.adoptionStatus == 'Đang chờ'}">
+                            <form action="${pageContext.request.contextPath}/staffManageAdoption" method="POST" class="adoption-form">
+                                <input type="hidden" name="adoptionId" value="${adoption.adoptionID}">
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label"><i class="fas fa-comment"></i> Ghi chú:</label>
+                                    <textarea class="form-control" name="notes" rows="3" required 
+                                              placeholder="Nhập ghi chú về quyết định của bạn..."></textarea>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" name="action" value="approve" class="btn btn-success mb-2">
+                                        <i class="fas fa-check"></i> Chấp nhận
+                                    </button>
+                                    <button type="submit" name="action" value="reject" class="btn btn-danger">
+                                        <i class="fas fa-times"></i> Từ chối
+                                    </button>
+                                </div>
+                            </form>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -190,19 +209,38 @@
     <script>
         function filterAdoptions(status) {
             let url = '${pageContext.request.contextPath}/staffManageAdoption';
-            if (status && status !== 'all') {
-                url += '?status=' + status;
+            if (status === 'pending') {
+                url += '?status=Pending';
+            } else if (status === 'approved') {
+                url += '?status=Approved';
+            } else if (status === 'rejected') {
+                url += '?status=Rejected';
             }
             window.location.href = url;
         }
 
-        // Show success/error messages
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+
+            // Update button states based on current filter
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('success') === 'true') {
-                alert('Yêu cầu nhận nuôi đã được cập nhật thành công!');
-            } else if (urlParams.get('error') === 'true') {
-                alert('Có lỗi xảy ra khi cập nhật yêu cầu nhận nuôi.');
+            const currentStatus = urlParams.get('status');
+            if (currentStatus) {
+                document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.textContent.toLowerCase().includes(currentStatus.toLowerCase())) {
+                        btn.classList.add('active');
+                    }
+                });
+            } else {
+                document.querySelector('.btn-group .btn-outline-primary').classList.add('active');
             }
         });
     </script>
