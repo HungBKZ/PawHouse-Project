@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -53,17 +55,27 @@ public class AddProductCommentServlet extends HttpServlet {
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = UUID.randomUUID().toString() + getFileExtension(filePart);
                 
-                // Create upload directory in web root
-                String webRootPath = getServletContext().getRealPath("");
-                String uploadPath = webRootPath + File.separator + UPLOAD_DIR;
-                File uploadDir = new File(uploadPath);
+                // Get the project's root directory path
+                String projectPath = new File(getServletContext().getRealPath("")).getParentFile().getParentFile().getParentFile().getPath();
+                
+                // Create path to upload directory in project structure
+                Path uploadPath = Paths.get(projectPath, "src", "main", "webapp", UPLOAD_DIR);
+                File uploadDir = uploadPath.toFile();
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
                 
-                // Save the file
-                String filePath = uploadPath + File.separator + fileName;
+                // Save the file to project directory
+                String filePath = uploadPath.resolve(fileName).toString();
                 filePart.write(filePath);
+                
+                // Also save to the deployed directory for immediate access
+                String deployedPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+                File deployedDir = new File(deployedPath);
+                if (!deployedDir.exists()) {
+                    deployedDir.mkdirs();
+                }
+                filePart.write(deployedPath + File.separator + fileName);
                 
                 // Store the web-accessible path
                 imagePath = request.getContextPath() + "/" + UPLOAD_DIR + "/" + fileName;
