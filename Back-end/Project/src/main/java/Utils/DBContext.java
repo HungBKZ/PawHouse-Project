@@ -21,7 +21,9 @@ public class DBContext {
                     + "user=sa;"
                     + "password=12345;"
                     + "encrypt=true;"
-                    + "trustServerCertificate=true;";
+                    + "trustServerCertificate=true;"
+                    + "characterEncoding=UTF-8;"
+                    + "useUnicode=true";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url);
         } catch (ClassNotFoundException | SQLException ex) {
