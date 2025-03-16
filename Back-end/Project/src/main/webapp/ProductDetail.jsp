@@ -258,7 +258,7 @@
                                         </div>
                                         <span class="review-date">${review.dateComment}</span>
                                     </div>
-                                    
+
                                     <%-- Debug information --%>
                                     <%
                                         User currentUser = (User) session.getAttribute("user");
@@ -269,7 +269,7 @@
                                             pageContext.setAttribute("currentUserId", currentUser.getUserID());
                                         }
                                     %>
-                                    
+
                                     <c:if test="${not empty currentUserId && currentUserId == review.user.userID}">
                                         <div class="d-flex gap-2">
                                             <button type="button" class="btn btn-sm btn-outline-primary edit-comment" 
@@ -375,220 +375,235 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            function incrementQuantity() {
-                const input = document.getElementById('quantity');
-                const max = parseInt(input.getAttribute('max'));
-                const currentValue = parseInt(input.value);
-                if (currentValue < max) {
-                    input.value = currentValue + 1;
-                }
-            }
+                                                    function incrementQuantity() {
+                                                        const input = document.getElementById('quantity');
+                                                        const max = parseInt(input.getAttribute('max'));
+                                                        const currentValue = parseInt(input.value);
+                                                        if (currentValue < max) {
+                                                            input.value = currentValue + 1;
+                                                        }
+                                                    }
 
-            function decrementQuantity() {
-                const input = document.getElementById('quantity');
-                const currentValue = parseInt(input.value);
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                }
-            }
+                                                    function decrementQuantity() {
+                                                        const input = document.getElementById('quantity');
+                                                        const currentValue = parseInt(input.value);
+                                                        if (currentValue > 1) {
+                                                            input.value = currentValue - 1;
+                                                        }
+                                                    }
 
-            // Initialize star rating functionality
-            function initializeStarRating(container) {
-                const stars = container.querySelectorAll('.star-label');
-                stars.forEach(star => {
-                    star.addEventListener('click', function() {
-                        const input = this.previousElementSibling;
-                        input.checked = true;
-                        updateStars(container, input.value);
-                    });
+                                                    // Initialize star rating functionality
+                                                    function initializeStarRating(container) {
+                                                        const stars = container.querySelectorAll('.star-label');
+                                                        stars.forEach(star => {
+                                                            star.addEventListener('click', function () {
+                                                                const input = this.previousElementSibling;
+                                                                input.checked = true;
+                                                                updateStars(container, input.value);
+                                                            });
 
-                    star.addEventListener('mouseover', function() {
-                        const value = this.previousElementSibling.value;
-                        updateStars(container, value);
-                    });
+                                                            star.addEventListener('mouseover', function () {
+                                                                const value = this.previousElementSibling.value;
+                                                                updateStars(container, value);
+                                                            });
 
-                    star.addEventListener('mouseout', function() {
-                        const checkedInput = container.querySelector('.star-input:checked');
-                        updateStars(container, checkedInput ? checkedInput.value : 0);
-                    });
-                });
-            }
+                                                            star.addEventListener('mouseout', function () {
+                                                                const checkedInput = container.querySelector('.star-input:checked');
+                                                                updateStars(container, checkedInput ? checkedInput.value : 0);
+                                                            });
+                                                        });
+                                                    }
 
-            function updateStars(container, value) {
-                const stars = container.querySelectorAll('.star-label i');
-                stars.forEach((star, index) => {
-                    if (index < value) {
-                        star.classList.remove('far');
-                        star.classList.add('fas');
-                    } else {
-                        star.classList.remove('fas');
-                        star.classList.add('far');
-                    }
-                });
-            }
+                                                    function updateStars(container, value) {
+                                                        const stars = container.querySelectorAll('.star-label i');
+                                                        stars.forEach((star, index) => {
+                                                            if (index < value) {
+                                                                star.classList.remove('far');
+                                                                star.classList.add('fas');
+                                                            } else {
+                                                                star.classList.remove('fas');
+                                                                star.classList.add('far');
+                                                            }
+                                                        });
+                                                    }
 
-            // Initialize star rating for new comment form
-            initializeStarRating(document.querySelector('form.mb-4'));
+                                                    // Initialize star rating for new comment form
+                                                    initializeStarRating(document.querySelector('form.mb-4'));
 
-            // Initialize star rating for edit modal
-            initializeStarRating(document.querySelector('#editCommentForm'));
+                                                    // Initialize star rating for edit modal
+                                                    initializeStarRating(document.querySelector('#editCommentForm'));
 
-            // Handle edit button click
-            $('.edit-comment').click(function() {
-                const commentId = $(this).data('comment-id');
-                const content = $(this).data('content');
-                const star = $(this).data('star');
-                
-                $('#editCommentId').val(commentId);
-                $('#editContent').val(content);
-                
-                // Set star rating
-                const editForm = document.querySelector('#editCommentForm');
-                const starInput = editForm.querySelector(`input[value="${star}"]`);
-                if (starInput) {
-                    starInput.checked = true;
-                    updateStars(editForm, star);
-                }
-                
-                $('#editCommentModal').modal('show');
-            });
+                                                    // Handle edit button click
+                                                    $('.edit-comment').click(function () {
+                                                        const commentId = $(this).data('comment-id');
+                                                        const content = $(this).data('content');
+                                                        const star = $(this).data('star');
 
-            // Handle edit form submission
-            $('#editCommentForm').on('submit', function(e) {
-                e.preventDefault();
-                const form = $(this);
-                const commentId = $('#editCommentId').val();
-                
-                if (!form.find('[name="content"]').val().trim()) {
-                    alert('Vui lòng nhập nội dung đánh giá');
-                    return;
-                }
+                                                        $('#editCommentId').val(commentId);
+                                                        $('#editContent').val(content);
 
-                if (!form.find('[name="star"]:checked').val()) {
-                    alert('Vui lòng chọn số sao đánh giá');
-                    return;
-                }
+                                                        // Set star rating
+                                                        const editForm = document.querySelector('#editCommentForm');
+                                                        const starInput = editForm.querySelector(`input[value="${star}"]`);
+                                                        if (starInput) {
+                                                            starInput.checked = true;
+                                                            updateStars(editForm, star);
+                                                        }
 
-                $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response && response.success) {
-                            $('#editCommentModal').modal('hide');
-                            const reviewDiv = $(`#review-${commentId}`);
-                            const content = form.find('[name="content"]').val();
-                            const star = form.find('[name="star"]:checked').val();
-                            
-                            // Update content
-                            reviewDiv.find('.review-content').text(content);
-                            
-                            // Update stars
-                            const stars = reviewDiv.find('.review-stars i');
-                            stars.each(function(index) {
-                                if (index < star) {
-                                    $(this).removeClass('far').addClass('fas');
-                                } else {
-                                    $(this).removeClass('fas').addClass('far');
-                                }
-                            });
-                            
-                            // Show success message
-                            const alertDiv = $('<div>')
-                                .addClass('alert alert-success alert-dismissible fade show mt-3')
-                                .html(`
+                                                        $('#editCommentModal').modal('show');
+                                                    });
+
+                                                    // Handle edit form submission
+                                                    $('#editCommentForm').on('submit', function (e) {
+                                                        e.preventDefault();
+                                                        const form = $(this);
+                                                        const commentId = $('#editCommentId').val();
+
+                                                        if (!form.find('[name="content"]').val().trim()) {
+                                                            alert('Vui lòng nhập nội dung đánh giá');
+                                                            return;
+                                                        }
+
+                                                        if (!form.find('[name="star"]:checked').val()) {
+                                                            alert('Vui lòng chọn số sao đánh giá');
+                                                            return;
+                                                        }
+
+                                                        $.ajax({
+                                                            url: form.attr('action'),
+                                                            type: form.attr('method'),
+                                                            data: form.serialize(),
+                                                            dataType: 'json',
+                                                            success: function (response) {
+                                                                if (response && response.success) {
+                                                                    $('#editCommentModal').modal('hide');
+                                                                    const reviewDiv = $(`#review-${commentId}`);
+                                                                    const content = form.find('[name="content"]').val();
+                                                                    const star = form.find('[name="star"]:checked').val();
+
+                                                                    // Update content
+                                                                    reviewDiv.find('.review-content').text(content);
+
+                                                                    // Update stars
+                                                                    const stars = reviewDiv.find('.review-stars i');
+                                                                    stars.each(function (index) {
+                                                                        if (index < star) {
+                                                                            $(this).removeClass('far').addClass('fas');
+                                                                        } else {
+                                                                            $(this).removeClass('fas').addClass('far');
+                                                                        }
+                                                                    });
+
+                                                                    // Show success message
+                                                                    const alertDiv = $('<div>')
+                                                                            .addClass('alert alert-success alert-dismissible fade show mt-3')
+                                                                            .html(`
                                     Đã cập nhật đánh giá thành công
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 `);
-                            reviewDiv.after(alertDiv);
-                            setTimeout(() => alertDiv.alert('close'), 3000);
-                            
-                            // Reset form
-                            form[0].reset();
-                        } else {
-                            alert(response ? response.message : 'Có lỗi xảy ra khi cập nhật đánh giá');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                        alert('Có lỗi xảy ra khi cập nhật đánh giá. Vui lòng thử lại sau.');
+                                                                    reviewDiv.after(alertDiv);
+                                                                    setTimeout(() => alertDiv.alert('close'), 3000);
+
+                                                                    // Reset form
+                                                                    form[0].reset();
+                                                                } else {
+                                                                    alert(response ? response.message : 'Có lỗi xảy ra khi cập nhật đánh giá');
+                                                                }
+                                                            },
+                                                            error: function (xhr, status, error) {
+                                                                console.error('Error:', error);
+                                                                alert('Có lỗi xảy ra khi cập nhật đánh giá. Vui lòng thử lại sau.');
+                                                            }
+                                                        });
+                                                    });
+
+                                                    // Delete Comment
+                                                    $('.delete-comment').click(function (e) {
+                                                        e.preventDefault();
+                                                        const form = $(this).closest('form');
+                                                        const commentId = form.find('[name="commentId"]').val();
+                                                        const reviewDiv = $(`#review-${commentId}`);
+
+                                                        const confirmModal = $(`
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).appendTo('body');
+
+                                                        const modal = new bootstrap.Modal(confirmModal);
+                                                        modal.show();
+
+                                                        $('#confirmDelete').click(function () {
+                                                            $.ajax({
+                                                                url: form.attr('action'),
+                                                                type: 'POST',
+                                                                data: form.serialize(),
+                                                                dataType: 'json',
+                                                                success: function (response) {
+                                                                    if (response && response.success) {
+                                                                        modal.hide();
+                                                                        confirmModal.remove();
+                                                                        // Load lại trang sau khi xóa thành công
+                                                                        location.reload();
+                                                                    } else {
+                                                                        alert(response ? response.message : 'Có lỗi xảy ra khi xóa đánh giá');
+                                                                    }
+                                                                },
+                                                                error: function (xhr, status, error) {
+                                                                    console.error('Error:', error);
+                                                                    alert('Có lỗi xảy ra khi xóa đánh giá. Vui lòng thử lại sau.');
+                                                                }
+                                                            });
+                                                        });
+
+                                                        confirmModal.on('hidden.bs.modal', function () {
+                                                            confirmModal.remove();
+                                                        });
+                                                    });
+
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Xử lý sự kiện submit form đánh giá mới
+                document.querySelector("form.mb-4").addEventListener("submit", function (event) {
+                    const starChecked = document.querySelector('input[name="star"]:checked');
+                    if (!starChecked) {
+                        alert("Vui lòng chọn số sao trước khi gửi đánh giá!");
+                        event.preventDefault();
                     }
                 });
             });
-
-            // Delete Comment
-            $('.delete-comment').click(function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                const commentId = form.find('[name="commentId"]').val();
-                const reviewDiv = $(`#review-${commentId}`);
-                
-                const confirmModal = $(`
-                    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Xác nhận xóa</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).appendTo('body');
-                
-                const modal = new bootstrap.Modal(confirmModal);
-                modal.show();
-                
-                $('#confirmDelete').click(function() {
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: 'POST',
-                        data: form.serialize(),
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response && response.success) {
-                                modal.hide();
-                                confirmModal.remove();
-                                
-                                reviewDiv.fadeOut(400, function() {
-                                    const alertDiv = $('<div>')
-                                        .addClass('alert alert-success alert-dismissible fade show')
-                                        .html(`
-                                            Đã xóa đánh giá thành công
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                        `);
-                                    $(this).after(alertDiv);
-                                    $(this).remove();
-                                    setTimeout(() => alertDiv.alert('close'), 3000);
-                                    
-                                    // Update review count
-                                    const countText = $('.card.p-3 h4').text();
-                                    const count = parseInt(countText.match(/\d+/)[0]);
-                                    $('.card.p-3 h4').text(`Các đánh giá (${count - 1})`);
-                                });
-                            } else {
-                                alert(response ? response.message : 'Có lỗi xảy ra khi xóa đánh giá');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                            alert('Có lỗi xảy ra khi xóa đánh giá. Vui lòng thử lại sau.');
-                        }
-                    });
-                });
-                
-                confirmModal.on('hidden.bs.modal', function() {
-                    confirmModal.remove();
-                });
+            // Load lại trang sau khi thêm đánh giá thành công
+            document.querySelector("form.mb-4").addEventListener("submit", function (event) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
             });
+
+            // Load lại trang sau khi chỉnh sửa đánh giá
+            document.getElementById("editCommentForm").addEventListener("submit", function (event) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            });
+
+            // Load lại trang sau khi xóa đánh giá
+
         </script>
+
     </body>
 </html>
