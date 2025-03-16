@@ -9,7 +9,7 @@
 <%
     // Khởi tạo DAO để lấy danh sách đơn hàng
     OrderDAO orderDAO = new OrderDAO();
-    List<Orders> orderList = orderDAO.getAll();
+    List<Orders> orderList = orderDAO.getAllOrders();
 
     // Định dạng tiền tệ
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));

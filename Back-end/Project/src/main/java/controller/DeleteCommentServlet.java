@@ -42,6 +42,7 @@ public class DeleteCommentServlet extends HttpServlet {
             jsonResponse.addProperty("success", success);
             if (success) {
                 jsonResponse.addProperty("message", "Đã xóa đánh giá thành công");
+                
             } else {
                 jsonResponse.addProperty("message", "Không thể xóa đánh giá. Vui lòng thử lại sau");
             }
