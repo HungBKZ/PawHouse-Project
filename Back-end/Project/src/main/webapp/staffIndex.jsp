@@ -101,13 +101,13 @@
     <body>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#"><i class="fas fa-paw"></i> PawHouse Staff</a>
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-paw"></i> PawHouse Staff</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="StaffPetServlet"><i class="fas fa-paw"></i> Pets</a></li>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/staffManageAdoption"><i class="fas fa-heart"></i> Adoptions</a></li>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/StaffAppointmentServlet?action=list"><i class="fas fa-calendar-check"></i> Appointments</a></li>
@@ -146,28 +146,28 @@
                     <div class="stats-card text-center">
                         <i class="fas fa-paw stats-icon"></i>
                         <h3>Total Pets</h3>
-                        <h2>42</h2>
+                        <h2>${totalPets}</h2>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card text-center">
                         <i class="fas fa-heart stats-icon"></i>
                         <h3>Pending Adoptions</h3>
-                        <h2>15</h2>
+                        <h2>${pendingAdoptions}</h2>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card text-center">
                         <i class="fas fa-calendar-check stats-icon"></i>
                         <h3>Today's Appointments</h3>
-                        <h2>8</h2>
+                        <h2>${todayAppointments}</h2>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card text-center">
                         <i class="fas fa-box stats-icon"></i>
                         <h3>Products</h3>
-                        <h2>156</h2>
+                        <h2>${totalProducts}</h2>
                     </div>
                 </div>
             </div>
@@ -177,21 +177,18 @@
             </div>
         </div>
 
-        <footer>
-            <p class="m-0">&copy; 2025 PawHouse. All rights reserved.</p>
-        </footer>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 var ctx = document.getElementById("incomeChart").getContext("2d");
+                var revenueData = ${revenueData};
+
                 var incomeChart = new Chart(ctx, {
                     type: "bar",
                     data: {
-                        labels: ["January", "February", "March", "April", "May", "June"],
+                        labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
                         datasets: [{
                                 label: "Monthly Revenue",
-                                data: [40000, 50000, 60000, 70000, 80000, 90000],
+                                data: revenueData,
                                 backgroundColor: "rgba(0, 86, 179, 0.5)",
                                 borderColor: "#0056b3",
                                 borderWidth: 1
@@ -222,5 +219,8 @@
                 });
             });
         </script>
+        <footer>
+            <p class="m-0">&copy; 2025 PawHouse. All rights reserved.</p>
+        </footer>
     </body>
 </html>

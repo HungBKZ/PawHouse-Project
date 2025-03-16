@@ -68,4 +68,25 @@ public class OrderDAO {
         }
     }
 
+    public List<Double> getMonthlyRevenue() {
+        List<Double> revenue = new ArrayList<>();
+        String sql = "SELECT SUM(TotalAmount) FROM Orders WHERE MONTH(OrderDate) = ? GROUP BY MONTH(OrderDate)";
+
+        try {
+            for (int month = 1; month <= 12; month++) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, month);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    revenue.add(rs.getDouble(1));
+                } else {
+                    revenue.add(0.0);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return revenue;
+    }
+
 }

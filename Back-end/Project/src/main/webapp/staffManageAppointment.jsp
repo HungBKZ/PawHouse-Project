@@ -36,9 +36,8 @@
     <body>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffIndex.jsp">
-                    <i class="fas fa-paw"></i> PawHouse Staff
-                </a>
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-paw"></i> PawHouse Staff</a>
+
             </div>
         </nav>
 

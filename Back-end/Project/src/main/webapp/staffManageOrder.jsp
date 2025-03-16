@@ -13,7 +13,7 @@
                 let message = status ? "Bạn có chắc muốn xác nhận đơn hàng này?" : "Bạn có chắc muốn hủy đơn hàng này?";
                 if (confirm(message)) {
                     console.log("Sending request to update order ID: " + orderID + " to status: " + status);
-                    
+
                     $.ajax({
                         url: "staffManageOrder",
                         method: "POST",
@@ -22,7 +22,7 @@
                             orderID: orderID,
                             status: status
                         },
-                        success: function(response) {
+                        success: function (response) {
                             console.log("Response from server:", response);
                             if (response === "success") {
                                 alert(status ? "Đã xác nhận đơn hàng thành công!" : "Đã hủy đơn hàng thành công!");
@@ -31,7 +31,7 @@
                                 alert("Có lỗi xảy ra: " + response);
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error("Error:", error);
                             alert("Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau!");
                         }
@@ -76,20 +76,16 @@
     <body>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffIndex.jsp">
-                    <i class="fas fa-paw"></i> PawHouse Staff
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-paw"></i> PawHouse Staff</a>
+
             </div>
         </nav>
         <div class="container mt-5">
             <h2 class="mb-4">Danh sách đơn hàng</h2>
             <% String error = (String) request.getAttribute("error");
-               if (error != null) { %>
+                if (error != null) {%>
             <div class="alert alert-danger" role="alert">
-                <%= error %>
+                <%= error%>
             </div>
             <% } %>
             <table class="table table-bordered table-hover">

@@ -35,12 +35,11 @@
         </style>
     </head>
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="${pageContext.request.contextPath}/staffIndex.jsp">
-                <i class="fas fa-paw"></i> PawHouse Staff
-            </a>
-        </div>
-    </nav>
+            <div class="container-fluid">
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-paw"></i> PawHouse Staff</a>
+                
+            </div>
+        </nav>
     <body class="bg-light">
         <div class="container-fluid py-4">
             <h1 class="mb-4"><i class="fas fa-chart-line"></i> Báo Cáo Doanh Thu</h1>

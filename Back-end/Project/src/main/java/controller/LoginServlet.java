@@ -171,7 +171,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("index.jsp");
                 break;
             case 3:
-                response.sendRedirect("staffIndex.jsp");
+                response.sendRedirect("staffDashboard");
                 break;
             case 4:
                 response.sendRedirect("doctorIndex.jsp");
