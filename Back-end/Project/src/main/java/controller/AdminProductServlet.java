@@ -3,11 +3,14 @@ package controller;
 import DAO.ProductAdminDAO;
 import Model.ProductAdmin;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Properties;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,7 +25,26 @@ import jakarta.servlet.http.Part;
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
 public class AdminProductServlet extends HttpServlet {
 
-    private static final String UPLOAD_DIR = "Z:/PawHouse-Project/Back-end/Project/src/main/webapp/imgs/product";
+    // Phương thức đọc đường dẫn thư mục lưu ảnh từ config.properties hoặc mặc định vào webapp/imgs/product
+    private String getUploadDirectory(HttpServletRequest request) {
+        Properties properties = new Properties();
+        String configPath = "src/main/config/config.properties"; // Đường dẫn tương đối
+
+        try (InputStream input = new FileInputStream(configPath)) {
+            properties.load(input);
+            String uploadPath = properties.getProperty("upload.directory");
+
+            if (uploadPath == null || uploadPath.isEmpty()) {
+                // Nếu không có config, tự động lấy thư mục trong webapp
+                uploadPath = request.getServletContext().getRealPath("/imgs/product");
+            }
+
+            return uploadPath;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return request.getServletContext().getRealPath("/imgs/product"); // Nếu có lỗi, dùng thư mục trong webapp
+    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -58,14 +80,21 @@ public class AdminProductServlet extends HttpServlet {
                     return;
                 }
 
+                // Lấy thư mục lưu ảnh từ config hoặc mặc định vào webapp/imgs/product
+                String uploadPath = getUploadDirectory(request);
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) uploadDir.mkdirs(); // Tạo thư mục nếu chưa có
+
+                // Xử lý file ảnh
                 Part filePart = request.getPart("image");
                 String imagePath = request.getParameter("existingImage");
+
                 if (filePart != null && filePart.getSize() > 0) {
                     String fileName = "product" + System.currentTimeMillis() + ".jpg";
-                    File uploadDir = new File(UPLOAD_DIR);
-                    if (!uploadDir.exists()) uploadDir.mkdirs();
                     Path filePath = new File(uploadDir, fileName).toPath();
                     Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                    // Cập nhật đường dẫn để lưu vào database (luôn lưu đường dẫn tương đối)
                     imagePath = "imgs/product/" + fileName;
                 }
 
