@@ -108,6 +108,10 @@
 
                     </li>
                     <li>
+                        <a href="admin-comments" class="list-group-item list-group-item-action">Comment Manage</a>
+
+                    </li>
+                    <li>
                         <a href="#systemSubmenu" data-bs-toggle="collapse"><i class="fas fa-cogs"></i> System Management</a>
                         <ul class="collapse list-unstyled" id="systemSubmenu">
                             <li><a href="admin-profile.jsp">Update Profile</a></li>
