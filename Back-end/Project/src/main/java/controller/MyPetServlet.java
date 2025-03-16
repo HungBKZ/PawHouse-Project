@@ -1,12 +1,15 @@
 package controller;
 
 import DAO.PetDAO;
+import DAO.UserDAO;
 import Model.Pet;
 import Model.User;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,74 +18,74 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "MyPetServlet", urlPatterns = {"/MyPet"})
 public class MyPetServlet extends HttpServlet {
 
-    private PetDAO petDAO;
-
     @Override
-    public void init() throws ServletException {
-        petDAO = new PetDAO();
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("loggedInUser");
 
+        // Nếu user chưa có trong session, kiểm tra trong cookie
+        if (user == null) {
+            user = getUserFromCookies(request);
+            if (user != null) {
+                session.setAttribute("loggedInUser", user);
+            }
+        }
+
+        // Nếu vẫn chưa có user, chuyển hướng về trang đăng nhập
         if (user == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        String action = request.getParameter("action");
-        String success = request.getParameter("success");
-        boolean isStaff = user.getRole() != null && user.getRole().getRoleID() == 2;
+        try {
+            // Lấy danh sách thú cưng của user
+            PetDAO petDAO = new PetDAO();
+            List<Pet> petList = petDAO.getPetsByUserId2(user.getUserID());
 
-        if (action != null && isStaff) {
-            int petId = Integer.parseInt(request.getParameter("petId"));
-            switch (action) {
-                case "edit":
-                    response.sendRedirect("editPet.jsp?petId=" + petId);
-                    return;
-                case "delete":
-                    petDAO.deletePet(petId);
-                    response.sendRedirect("MyPet");
-                    return;
-            }
+            // Lưu danh sách vào request và chuyển tiếp đến trang hiển thị
+            request.setAttribute("petList", petList);
+            request.getRequestDispatcher("myPet.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
         }
+    }
 
-        // Lấy danh sách thú cưng của người dùng
-        List<Pet> petList = petDAO.getPetsByUserId(user.getUserID());
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 
-        // Kiểm tra trạng thái dịch vụ của từng thú cưng
-        for (Pet pet : petList) {
-            String inUseService = pet.getInUseService();
-            if (inUseService == null || inUseService.trim().isEmpty()) {
-                pet.setInUseService("Chưa từng sử dụng dịch vụ");
-            } else {
-                // Chuyển đổi giá trị số sang text
-                switch (inUseService) {
-                    case "Đang tiến hành":
-                        pet.setInUseService("Đang tiến hành");
-                        break;
-                    case "Chưa hoàn thành":
-                        pet.setInUseService("Chưa hoàn thành");
-                        break;
-                    case "Hoàn thành":
-                        pet.setInUseService("Hoàn thành");
-                        break;
-                    default:
-                        pet.setInUseService("Chưa từng sử dụng dịch vụ");
+    /**
+     * Lấy thông tin User từ Cookie
+     */
+    private User getUserFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("authToken".equals(cookie.getName())) {
+                    try {
+                        String decodedValue = decodeAuthToken(cookie.getValue());
+                        if (decodedValue != null && decodedValue.contains(":")) {
+                            String email = decodedValue.split(":")[0];
+                            UserDAO userDAO = new UserDAO();
+                            return userDAO.getUserByEmail(email);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+        return null;
+    }
 
-        request.setAttribute("myPets", petList);
-        request.setAttribute("isStaff", isStaff);
-        
-        // Set success message if present
-        if (success != null && success.equals("adopted")) {
-            request.setAttribute("successMessage", "Bạn đã nhận nuôi thú cưng thành công!");
-        }
-        
-        request.getRequestDispatcher("/myPet.jsp").forward(request, response);
+    /**
+     * Giải mã authToken từ Base64
+     */
+    private String decodeAuthToken(String token) {
+        return new String(java.util.Base64.getDecoder().decode(token));
     }
 }
