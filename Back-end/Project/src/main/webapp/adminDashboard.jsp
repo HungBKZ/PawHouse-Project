@@ -20,7 +20,6 @@
                 width: 100%;
                 align-items: stretch;
             }
-
             #sidebar {
                 min-width: 250px;
                 max-width: 250px;
@@ -93,7 +92,7 @@
                         <a href="adminDashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
                     </li>
                     <li>
-                        <a href="adminAccount-list.jsp"><i class="fas fa-users"></i> Account Management</a>
+                        <a href="admin/accounts"><i class="fas fa-users"></i> Account Management</a>
                     </li>
                     <li>
                         <a href="adminIncome-statistics.jsp"><i class="fas fa-bars"></i> Income Statistics</a>
@@ -105,7 +104,8 @@
                         <a href="adminPet-list.jsp"><i class="fas fa-paw"></i> Pet Management</a>
                     </li>
                     <li>
-                        <a href="commentManagement.jsp"><i class="fas fa-comments"></i> Comment Management</a>
+                        <a href="admin/products" class="list-group-item list-group-item-action">Product Manage</a>
+
                     </li>
                     <li>
                         <a href="#systemSubmenu" data-bs-toggle="collapse"><i class="fas fa-cogs"></i> System Management</a>

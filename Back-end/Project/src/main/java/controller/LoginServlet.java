@@ -165,7 +165,7 @@ public class LoginServlet extends HttpServlet {
 
         switch (user.getRole().getRoleID()) {
             case 1:
-                response.sendRedirect("adminIndex.jsp");
+                response.sendRedirect("adminDashboard.jsp");
                 break;
             case 2:
                 response.sendRedirect("index.jsp");
