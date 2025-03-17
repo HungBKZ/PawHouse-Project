@@ -95,7 +95,7 @@
                         <a href="admin/accounts"><i class="fas fa-users"></i> Account Management</a>
                     </li>
                     <li>
-                        <a href="adminIncome-statistics.jsp"><i class="fas fa-bars"></i> Income Statistics</a>
+                        <a href="${pageContext.request.contextPath}/staff/report"><i class="fas fa-bars"></i> Income Statistics</a>
                     </li>
                     <li>
                         <a href="admin/services"><i class="fas fa-user-circle"></i> Service Management</a>
