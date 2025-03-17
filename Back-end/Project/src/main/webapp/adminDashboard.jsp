@@ -98,7 +98,7 @@
                         <a href="adminIncome-statistics.jsp"><i class="fas fa-bars"></i> Income Statistics</a>
                     </li>
                     <li>
-                        <a href="adminDoctor-list.jsp"><i class="fas fa-user-circle"></i> Doctor Management</a>
+                        <a href="admin/services"><i class="fas fa-user-circle"></i> Service Management</a>
                     </li>
                     <li>
                         <a href="adminPet-list.jsp"><i class="fas fa-paw"></i> Pet Management</a>
