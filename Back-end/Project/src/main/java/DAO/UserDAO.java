@@ -204,7 +204,27 @@ public class UserDAO extends DBContext {
                     User user = new User();
                     user.setUserID(rs.getInt("UserID"));
                     user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
+                    user.setPassword(rs.getString("Password"));                    user.setEmail(rs.getString("Email"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setUserStatus(rs.getBoolean("UserStatus"));
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+
+    public User getUserById(int userId) {
+        String query = "SELECT * FROM Users WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
                     user.setEmail(rs.getString("Email"));
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
@@ -213,6 +233,8 @@ public class UserDAO extends DBContext {
                     return user;
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
