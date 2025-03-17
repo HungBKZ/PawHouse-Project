@@ -114,14 +114,17 @@ public class ProductCommentDAO extends DBContext {
     }
 
     public boolean toggleCommentStatus(int commentId) {
-        String query = "UPDATE ProductComment SET ProductCommentStatus = NOT ProductCommentStatus WHERE CommentID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
+        String query = "UPDATE ProductComment SET ProductCommentStatus = CASE WHEN ProductCommentStatus = 1 THEN 0 ELSE 1 END WHERE CommentID = ?";
+        
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, commentId);
-            return ps.executeUpdate() > 0;
+            int result = ps.executeUpdate();
+            return result > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     public boolean softDeleteComment(int commentId) {

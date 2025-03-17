@@ -128,7 +128,7 @@
                                 </div>
                             </div>
                             <hr>
-                            <a href="staffUpdateProfile.jsp" class="btn btn-outline-primary w-100 mb-2">
+                            <a href="profile.jsp" class="btn btn-outline-primary w-100 mb-2">
                                 <i class="fas fa-user-edit"></i> Update Profile
                             </a>
                             <a href="logout" class="btn btn-outline-danger w-100">
