@@ -83,10 +83,12 @@
             .star-filter.active {
                 color: #ffc107;
             }
+            .hidden {
+                display: none !important;
+            }
         </style>
     </head>
     <body>
-   
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12 mt-4">
@@ -98,15 +100,15 @@
                             <!-- Filter Section -->
                             <div class="filter-section">
                                 <div class="row g-3">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label class="form-label">Tên sản phẩm</label>
                                         <input type="text" class="form-control" id="productFilter" placeholder="Lọc theo tên sản phẩm">
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label class="form-label">Nội dung bình luận</label>
                                         <input type="text" class="form-control" id="contentFilter" placeholder="Lọc theo nội dung">
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label">Đánh giá sao</label>
                                         <div class="star-rating-filter">
                                             <span class="star-filter" data-rating="1"><i class="fas fa-star"></i></span>
@@ -118,7 +120,13 @@
                                                 <i class="fas fa-times"></i> Xóa
                                             </button>
                                         </div>
+                                       
                                     </div>
+                                     <div class="col-md-3">
+                                        <label class="form-label">Lọc theo ngày</label>
+                                        <input type="date" class="form-control" id="dateFilter">
+                                    </div>
+                                    
                                     <div class="col-md-2 d-flex align-items-end">
                                         <button class="btn btn-primary w-100" id="resetFilters">
                                             <i class="fas fa-sync-alt"></i> Đặt lại bộ lọc
@@ -133,7 +141,7 @@
                                     <p class="h5">${message}</p>
                                 </div>
                             </c:if>
-                            
+
                             <c:if test="${not empty error}">
                                 <div class="alert alert-danger" role="alert">
                                     <i class="fas fa-exclamation-circle me-2"></i>
@@ -159,7 +167,7 @@
                                         </thead>
                                         <tbody>
                                             <c:forEach items="${comments}" var="comment">
-                                                <tr class="comment-row">
+                                                <tr class="comment-row" data-comment-date="${comment.dateComment}">
                                                     <td>${comment.commentID}</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
@@ -228,12 +236,12 @@
                 </div>
             </div>
         </div>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 // Cấu hình toastr
                 toastr.options = {
                     "closeButton": true,
@@ -244,7 +252,7 @@
 
                 // Xử lý lọc theo sao
                 let selectedStars = 0;
-                $('.star-filter').click(function() {
+                $('.star-filter').click(function () {
                     const rating = $(this).data('rating');
                     if (selectedStars === rating) {
                         // Bỏ chọn tất cả sao nếu click lại cùng số sao
@@ -253,7 +261,7 @@
                     } else {
                         // Chọn số sao mới
                         $('.star-filter').removeClass('active');
-                        $('.star-filter').each(function() {
+                        $('.star-filter').each(function () {
                             if ($(this).data('rating') <= rating) {
                                 $(this).addClass('active');
                             }
@@ -264,21 +272,27 @@
                 });
 
                 // Xóa bộ lọc sao
-                $('#clearStarFilter').click(function() {
+                $('#clearStarFilter').click(function () {
                     $('.star-filter').removeClass('active');
                     selectedStars = 0;
                     filterComments();
                 });
 
                 // Lọc theo tên sản phẩm và nội dung (realtime)
-                $('#productFilter, #contentFilter').on('input', function() {
+                $('#productFilter, #contentFilter').on('input', function () {
+                    filterComments();
+                });
+
+                // Lọc theo ngày
+                $('#dateFilter').on('change', function () {
                     filterComments();
                 });
 
                 // Đặt lại tất cả bộ lọc
-                $('#resetFilters').click(function() {
+                $('#resetFilters').click(function () {
                     $('#productFilter').val('');
                     $('#contentFilter').val('');
+                    $('#dateFilter').val('');
                     $('.star-filter').removeClass('active');
                     selectedStars = 0;
                     filterComments();
@@ -288,18 +302,21 @@
                 function filterComments() {
                     const productFilter = $('#productFilter').val().toLowerCase();
                     const contentFilter = $('#contentFilter').val().toLowerCase();
+                    const dateFilter = $('#dateFilter').val();
 
-                    $('.comment-row').each(function() {
+                    $('.comment-row').each(function () {
                         const row = $(this);
                         const productName = row.find('.product-name').text().toLowerCase();
                         const content = row.find('.comment-content').text().toLowerCase();
                         const stars = parseInt(row.find('.star-rating').data('stars'));
+                        const commentDate = row.data('comment-date').split(' ')[0]; // Get only the date part
 
                         const matchesProduct = productName.includes(productFilter);
                         const matchesContent = content.includes(contentFilter);
                         const matchesStars = selectedStars === 0 || stars === selectedStars;
+                        const matchesDate = !dateFilter || commentDate === dateFilter;
 
-                        if (matchesProduct && matchesContent && matchesStars) {
+                        if (matchesProduct && matchesContent && matchesStars && matchesDate) {
                             row.show();
                         } else {
                             row.hide();
@@ -308,22 +325,22 @@
                 }
 
                 // Xử lý toggle trạng thái
-                $('.toggle-status').click(function(e) {
+                $('.toggle-status').click(function (e) {
                     e.preventDefault();
                     const button = $(this);
                     const commentId = button.data('id');
                     const row = button.closest('tr');
-                    
+
                     $.ajax({
                         url: 'ToggleCommentStatus',
                         type: 'POST',
-                        data: { commentId: commentId },
-                        success: function(response) {
+                        data: {commentId: commentId},
+                        success: function (response) {
                             if (response.success) {
                                 // Cập nhật trạng thái hiển thị
                                 const statusSpan = row.find('.status-active, .status-inactive');
                                 const isCurrentlyActive = statusSpan.hasClass('status-active');
-                                
+
                                 if (isCurrentlyActive) {
                                     statusSpan.removeClass('status-active').addClass('status-inactive')
                                             .html('<i class="fas fa-circle me-1"></i>Ẩn');
@@ -335,37 +352,37 @@
                                     button.find('i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
                                     button.attr('title', 'Ẩn bình luận');
                                 }
-                                
+
                                 toastr.success(response.message);
                             } else {
                                 toastr.error(response.message);
                             }
                         },
-                        error: function() {
+                        error: function () {
                             toastr.error('Có lỗi xảy ra khi thực hiện thao tác');
                         }
                     });
                 });
 
                 // Xử lý xóa comment
-                $('.delete-comment').click(function() {
+                $('.delete-comment').click(function () {
                     const commentId = $(this).data('id');
                     const row = $(this).closest('tr');
-                    
+
                     if (confirm('Bạn có chắc muốn xóa bình luận này?')) {
                         $.ajax({
                             url: 'DeleteComment',
                             type: 'POST',
-                            data: { commentId: commentId },
-                            success: function(response) {
+                            data: {commentId: commentId},
+                            success: function (response) {
                                 try {
                                     // Parse response if it's a string
                                     if (typeof response === 'string') {
                                         response = JSON.parse(response);
                                     }
-                                    
+
                                     if (response.success) {
-                                        row.fadeOut(400, function() {
+                                        row.fadeOut(400, function () {
                                             $(this).remove();
                                             if ($('.comment-row:visible').length === 0) {
                                                 location.reload();
@@ -380,7 +397,7 @@
                                     toastr.error('Có lỗi xảy ra khi xử lý phản hồi từ server!');
                                 }
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                                 console.error('AJAX Error:', status, error);
                                 toastr.error('Có lỗi xảy ra khi gửi yêu cầu đến server!');
                             }
@@ -396,5 +413,6 @@
                 modal.show();
             }
         </script>
+        
     </body>
 </html>
