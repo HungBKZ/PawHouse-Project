@@ -46,33 +46,36 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
 
-        // Verify current password
-        UserDAO userDAO = new UserDAO();
-        String hashedCurrentPassword = PasswordHasher.hashMD5(currentPassword);
-        
-        if (!user.getPassword().equals(hashedCurrentPassword)) {
-            request.setAttribute("error", "Mật khẩu hiện tại không đúng!");
+        // Validate password pattern
+        if (!newPassword.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) {
+            request.setAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ và số!");
             request.getRequestDispatcher("profile.jsp").forward(request, response);
             return;
         }
-
-        // Hash new password and update
-        String hashedNewPassword = PasswordHasher.hashMD5(newPassword);
-        user.setPassword(hashedNewPassword);
         
-        boolean success = false;
+        UserDAO userDAO = new UserDAO();
         try {
-            success = userDAO.updateUserPassword(user.getUserID(), hashedNewPassword);
+            // Xác thực mật khẩu hiện tại
+            User verifiedUser = userDAO.checkLogin(user.getEmail(), currentPassword);
+            if (verifiedUser == null) {
+                request.setAttribute("error", "Mật khẩu hiện tại không đúng!");
+                request.getRequestDispatcher("profile.jsp").forward(request, response);
+                return;
+            }
+
+            // Nếu mật khẩu hiện tại đúng, tiến hành đổi mật khẩu mới
+            boolean success = userDAO.updateUserPassword(user.getUserID(), newPassword);
+            
+            if (success) {
+                // Cập nhật lại thông tin user trong session với mật khẩu đã băm
+                user.setPassword(PasswordHasher.hashMD5(newPassword));
+                session.setAttribute("loggedInUser", user);
+                request.setAttribute("message", "Đổi mật khẩu thành công!");
+            } else {
+                request.setAttribute("error", "Có lỗi xảy ra khi đổi mật khẩu. Vui lòng thử lại!");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi đổi mật khẩu. Vui lòng thử lại!");
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
-            return;
-        }
-        
-        if (success) {
-            request.setAttribute("message", "Đổi mật khẩu thành công!");
-        } else {
             request.setAttribute("error", "Có lỗi xảy ra khi đổi mật khẩu. Vui lòng thử lại!");
         }
         

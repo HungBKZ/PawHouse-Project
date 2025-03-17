@@ -61,6 +61,28 @@
                 border-radius: 8px;
                 margin-bottom: 20px;
             }
+            .filter-section {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            .filter-section .form-control {
+                border-radius: 6px;
+            }
+            .filter-section .btn {
+                border-radius: 6px;
+            }
+            .star-filter {
+                display: inline-block;
+                cursor: pointer;
+                color: #dee2e6;
+                font-size: 1.2rem;
+            }
+            .star-filter.active {
+                color: #ffc107;
+            }
         </style>
     </head>
     <body>
@@ -73,6 +95,38 @@
                             <h3 class="card-title mb-0">Quản lý Bình luận Sản phẩm</h3>
                         </div>
                         <div class="card-body">
+                            <!-- Filter Section -->
+                            <div class="filter-section">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Tên sản phẩm</label>
+                                        <input type="text" class="form-control" id="productFilter" placeholder="Lọc theo tên sản phẩm">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Nội dung bình luận</label>
+                                        <input type="text" class="form-control" id="contentFilter" placeholder="Lọc theo nội dung">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Đánh giá sao</label>
+                                        <div class="star-rating-filter">
+                                            <span class="star-filter" data-rating="1"><i class="fas fa-star"></i></span>
+                                            <span class="star-filter" data-rating="2"><i class="fas fa-star"></i></span>
+                                            <span class="star-filter" data-rating="3"><i class="fas fa-star"></i></span>
+                                            <span class="star-filter" data-rating="4"><i class="fas fa-star"></i></span>
+                                            <span class="star-filter" data-rating="5"><i class="fas fa-star"></i></span>
+                                            <button class="btn btn-sm btn-outline-secondary ms-2" id="clearStarFilter">
+                                                <i class="fas fa-times"></i> Xóa
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button class="btn btn-primary w-100" id="resetFilters">
+                                            <i class="fas fa-sync-alt"></i> Đặt lại bộ lọc
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <c:if test="${not empty message}">
                                 <div class="empty-state">
                                     <i class="fas fa-comments"></i>
@@ -105,7 +159,7 @@
                                         </thead>
                                         <tbody>
                                             <c:forEach items="${comments}" var="comment">
-                                                <tr>
+                                                <tr class="comment-row">
                                                     <td>${comment.commentID}</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
@@ -113,15 +167,15 @@
                                                             ${comment.user.username}
                                                         </div>
                                                     </td>
-                                                    <td>${comment.product.productName}</td>
+                                                    <td class="product-name">${comment.product.productName}</td>
                                                     <td>
-                                                        <div class="star-rating">
+                                                        <div class="star-rating" data-stars="${comment.star}">
                                                             <c:forEach begin="1" end="${comment.star}">
                                                                 <i class="fas fa-star"></i>
                                                             </c:forEach>
                                                         </div>
                                                     </td>
-                                                    <td>${comment.content}</td>
+                                                    <td class="comment-content">${comment.content}</td>
                                                     <td>
                                                         <c:if test="${not empty comment.image}">
                                                             <img src="${comment.image}" alt="Comment Image" class="comment-image" onclick="showImageModal(this.src)">
@@ -136,13 +190,13 @@
                                                     </td>
                                                     <td>
                                                         <div class="btn-group">
-                                                            <button class="btn btn-sm btn-outline-primary toggle-status" 
-                                                                    data-id="${comment.commentID}"
+                                                            <button type="button" class="btn btn-sm btn-outline-primary toggle-status" 
+                                                                    data-id="${comment.commentID}" 
                                                                     title="${comment.productCommentStatus ? 'Ẩn bình luận' : 'Hiện bình luận'}">
-                                                                <i class="fas fa-toggle-on"></i>
+                                                                <i class="fas fa-toggle-${comment.productCommentStatus ? 'on' : 'off'}"></i>
                                                             </button>
-                                                            <button class="btn btn-sm btn-outline-danger delete-comment" 
-                                                                    data-id="${comment.commentID}"
+                                                            <button type="button" class="btn btn-sm btn-outline-danger delete-comment" 
+                                                                    data-id="${comment.commentID}" 
                                                                     title="Xóa bình luận">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
@@ -185,82 +239,150 @@
                     "closeButton": true,
                     "progressBar": true,
                     "positionClass": "toast-top-right",
-                    "timeOut": "3000",
-                    "extendedTimeOut": "1000",
-                    "preventDuplicates": true,
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
+                    "timeOut": "3000"
                 };
 
-                // Xóa bình luận
-                $('.delete-comment').click(function() {
-                    const button = $(this);
-                    const commentId = button.data('id');
-                    const row = button.closest('tr');
-                    
-                    if (confirm('Bạn có chắc chắn muốn xóa bình luận này không?')) {
-                        button.prop('disabled', true);
-                        $.ajax({
-                            url: 'admin-comments',
-                            type: 'POST',
-                            data: {
-                                action: 'delete',
-                                commentId: commentId
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    toastr.success(response.message);
-                                    row.fadeOut(300, function() { $(this).remove(); });
-                                    if ($('tbody tr').length === 1) {
-                                        location.reload();
-                                    }
-                                } else {
-                                    toastr.error(response.message);
-                                    button.prop('disabled', false);
-                                }
-                            },
-                            error: function() {
-                                toastr.error('Đã xảy ra lỗi khi xử lý yêu cầu');
-                                button.prop('disabled', false);
+                // Xử lý lọc theo sao
+                let selectedStars = 0;
+                $('.star-filter').click(function() {
+                    const rating = $(this).data('rating');
+                    if (selectedStars === rating) {
+                        // Bỏ chọn tất cả sao nếu click lại cùng số sao
+                        $('.star-filter').removeClass('active');
+                        selectedStars = 0;
+                    } else {
+                        // Chọn số sao mới
+                        $('.star-filter').removeClass('active');
+                        $('.star-filter').each(function() {
+                            if ($(this).data('rating') <= rating) {
+                                $(this).addClass('active');
                             }
                         });
+                        selectedStars = rating;
                     }
+                    filterComments();
                 });
 
-                // Chuyển đổi trạng thái bình luận
-                $('.toggle-status').click(function() {
+                // Xóa bộ lọc sao
+                $('#clearStarFilter').click(function() {
+                    $('.star-filter').removeClass('active');
+                    selectedStars = 0;
+                    filterComments();
+                });
+
+                // Lọc theo tên sản phẩm và nội dung (realtime)
+                $('#productFilter, #contentFilter').on('input', function() {
+                    filterComments();
+                });
+
+                // Đặt lại tất cả bộ lọc
+                $('#resetFilters').click(function() {
+                    $('#productFilter').val('');
+                    $('#contentFilter').val('');
+                    $('.star-filter').removeClass('active');
+                    selectedStars = 0;
+                    filterComments();
+                });
+
+                // Hàm lọc comments
+                function filterComments() {
+                    const productFilter = $('#productFilter').val().toLowerCase();
+                    const contentFilter = $('#contentFilter').val().toLowerCase();
+
+                    $('.comment-row').each(function() {
+                        const row = $(this);
+                        const productName = row.find('.product-name').text().toLowerCase();
+                        const content = row.find('.comment-content').text().toLowerCase();
+                        const stars = parseInt(row.find('.star-rating').data('stars'));
+
+                        const matchesProduct = productName.includes(productFilter);
+                        const matchesContent = content.includes(contentFilter);
+                        const matchesStars = selectedStars === 0 || stars === selectedStars;
+
+                        if (matchesProduct && matchesContent && matchesStars) {
+                            row.show();
+                        } else {
+                            row.hide();
+                        }
+                    });
+                }
+
+                // Xử lý toggle trạng thái
+                $('.toggle-status').click(function(e) {
+                    e.preventDefault();
                     const button = $(this);
                     const commentId = button.data('id');
                     const row = button.closest('tr');
-                    const statusSpan = row.find('td:nth-last-child(2) span');
                     
-                    if (confirm('Bạn có muốn thay đổi trạng thái của bình luận này không?')) {
-                        button.prop('disabled', true);
-                        $.ajax({
-                            url: 'admin-comments',
-                            type: 'POST',
-                            data: {
-                                action: 'toggle',
-                                commentId: commentId
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    toastr.success(response.message);
-                                    const isCurrentlyActive = statusSpan.hasClass('status-active');
-                                    statusSpan.removeClass(isCurrentlyActive ? 'status-active' : 'status-inactive')
-                                            .addClass(isCurrentlyActive ? 'status-inactive' : 'status-active')
-                                            .html(`<i class="fas fa-circle me-1"></i> \${isCurrentlyActive ? 'Ẩn' : 'Hiện'}`);
-                                    button.attr('title', isCurrentlyActive ? 'Hiện bình luận' : 'Ẩn bình luận');
+                    $.ajax({
+                        url: 'ToggleCommentStatus',
+                        type: 'POST',
+                        data: { commentId: commentId },
+                        success: function(response) {
+                            if (response.success) {
+                                // Cập nhật trạng thái hiển thị
+                                const statusSpan = row.find('.status-active, .status-inactive');
+                                const isCurrentlyActive = statusSpan.hasClass('status-active');
+                                
+                                if (isCurrentlyActive) {
+                                    statusSpan.removeClass('status-active').addClass('status-inactive')
+                                            .html('<i class="fas fa-circle me-1"></i>Ẩn');
+                                    button.find('i').removeClass('fa-toggle-on').addClass('fa-toggle-off');
+                                    button.attr('title', 'Hiện bình luận');
                                 } else {
-                                    toastr.error(response.message);
+                                    statusSpan.removeClass('status-inactive').addClass('status-active')
+                                            .html('<i class="fas fa-circle me-1"></i>Hiện');
+                                    button.find('i').removeClass('fa-toggle-off').addClass('fa-toggle-on');
+                                    button.attr('title', 'Ẩn bình luận');
                                 }
-                                button.prop('disabled', false);
+                                
+                                toastr.success(response.message);
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function() {
+                            toastr.error('Có lỗi xảy ra khi thực hiện thao tác');
+                        }
+                    });
+                });
+
+                // Xử lý xóa comment
+                $('.delete-comment').click(function() {
+                    const commentId = $(this).data('id');
+                    const row = $(this).closest('tr');
+                    
+                    if (confirm('Bạn có chắc muốn xóa bình luận này?')) {
+                        $.ajax({
+                            url: 'DeleteComment',
+                            type: 'POST',
+                            data: { commentId: commentId },
+                            success: function(response) {
+                                try {
+                                    // Parse response if it's a string
+                                    if (typeof response === 'string') {
+                                        response = JSON.parse(response);
+                                    }
+                                    
+                                    if (response.success) {
+                                        row.fadeOut(400, function() {
+                                            $(this).remove();
+                                            if ($('.comment-row:visible').length === 0) {
+                                                location.reload();
+                                            }
+                                        });
+                                        toastr.success('Đã xóa bình luận thành công!');
+                                    } else {
+                                        toastr.error(response.message || 'Có lỗi xảy ra khi xóa bình luận!');
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing response:', e);
+                                    toastr.error('Có lỗi xảy ra khi xử lý phản hồi từ server!');
+                                }
                             },
-                            error: function() {
-                                toastr.error('Đã xảy ra lỗi khi xử lý yêu cầu');
-                                button.prop('disabled', false);
+                            error: function(xhr, status, error) {
+                                console.error('AJAX Error:', status, error);
+                                toastr.error('Có lỗi xảy ra khi gửi yêu cầu đến server!');
                             }
                         });
                     }
@@ -270,7 +392,7 @@
             // Hiển thị modal hình ảnh
             function showImageModal(src) {
                 const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-                document.querySelector('#imageModal .modal-image').src = src;
+                document.querySelector('.modal-image').src = src;
                 modal.show();
             }
         </script>

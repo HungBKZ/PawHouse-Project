@@ -343,6 +343,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+ 
     public boolean updateUserPassword(int userId, String newPassword) throws SQLException {
         String query = "UPDATE Users SET Password = ? WHERE UserID = ?";
 
