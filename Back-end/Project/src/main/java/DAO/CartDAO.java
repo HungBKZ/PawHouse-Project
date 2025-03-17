@@ -28,7 +28,7 @@ public class CartDAO extends DBContext {
                 Cart cart = new Cart();
                 cart.setCartID(rs.getInt("CartID"));
                 cart.setQuantity(rs.getInt("Quantity"));
-                cart.setAddedDate(rs.getDate("AddedDate"));
+                cart.setAddedDate(rs.getTimestamp("AddedDate"));
                 cartList.add(cart);
             }
         } catch (SQLException e) {
@@ -44,7 +44,7 @@ public class CartDAO extends DBContext {
             ps.setInt(1, cart.getUser().getUserID());
             ps.setInt(2, cart.getProduct().getProductID());
             ps.setInt(3, cart.getQuantity());
-            ps.setDate(4, cart.getAddedDate());
+            ps.setTimestamp(4, cart.getAddedDate());
 
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
@@ -80,7 +80,7 @@ public class CartDAO extends DBContext {
                 cart.setProduct(product);
 
                 cart.setQuantity(rs.getInt("Quantity"));
-                cart.setAddedDate(rs.getDate("AddedDate"));
+                cart.setAddedDate(rs.getTimestamp("AddedDate"));
                 cartList.add(cart);
             }
         } catch (SQLException e) {
@@ -100,7 +100,7 @@ public class CartDAO extends DBContext {
                 Cart cart = new Cart();
                 cart.setCartID(rs.getInt("CartID"));
                 cart.setQuantity(rs.getInt("Quantity"));
-                cart.setAddedDate(rs.getDate("AddedDate"));
+                cart.setAddedDate(rs.getTimestamp("AddedDate"));
                 return cart;
             }
         } catch (SQLException e) {
@@ -145,7 +145,7 @@ public class CartDAO extends DBContext {
                 Cart cart = new Cart();
                 cart.setCartID(rs.getInt("CartID"));
                 cart.setQuantity(rs.getInt("Quantity"));
-                cart.setAddedDate(rs.getDate("AddedDate"));
+                cart.setAddedDate(rs.getTimestamp("AddedDate"));
                 return cart;
             }
         } catch (SQLException e) {

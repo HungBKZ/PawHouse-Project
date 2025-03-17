@@ -31,7 +31,7 @@ public class ProductCommentDAO extends DBContext {
 
                 comment.setStar(rs.getInt("Star"));
                 comment.setContent(rs.getString("Content"));
-                comment.setDateComment(rs.getDate("Date_Comment"));
+                comment.setDateComment(rs.getTimestamp("Date_Comment"));
                 comment.setImage(rs.getString("Image"));
                 comment.setProductCommentStatus(rs.getBoolean("ProductCommentStatus"));
 
@@ -50,7 +50,7 @@ public class ProductCommentDAO extends DBContext {
             ps.setInt(2, comment.getProduct().getProductID());
             ps.setInt(3, comment.getStar());
             ps.setString(4, comment.getContent());
-            ps.setDate(5, comment.getDateComment());
+            ps.setTimestamp(5, comment.getDateComment());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -73,7 +73,7 @@ public class ProductCommentDAO extends DBContext {
                 comment.setCommentID(rs.getInt("CommentID"));
                 comment.setStar(rs.getInt("Star"));
                 comment.setContent(rs.getString("Content"));
-                comment.setDateComment(rs.getDate("Date_Comment"));
+                comment.setDateComment(rs.getTimestamp("Date_Comment"));
                 comment.setProductCommentStatus(rs.getBoolean("ProductCommentStatus"));
 
                 User user = new User();

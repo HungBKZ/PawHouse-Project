@@ -1,10 +1,10 @@
 package Model;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class OrderDetail {
     private int orderId;
-    private Date orderDate;
+    private Timestamp orderDate;
     private String customerName;
     private String productName;
     private int quantity;
@@ -15,7 +15,7 @@ public class OrderDetail {
     public OrderDetail() {
     }
 
-    public OrderDetail(int orderId, Date orderDate, String customerName, String productName, int quantity, double price, double total, String status) {
+    public OrderDetail(int orderId, Timestamp orderDate, String customerName, String productName, int quantity, double price, double total, String status) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.customerName = customerName;
@@ -35,11 +35,11 @@ public class OrderDetail {
         this.orderId = orderId;
     }
 
-    public Date getOrderDate() {
+    public Timestamp getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Date orderDate) {
+    public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
     }
 

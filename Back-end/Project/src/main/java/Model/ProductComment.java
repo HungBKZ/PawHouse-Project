@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -17,14 +17,14 @@ public class ProductComment {
     private Product product;
     private int star;
     private String content;
-    private Date dateComment;
+    private Timestamp dateComment;
     private String image;
     private boolean productCommentStatus;
 
     public ProductComment() {
     }
 
-    public ProductComment(int commentID, User user, Product product, int star, String content, Date dateComment, String image, boolean productCommentStatus) {
+    public ProductComment(int commentID, User user, Product product, int star, String content, Timestamp dateComment, String image, boolean productCommentStatus) {
         this.commentID = commentID;
         this.user = user;
         this.product = product;
@@ -75,11 +75,11 @@ public class ProductComment {
         this.content = content;
     }
 
-    public Date getDateComment() {
+    public Timestamp getDateComment() {
         return dateComment;
     }
 
-    public void setDateComment(Date dateComment) {
+    public void setDateComment(Timestamp dateComment) {
         this.dateComment = dateComment;
     }
 

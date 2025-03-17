@@ -11,9 +11,9 @@ import Utils.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.TreeSet;
  */
 public class ReportDAO extends DBContext {
     
-    public ReportDTO getReport(Date startDate, Date endDate, String reportType) throws SQLException {
+    public ReportDTO getReport(Timestamp startDate, Timestamp endDate, String reportType) throws SQLException {
         ReportDTO report = new ReportDTO();
         report.setStartDate(startDate);
         report.setEndDate(endDate);
@@ -186,7 +186,7 @@ public class ReportDAO extends DBContext {
         return report;
     }
 
-    private List<OrderDetail> getOrderDetails(Date startDate, Date endDate) throws SQLException {
+    private List<OrderDetail> getOrderDetails(Timestamp startDate, Timestamp endDate) throws SQLException {
         List<OrderDetail> details = new ArrayList<>();
         String query = "SELECT o.OrderID, o.OrderDate, u.FullName as CustomerName, " +
                       "p.ProductName, od.Quantity, od.Price, (od.Price * od.Quantity) as Total " +
@@ -205,7 +205,7 @@ public class ReportDAO extends DBContext {
             while (rs.next()) {
                 OrderDetail detail = new OrderDetail();
                 detail.setOrderId(rs.getInt("OrderID"));
-                detail.setOrderDate(rs.getDate("OrderDate"));
+                detail.setOrderDate(rs.getTimestamp("OrderDate"));
                 detail.setCustomerName(rs.getString("CustomerName"));
                 detail.setProductName(rs.getString("ProductName"));
                 detail.setQuantity(rs.getInt("Quantity"));
@@ -217,7 +217,7 @@ public class ReportDAO extends DBContext {
         return details;
     }
 
-    private List<ServiceDetail> getServiceDetails(Date startDate, Date endDate) throws SQLException {
+    private List<ServiceDetail> getServiceDetails(Timestamp startDate, Timestamp endDate) throws SQLException {
         List<ServiceDetail> details = new ArrayList<>();
         String query = "SELECT a.AppointmentID, a.AppointmentDate, u.FullName as CustomerName, " +
                       "s.ServiceName, a.Price " +
@@ -235,7 +235,7 @@ public class ReportDAO extends DBContext {
             while (rs.next()) {
                 ServiceDetail detail = new ServiceDetail();
                 detail.setAppointmentId(rs.getInt("AppointmentID"));
-                detail.setAppointmentDate(rs.getDate("AppointmentDate"));
+                detail.setAppointmentDate(rs.getTimestamp("AppointmentDate"));
                 detail.setCustomerName(rs.getString("CustomerName"));
                 detail.setServiceName(rs.getString("ServiceName"));
                 detail.setPrice(rs.getDouble("Price"));

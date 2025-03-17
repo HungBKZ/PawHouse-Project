@@ -31,7 +31,7 @@ public class MedicalRecordDAO extends DBContext {
                 record.setWeight(rs.getDouble("Weight"));
                 record.setTemperature(rs.getDouble("Temperature"));
                 record.setNotes(rs.getString("Notes"));
-                record.setRecordDate(rs.getDate("RecordDate"));
+                record.setRecordDate(rs.getTimestamp("RecordDate"));
                 recordList.add(record);
             }
         } catch (SQLException e) {

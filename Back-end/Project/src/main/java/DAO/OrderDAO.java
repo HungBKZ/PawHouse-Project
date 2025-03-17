@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class OrderDAO {
                 Orders order = new Orders();
                 order.setOrderID(rs.getInt("OrderID"));
                 order.setUser(user);
-                order.setOrderDate(rs.getDate("OrderDate"));
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
                 order.setTotalAmount(rs.getDouble("TotalAmount"));
                 order.setOrderStatus(rs.getBoolean("OrderStatus"));
                 order.setNotes(rs.getString("Notes"));

@@ -69,10 +69,7 @@ public class AdoptPetServlet extends HttpServlet {
             pet.setAdoptionStatus("Đang chờ duyệt");
             pet.setOwner(user);
             petDAO.updatePet2(pet);
-
-            // Lưu lịch sử nhận nuôi
-            AdoptionHistory adoption = new AdoptionHistory(0, pet, Date.valueOf(LocalDate.now()), "Đã nhận nuôi", "Thú cưng đã được nhận nuôi");
-            adoptionDAO.addAdoptionHistory(adoption);
+            adoptionDAO.addAdoptionHistoryWithPendingStatus(petId);
 
             response.sendRedirect("/AdoptionServlet?filter=pendingAdoptionList");
         } catch (NumberFormatException e) {

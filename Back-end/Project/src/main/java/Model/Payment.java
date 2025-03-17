@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -15,14 +15,14 @@ public class Payment {
     private int paymentID;
     private Orders order;
     private double amount;
-    private Date paymentDate;
+    private Timestamp paymentDate;
     private String paymentMethod;
     private boolean paymentStatus;
 
     public Payment() {
     }
 
-    public Payment(int paymentID, Orders order, double amount, Date paymentDate, String paymentMethod, boolean paymentStatus) {
+    public Payment(int paymentID, Orders order, double amount, Timestamp paymentDate, String paymentMethod, boolean paymentStatus) {
         this.paymentID = paymentID;
         this.order = order;
         this.amount = amount;
@@ -55,11 +55,11 @@ public class Payment {
         this.amount = amount;
     }
 
-    public Date getPaymentDate() {
+    public Timestamp getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(Date paymentDate) {
+    public void setPaymentDate(Timestamp paymentDate) {
         this.paymentDate = paymentDate;
     }
 

@@ -7,7 +7,7 @@ import Model.Cart;
 import Model.Product;
 import Model.User;
 import java.io.IOException;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.sql.SQLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -78,7 +78,7 @@ public class AddToCartServlet extends HttpServlet {
                 cartItem.setUser(user);
                 cartItem.setProduct(product);
                 cartItem.setQuantity(quantity);
-                cartItem.setAddedDate(new Date(System.currentTimeMillis()));
+                cartItem.setAddedDate(new Timestamp(System.currentTimeMillis()));
                 cartDAO.addToCart(cartItem);
             }
 

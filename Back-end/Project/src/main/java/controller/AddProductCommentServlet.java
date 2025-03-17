@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @WebServlet(name = "AddProductCommentServlet", urlPatterns = {"/AddProductComment"})
@@ -46,7 +46,7 @@ public class AddProductCommentServlet extends HttpServlet {
                 comment.setProduct(product);
                 comment.setStar(star);
                 comment.setContent(content);
-                comment.setDateComment(Date.valueOf(LocalDate.now()));
+                comment.setDateComment(new Timestamp(System.currentTimeMillis()));
                 comment.setProductCommentStatus(true);
                 
                 ProductCommentDAO commentDAO = new ProductCommentDAO();

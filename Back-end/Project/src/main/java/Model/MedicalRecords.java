@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -20,16 +20,16 @@ public class MedicalRecords {
     private String treatment;
     private String prescription;
     private String vaccinationDetails;
-    private Date nextVaccinationDate;
+    private Timestamp nextVaccinationDate;
     private double weight;
     private double temperature;
     private String notes;
-    private Date recordDate;
+    private Timestamp recordDate;
 
     public MedicalRecords() {
     }
 
-    public MedicalRecords(int recordID, Appointment appointment, User doctor, Pet pet, String diagnosis, String treatment, String prescription, String vaccinationDetails, Date nextVaccinationDate, double weight, double temperature, String notes, Date recordDate) {
+    public MedicalRecords(int recordID, Appointment appointment, User doctor, Pet pet, String diagnosis, String treatment, String prescription, String vaccinationDetails, Timestamp nextVaccinationDate, double weight, double temperature, String notes, Timestamp recordDate) {
         this.recordID = recordID;
         this.appointment = appointment;
         this.doctor = doctor;
@@ -109,11 +109,11 @@ public class MedicalRecords {
         this.vaccinationDetails = vaccinationDetails;
     }
 
-    public Date getNextVaccinationDate() {
+    public Timestamp getNextVaccinationDate() {
         return nextVaccinationDate;
     }
 
-    public void setNextVaccinationDate(Date nextVaccinationDate) {
+    public void setNextVaccinationDate(Timestamp nextVaccinationDate) {
         this.nextVaccinationDate = nextVaccinationDate;
     }
 
@@ -141,11 +141,11 @@ public class MedicalRecords {
         this.notes = notes;
     }
 
-    public Date getRecordDate() {
+    public Timestamp getRecordDate() {
         return recordDate;
     }
 
-    public void setRecordDate(Date recordDate) {
+    public void setRecordDate(Timestamp recordDate) {
         this.recordDate = recordDate;
     }
 

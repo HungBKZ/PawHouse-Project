@@ -23,7 +23,7 @@ public class AdoptionHistoryDAO extends DBContext {
             while (rs.next()) {
                 AdoptionHistory adoption = new AdoptionHistory();
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
-                adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
+                adoption.setAdoptionDate(rs.getTimestamp("AdoptionDate"));
                 adoption.setAdoptionStatus(rs.getString("AdoptionStatus")); // ✅ Fix lỗi tên cột
                 adoption.setNotes(rs.getString("Notes"));
                 
