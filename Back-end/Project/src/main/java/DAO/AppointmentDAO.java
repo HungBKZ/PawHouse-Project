@@ -69,8 +69,8 @@ public class AppointmentDAO extends DBContext {
                         null, // Doctor (chưa lấy)
                         pet,
                         null, // Service (chưa lấy)
-                        rs.getDate("AppointmentDate"),
-                        rs.getDate("BookingDate"),
+                        rs.getTimestamp("AppointmentDate"),
+                        rs.getTimestamp("BookingDate"),
                         rs.getString("AppointmentStatus"),
                         rs.getString("Notes"),
                         rs.getDouble("Price")
@@ -121,8 +121,8 @@ public class AppointmentDAO extends DBContext {
                 Appointment appointment = new Appointment(
                         rs.getInt("AppointmentID"),
                         customer, staff, doctor, pet, service,
-                        rs.getDate("AppointmentDate"),
-                        rs.getDate("BookingDate"),
+                        rs.getTimestamp("AppointmentDate"),
+                        rs.getTimestamp("BookingDate"),
                         rs.getString("AppointmentStatus"),
                         rs.getString("Notes"),
                         rs.getDouble("Price")

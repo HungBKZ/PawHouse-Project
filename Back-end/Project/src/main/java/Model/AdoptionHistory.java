@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -14,14 +14,14 @@ public class AdoptionHistory {
 
     private int adoptionID;
     private Pet pet;
-    private Date adoptionDate;
+    private Timestamp adoptionDate;
     private String adoptionStatus;
     private String notes;
 
     public AdoptionHistory() {
     }
 
-    public AdoptionHistory(int adoptionID, Pet pet, Date adoptionDate, String adoptionStatus, String notes) {
+    public AdoptionHistory(int adoptionID, Pet pet, Timestamp adoptionDate, String adoptionStatus, String notes) {
         this.adoptionID = adoptionID;
         this.pet = pet;
         this.adoptionDate = adoptionDate;
@@ -45,11 +45,11 @@ public class AdoptionHistory {
         this.pet = pet;
     }
 
-    public Date getAdoptionDate() {
+    public Timestamp getAdoptionDate() {
         return adoptionDate;
     }
 
-    public void setAdoptionDate(Date adoptionDate) {
+    public void setAdoptionDate(Timestamp adoptionDate) {
         this.adoptionDate = adoptionDate;
     }
 

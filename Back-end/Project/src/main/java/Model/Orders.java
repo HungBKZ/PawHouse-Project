@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -14,7 +14,7 @@ public class Orders {
 
     private int orderID;
     private User user;
-    private Date orderDate;
+    private Timestamp orderDate;
     private double totalAmount;
     private boolean orderStatus;
     private String notes;
@@ -22,7 +22,7 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(int orderID, User user, Date orderDate, double totalAmount, boolean orderStatus, String notes) {
+    public Orders(int orderID, User user, Timestamp orderDate, double totalAmount, boolean orderStatus, String notes) {
         this.orderID = orderID;
         this.user = user;
         this.orderDate = orderDate;
@@ -48,11 +48,11 @@ public class Orders {
         this.user = user;
     }
 
-    public Date getOrderDate() {
+    public Timestamp getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Date orderDate) {
+    public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
     }
 

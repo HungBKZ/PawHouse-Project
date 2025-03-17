@@ -10,7 +10,7 @@ import Model.PetCategories;
 import Model.User;
 import Utils.DBContext;
 import java.sql.Connection;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,7 +69,7 @@ public class AdoptionDAO {
                 AdoptionHistory history = new AdoptionHistory(
                         rs.getInt("AdoptionID"),
                         pet,
-                        rs.getDate("AdoptionDate"),
+                        rs.getTimestamp("AdoptionDate"),
                         rs.getString("Status"),
                         rs.getString("Notes")
                 );
@@ -87,7 +87,7 @@ public class AdoptionDAO {
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, adoption.getPet().getPetID());
-            ps.setDate(2, (Date) adoption.getAdoptionDate());
+            ps.setTimestamp(2, (Timestamp) adoption.getAdoptionDate());
             ps.setString(3, adoption.getAdoptionStatus());
             ps.setString(4, adoption.getNotes());
 
@@ -171,7 +171,7 @@ public class AdoptionDAO {
                 AdoptionHistory adoption = new AdoptionHistory();
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setPet(pet);
-                adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
+                adoption.setAdoptionDate(rs.getTimestamp("AdoptionDate"));
                 adoption.setAdoptionStatus(rs.getString("Status"));
                 adoption.setNotes(rs.getString("Notes"));
                 
@@ -240,7 +240,7 @@ public class AdoptionDAO {
                 AdoptionHistory adoption = new AdoptionHistory();
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setPet(pet);
-                adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
+                adoption.setAdoptionDate(rs.getTimestamp("AdoptionDate"));
                 adoption.setAdoptionStatus(rs.getString("AdoptionStatus"));
                 adoption.setNotes(rs.getString("Notes"));
                 
@@ -288,7 +288,7 @@ public class AdoptionDAO {
         }
         if (dateStr != null && !dateStr.isEmpty()) {
             query.append("AND CAST(ah.AdoptionDate AS DATE) = ? ");
-            params.add(Date.valueOf(dateStr));
+            params.add(Timestamp.valueOf(dateStr));
         }
 
         query.append("ORDER BY CASE ah.AdoptionStatus ")
@@ -331,7 +331,7 @@ public class AdoptionDAO {
                 AdoptionHistory adoption = new AdoptionHistory();
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setPet(pet);
-                adoption.setAdoptionDate(rs.getDate("AdoptionDate"));
+                adoption.setAdoptionDate(rs.getTimestamp("AdoptionDate"));
                 adoption.setAdoptionStatus(rs.getString("AdoptionStatus"));
                 adoption.setNotes(rs.getString("Notes"));
                 
@@ -342,5 +342,22 @@ public class AdoptionDAO {
             e.printStackTrace();
         }
         return adoptionList;
+    }
+    
+    public void addAdoptionHistoryWithPendingStatus(int petId) {
+        String query = "INSERT INTO AdoptionHistory (PetID, AdoptionDate, AdoptionStatus, Notes) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, petId);
+            ps.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Ngày hiện tại
+            ps.setString(3, "Đang chờ"); // Trạng thái "Đang chờ"
+            ps.setNull(4, java.sql.Types.NVARCHAR); // Notes là null
+
+            ps.executeUpdate();
+            System.out.println("✅ Lịch sử nhận nuôi đã được lưu với trạng thái Đang chờ.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("⚠️ Lỗi khi lưu lịch sử nhận nuôi: " + e.getMessage());
+        }
     }
 }

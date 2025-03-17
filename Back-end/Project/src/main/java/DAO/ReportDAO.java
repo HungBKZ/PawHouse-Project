@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.TreeSet;
  */
 public class ReportDAO extends DBContext {
     
-    public ReportDTO getReport(Date startDate, Date endDate, String reportType) throws SQLException {
+    public ReportDTO getReport(Timestamp startDate, Timestamp endDate, String reportType) throws SQLException {
         ReportDTO report = new ReportDTO();
         report.setStartDate(startDate);
         report.setEndDate(endDate);
@@ -40,8 +40,8 @@ public class ReportDAO extends DBContext {
                             "AND o.OrderStatus = N'Hoàn thành'";
         
         try (PreparedStatement stmt = connection.prepareStatement(productQuery)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 report.setProductRevenue(rs.getDouble("Revenue"));
@@ -55,8 +55,8 @@ public class ReportDAO extends DBContext {
                             "AND a.AppointmentStatus = N'1'";
         
         try (PreparedStatement stmt = connection.prepareStatement(serviceQuery)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 report.setServiceRevenue(rs.getDouble("Revenue"));
@@ -82,10 +82,10 @@ public class ReportDAO extends DBContext {
                              ") as UniqueCustomers";
         
         try (PreparedStatement stmt = connection.prepareStatement(customerQuery)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
-            stmt.setDate(3, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(4, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
+            stmt.setTimestamp(3, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(4, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 report.setTotalCustomers(rs.getInt("TotalCustomers"));
@@ -127,11 +127,11 @@ public class ReportDAO extends DBContext {
                                 "ORDER BY ReportDate";
 
         try (PreparedStatement stmt = connection.prepareStatement(productTimeQuery)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                String dateKey = sdf.format(rs.getDate("ReportDate"));
+                String dateKey = sdf.format(rs.getTimestamp("ReportDate"));
                 productRevenueMap.put(dateKey, rs.getDouble("Revenue"));
             }
         }
@@ -146,11 +146,11 @@ public class ReportDAO extends DBContext {
                                 "ORDER BY ReportDate";
 
         try (PreparedStatement stmt = connection.prepareStatement(serviceTimeQuery)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                String dateKey = sdf.format(rs.getDate("ReportDate"));
+                String dateKey = sdf.format(rs.getTimestamp("ReportDate"));
                 serviceRevenueMap.put(dateKey, rs.getDouble("Revenue"));
             }
         }
@@ -186,7 +186,7 @@ public class ReportDAO extends DBContext {
         return report;
     }
 
-    private List<OrderDetail> getOrderDetails(Date startDate, Date endDate) throws SQLException {
+    private List<OrderDetail> getOrderDetails(Timestamp startDate, Timestamp endDate) throws SQLException {
         List<OrderDetail> details = new ArrayList<>();
         String query = "SELECT o.OrderID, o.OrderDate, u.FullName as CustomerName, " +
                       "p.ProductName, od.Quantity, od.Price, (od.Price * od.Quantity) as Total " +
@@ -199,13 +199,13 @@ public class ReportDAO extends DBContext {
                       "ORDER BY o.OrderDate DESC";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 OrderDetail detail = new OrderDetail();
                 detail.setOrderId(rs.getInt("OrderID"));
-                detail.setOrderDate(rs.getDate("OrderDate"));
+                detail.setOrderDate(rs.getTimestamp("OrderDate"));
                 detail.setCustomerName(rs.getString("CustomerName"));
                 detail.setProductName(rs.getString("ProductName"));
                 detail.setQuantity(rs.getInt("Quantity"));
@@ -217,7 +217,7 @@ public class ReportDAO extends DBContext {
         return details;
     }
 
-    private List<ServiceDetail> getServiceDetails(Date startDate, Date endDate) throws SQLException {
+    private List<ServiceDetail> getServiceDetails(Timestamp startDate, Timestamp endDate) throws SQLException {
         List<ServiceDetail> details = new ArrayList<>();
         String query = "SELECT a.AppointmentID, a.AppointmentDate, u.FullName as CustomerName, " +
                       "s.ServiceName, a.Price " +
@@ -229,13 +229,13 @@ public class ReportDAO extends DBContext {
                       "ORDER BY a.AppointmentDate DESC";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+            stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
+            stmt.setTimestamp(2, new java.sql.Timestamp(endDate.getTime()));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ServiceDetail detail = new ServiceDetail();
                 detail.setAppointmentId(rs.getInt("AppointmentID"));
-                detail.setAppointmentDate(rs.getDate("AppointmentDate"));
+                detail.setAppointmentDate(rs.getTimestamp("AppointmentDate"));
                 detail.setCustomerName(rs.getString("CustomerName"));
                 detail.setServiceName(rs.getString("ServiceName"));
                 detail.setPrice(rs.getDouble("Price"));

@@ -1,6 +1,6 @@
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Appointment {
 
@@ -10,8 +10,8 @@ public class Appointment {
     private User doctor;
     private Pet pet;
     private Service service;
-    private Date appointmentDate;
-    private Date bookingDate;
+    private Timestamp appointmentDate;
+    private Timestamp bookingDate;
     private String appointmentStatus;  // 🆕 Thêm trạng thái cuộc hẹn
     private String notes;
     private double price;
@@ -20,7 +20,7 @@ public class Appointment {
     }
 
     public Appointment(int appointmentID, User customer, User staff, User doctor, Pet pet, Service service,
-            Date appointmentDate, Date bookingDate, String appointmentStatus, String notes, double price) {
+            Timestamp appointmentDate, Timestamp bookingDate, String appointmentStatus, String notes, double price) {
         this.appointmentID = appointmentID;
         this.customer = customer;
         this.staff = staff;
@@ -82,19 +82,19 @@ public class Appointment {
         this.service = service;
     }
 
-    public Date getAppointmentDate() {
+    public Timestamp getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(Date appointmentDate) {
+    public void setAppointmentDate(Timestamp appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 
-    public Date getBookingDate() {
+    public Timestamp getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(Date bookingDate) {
+    public void setBookingDate(Timestamp bookingDate) {
         this.bookingDate = bookingDate;
     }
 

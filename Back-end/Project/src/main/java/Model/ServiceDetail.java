@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class ServiceDetail {
     private int appointmentId;
-    private Date appointmentDate;
+    private Timestamp appointmentDate;
     private String customerName;
     private String petName;
     private String serviceName;
@@ -22,7 +22,7 @@ public class ServiceDetail {
     public ServiceDetail() {
     }
 
-    public ServiceDetail(int appointmentId, Date appointmentDate, String customerName, String petName, String serviceName, double price, String status) {
+    public ServiceDetail(int appointmentId, Timestamp appointmentDate, String customerName, String petName, String serviceName, double price, String status) {
         this.appointmentId = appointmentId;
         this.appointmentDate = appointmentDate;
         this.customerName = customerName;
@@ -40,11 +40,11 @@ public class ServiceDetail {
         this.appointmentId = appointmentId;
     }
 
-    public Date getAppointmentDate() {
+    public Timestamp getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(Date appointmentDate) {
+    public void setAppointmentDate(Timestamp appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 

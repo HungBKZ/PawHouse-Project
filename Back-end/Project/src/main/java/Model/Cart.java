@@ -4,7 +4,7 @@
  */
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -16,12 +16,12 @@ public class Cart {
     private User user;
     private Product product;
     private int quantity;
-    private Date addedDate;
+    private Timestamp addedDate;
 
     public Cart() {
     }
 
-    public Cart(int cartID, User user, Product product, int quantity, Date addedDate) {
+    public Cart(int cartID, User user, Product product, int quantity, Timestamp addedDate) {
         this.cartID = cartID;
         this.user = user;
         this.product = product;
@@ -61,11 +61,11 @@ public class Cart {
         this.quantity = quantity;
     }
 
-    public Date getAddedDate() {
+    public Timestamp getAddedDate() {
         return addedDate;
     }
 
-    public void setAddedDate(Date addedDate) {
+    public void setAddedDate(Timestamp addedDate) {
         this.addedDate = addedDate;
     }
 

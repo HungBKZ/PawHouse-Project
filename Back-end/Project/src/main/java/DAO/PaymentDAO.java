@@ -26,7 +26,7 @@ public class PaymentDAO extends DBContext {
                 Payment payment = new Payment();
                 payment.setPaymentID(rs.getInt("PaymentID"));
                 payment.setAmount(rs.getDouble("Amount"));
-                payment.setPaymentDate(rs.getDate("PaymentDate"));
+                payment.setPaymentDate(rs.getTimestamp("PaymentDate"));
                 payment.setPaymentMethod(rs.getString("PaymentMethod"));
                 payment.setPaymentStatus(rs.getBoolean("PaymentStatus"));
                 paymentList.add(payment);

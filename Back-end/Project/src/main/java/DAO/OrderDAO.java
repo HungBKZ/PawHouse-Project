@@ -35,7 +35,7 @@ public class OrderDAO {
                 Orders order = new Orders();
                 order.setOrderID(rs.getInt("OrderID"));
                 order.setUser(user);
-                order.setOrderDate(rs.getDate("OrderDate"));
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
                 order.setTotalAmount(rs.getDouble("TotalAmount"));
                 order.setOrderStatus(rs.getBoolean("OrderStatus"));
                 order.setNotes(rs.getString("Notes"));

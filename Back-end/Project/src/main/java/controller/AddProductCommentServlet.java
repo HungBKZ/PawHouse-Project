@@ -20,7 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -95,7 +95,7 @@ public class AddProductCommentServlet extends HttpServlet {
                 comment.setProduct(product);
                 comment.setStar(star);
                 comment.setContent(content);
-                comment.setDateComment(Date.valueOf(LocalDate.now()));
+                comment.setDateComment(new Timestamp(System.currentTimeMillis()));
                 comment.setImage(imagePath);
                 comment.setProductCommentStatus(true);
                 

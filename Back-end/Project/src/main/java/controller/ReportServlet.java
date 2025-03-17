@@ -5,7 +5,7 @@ import Model.ReportDTO;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.sql.Timestamp;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,11 +18,14 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ReportServlet", urlPatterns = {"/staff/report"})
 public class ReportServlet extends HttpServlet {
+
     private final ReportDAO reportDAO = new ReportDAO();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -37,17 +40,18 @@ public class ReportServlet extends HttpServlet {
             String endDateStr = request.getParameter("endDate");
             String reportType = request.getParameter("type");
 
-            Date startDate, endDate;
+            Timestamp startDate, endDate;
             if (startDateStr == null || endDateStr == null) {
                 // Mặc định lấy báo cáo 7 ngày gần nhất
                 Calendar cal = Calendar.getInstance();
-                endDate = cal.getTime();
+                endDate = new Timestamp(cal.getTimeInMillis());
                 cal.add(Calendar.DAY_OF_MONTH, -6);
-                startDate = cal.getTime();
+                startDate = new Timestamp(cal.getTimeInMillis());
                 reportType = "daily";
             } else {
-                startDate = dateFormat.parse(startDateStr);
-                endDate = dateFormat.parse(endDateStr);
+                startDate = new Timestamp(dateFormat.parse(startDateStr).getTime());
+                endDate = new Timestamp(dateFormat.parse(endDateStr).getTime());
+
             }
 
             // Lấy dữ liệu báo cáo
@@ -68,6 +72,7 @@ public class ReportServlet extends HttpServlet {
 
     /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
