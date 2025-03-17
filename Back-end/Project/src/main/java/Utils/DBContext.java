@@ -19,7 +19,7 @@ public class DBContext {
             String url = "jdbc:sqlserver://localhost:1433;"
                     + "databaseName=PawHouseProjectHasData;"
                     + "user=sa;"
-                    + "password=12345;"
+                    + "password=260104;"
                     + "encrypt=true;"
                     + "trustServerCertificate=true;"
                     + "characterEncoding=UTF-8;"
