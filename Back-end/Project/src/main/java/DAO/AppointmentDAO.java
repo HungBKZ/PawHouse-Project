@@ -29,6 +29,7 @@ public class AppointmentDAO extends DBContext {
                 appointmentList.add(appointment);
             }
         } catch (SQLException e) {
+            System.out.println("Error in getAll: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -98,52 +99,107 @@ public class AppointmentDAO extends DBContext {
                 + "LEFT JOIN Users u ON p.UserID = u.UserID " // Chủ sở hữu thú cưng
                 + "JOIN Services svc ON a.ServiceID = svc.ServiceID";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); 
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Khách hàng
-                User customer = new User(rs.getInt("CustomerID"), rs.getString("CustomerUsername"), rs.getString("CustomerName"));
+                try {
+                    // Khách hàng
+                    User customer = new User(rs.getInt("CustomerID"), 
+                                          rs.getString("CustomerUsername"), 
+                                          rs.getString("CustomerName"));
 
-                // Chủ sở hữu thú cưng
-                User owner = rs.getInt("UserID") != 0 ? new User(rs.getInt("UserID"), rs.getString("OwnerUsername"), "") : null;
+                    // Chủ sở hữu thú cưng
+                    User owner = rs.getInt("UserID") != 0 ? 
+                               new User(rs.getInt("UserID"), 
+                                      rs.getString("OwnerUsername"), "") : null;
 
-                // Nhân viên & bác sĩ
-                User staff = rs.getInt("StaffID") != 0 ? new User(rs.getInt("StaffID"), rs.getString("StaffName"), "") : null;
-                User doctor = rs.getInt("DoctorID") != 0 ? new User(rs.getInt("DoctorID"), rs.getString("DoctorName"), "") : null;
+                    // Nhân viên & bác sĩ
+                    User staff = rs.getInt("StaffID") != 0 ? 
+                               new User(rs.getInt("StaffID"), 
+                                      "", rs.getString("StaffName")) : null;
+                    User doctor = rs.getInt("DoctorID") != 0 ? 
+                                new User(rs.getInt("DoctorID"), 
+                                       "", rs.getString("DoctorName")) : null;
 
-                // Thông tin thú cưng
-                Pet pet = new Pet(rs.getInt("PetID"), rs.getString("PetName"), owner);
+                    // Thông tin thú cưng
+                    Pet pet = new Pet(rs.getInt("PetID"), 
+                                    rs.getString("PetName"), 
+                                    owner);
 
-                // Dịch vụ
-                Service service = new Service(rs.getInt("ServiceID"), rs.getString("ServiceName"), rs.getDouble("Price"));
+                    // Dịch vụ
+                    Service service = new Service(rs.getInt("ServiceID"), 
+                                               rs.getString("ServiceName"), 
+                                               rs.getDouble("Price"));
 
-                // Tạo đối tượng Appointment
-                Appointment appointment = new Appointment(
-                        rs.getInt("AppointmentID"),
-                        customer, staff, doctor, pet, service,
-                        rs.getTimestamp("AppointmentDate"),
-                        rs.getTimestamp("BookingDate"),
-                        rs.getString("AppointmentStatus"),
-                        rs.getString("Notes"),
-                        rs.getDouble("Price")
-                );
+                    // Tạo đối tượng Appointment
+                    Appointment appointment = new Appointment(
+                            rs.getInt("AppointmentID"),
+                            customer, staff, doctor, pet, service,
+                            rs.getTimestamp("AppointmentDate"),
+                            rs.getTimestamp("BookingDate"),
+                            rs.getString("AppointmentStatus"),
+                            rs.getString("Notes"),
+                            rs.getDouble("Price")
+                    );
 
-                appointments.add(appointment);
+                    appointments.add(appointment);
+                } catch (Exception e) {
+                    System.out.println("Error processing appointment row: " + e.getMessage());
+                    e.printStackTrace();
+                    // Continue to next row instead of breaking the entire loop
+                    continue;
+                }
             }
 
         } catch (SQLException e) {
+            System.out.println("Error in getAllAppointments: " + e.getMessage());
             e.printStackTrace();
         }
         return appointments;
     }
 
-    public boolean updateAppointmentStatus(int appointmentID, int status) {
-        String sql = "UPDATE Appointments SET AppointmentStatus = ? WHERE AppointmentID = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, status);
-            stmt.setInt(2, appointmentID);
-            return stmt.executeUpdate() > 0; // Trả về true nếu cập nhật thành công
+    public void addAppointment(Appointment appointment) {
+        String sql = "INSERT INTO Appointments (CustomerID, StaffID, DoctorID, PetID, ServiceID, AppointmentDate, BookingDate, AppointmentStatus, Notes, Price) "
+                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Validate required fields
+            if (appointment.getCustomer() == null || appointment.getPet() == null || 
+                appointment.getService() == null) {
+                throw new IllegalArgumentException("Customer, Pet, and Service are required fields");
+            }
+
+            statement.setInt(1, appointment.getCustomer().getUserID());
+            statement.setObject(2, appointment.getStaff() != null ? 
+                                 appointment.getStaff().getUserID() : null);
+            statement.setObject(3, appointment.getDoctor() != null ? 
+                                 appointment.getDoctor().getUserID() : null);
+            statement.setInt(4, appointment.getPet().getPetID());
+            statement.setInt(5, appointment.getService().getServiceID());
+            statement.setTimestamp(6, appointment.getAppointmentDate());
+            statement.setTimestamp(7, appointment.getBookingDate());
+            statement.setString(8, appointment.getAppointmentStatus());
+            statement.setString(9, appointment.getNotes());
+            statement.setDouble(10, appointment.getPrice());
+
+            statement.executeUpdate();
         } catch (SQLException e) {
+            System.out.println("Error in addAppointment: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to add appointment", e);
+        }
+    }
+
+    public boolean updateAppointmentStatus(int appointmentID, String status) {
+        String sql = "UPDATE Appointments SET AppointmentStatus = ? WHERE AppointmentID = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, status);
+            statement.setInt(2, appointmentID);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error in updateAppointmentStatus: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -155,7 +211,7 @@ public class AppointmentDAO extends DBContext {
             ps.setInt(1, appointmentId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("Error deleting appointment: " + e.getMessage());
+            System.out.println("Error in deleteAppointment: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

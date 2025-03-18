@@ -60,7 +60,7 @@ public class StaffAppointmentServlet extends HttpServlet {
             }
 
             int appointmentID = Integer.parseInt(idParam);
-            int status = Integer.parseInt(statusParam); // 1 = Đang sử dụng, 0 = Đã sử dụng
+            String status = statusParam.equals("1") ? "Đang sử dụng" : "Đã sử dụng";
 
             // Cập nhật trạng thái trong database
             boolean success = appointmentDAO.updateAppointmentStatus(appointmentID, status);

@@ -20,8 +20,12 @@ public class Service {
 
     public Service() {
     }
+    // Constructor nhận một serviceID
+    public Service(int serviceID) {
+        this.serviceID = serviceID;
+    }
 
-    public Service(int serviceID, ServiceCategories category, String serviceName, String description, double price, String serviceImage, boolean servicetatus) {
+    public Service(int serviceID, ServiceCategories category, String serviceName, String description, double price, String serviceImage, boolean serviceStatus) {
         this.serviceID = serviceID;
         this.category = category;
         this.serviceName = serviceName;
