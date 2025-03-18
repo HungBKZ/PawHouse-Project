@@ -115,7 +115,7 @@
                 <div class="card p-4">
                     <h4><i class="bi bi-person-circle"></i> Hồ Sơ Cá Nhân</h4>
                     <p>Cập nhật thông tin bác sĩ</p>
-                    <a href="doctorProfile.jsp" class="btn btn-primary">Xem chi tiết</a>
+                    <a href="profile.jsp" class="btn btn-primary">Xem chi tiết</a>
                 </div>
             </div>
         </div>
