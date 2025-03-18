@@ -114,7 +114,7 @@
                     <li>
                         <a href="#systemSubmenu" data-bs-toggle="collapse"><i class="fas fa-cogs"></i> System Management</a>
                         <ul class="collapse list-unstyled" id="systemSubmenu">
-                            <li><a href="admin-profile.jsp">Update Profile</a></li>
+                            <li><a href="profile.jsp">Update Profile</a></li>
                             <li><a href="login.jsp">Logout</a></li>
                         </ul>
                     </li>
@@ -135,7 +135,7 @@
                                     <i class="fas fa-user-circle"></i> Admin
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="admin-profile.jsp">Profile</a></li>
+                                    <li><a class="dropdown-item" href="profile.jsp">Profile</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="login.jsp">Logout</a></li>
                                 </ul>

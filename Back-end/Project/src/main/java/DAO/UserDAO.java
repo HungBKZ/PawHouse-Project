@@ -194,7 +194,9 @@ public class UserDAO extends DBContext {
     }
 
     public User getUserByEmail(String email) throws SQLException {
-        String query = "SELECT * FROM Users WHERE Email = ?";
+        String query = "SELECT u.*, r.RoleID, r.RoleName FROM Users u " +
+                      "LEFT JOIN Roles r ON u.RoleID = r.RoleID " +
+                      "WHERE u.Email = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
@@ -204,11 +206,19 @@ public class UserDAO extends DBContext {
                     User user = new User();
                     user.setUserID(rs.getInt("UserID"));
                     user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));                    user.setEmail(rs.getString("Email"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setEmail(rs.getString("Email"));
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
                     user.setUserStatus(rs.getBoolean("UserStatus"));
+                    
+                    // Set role information
+                    Role role = new Role();
+                    role.setRoleID(rs.getInt("RoleID"));
+                    role.setRoleName(rs.getString("RoleName"));
+                    user.setRole(role);
+                    
                     return user;
                 }
             }

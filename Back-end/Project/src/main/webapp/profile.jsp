@@ -1,3 +1,4 @@
+<%@page import="Model.Role"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="Model.User" %>
 <%@ page import="DAO.UserDAO" %>
@@ -38,7 +39,47 @@
         response.sendRedirect("login.jsp");
         return;
     }
+    
+    String roleName = "";
+    if (user.getRole() != null) {
+        Role userRole = user.getRole();
+        int roleId = userRole.getRoleID();
+        roleName = userRole.getRoleName(); // First try to get the role name directly
+        
+        // Fallback to switch case if roleName is null or empty
+        if (roleName == null || roleName.trim().isEmpty()) {
+            switch (roleId) {
+                case 1:
+                    roleName = "Admin";
+                    break;
+                case 2:
+                    roleName = "Người dùng";
+                    break;
+                case 3:
+                    roleName = "Nhân viên";
+                    break;
+                case 4:
+                    roleName = "Bác sĩ";
+                    break;
+                default:
+                    roleName = "Không xác định (ID: " + roleId + ")";
+            }
+        }
+    } else {
+        roleName = "Không xác định";
+    }
+    
+    // Add debug information
+    System.out.println("Debug - User Role Info:");
+    System.out.println("User ID: " + user.getUserID());
+    if (user.getRole() != null) {
+        System.out.println("Role ID: " + user.getRole().getRoleID());
+        System.out.println("Role Name: " + user.getRole().getRoleName());
+    } else {
+        System.out.println("Role is null");
+    }
 %>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -126,7 +167,7 @@
                     <span class="google-badge"><i class="fab fa-google"></i> Google</span>
                     <% }%>
                 </h4>
-                <p class="text-muted">Vai trò: <strong><%= user.getRole() != null ? user.getRole().getRoleName() : "Người dùng"%></strong></p>
+               <p class="text-muted">Vai trò: <strong><%= roleName %></strong></p>
             </div>
 
             <% if (message != null) {%>
@@ -194,7 +235,23 @@
             <% }%>
 
             <div class="text-center mt-4">
-                <a href="index.jsp" class="btn btn-secondary me-2"><i class="fas fa-home"></i> Trang chủ</a>
+                <%
+                    String homeLink = "index.jsp"; 
+                    if (user.getRole() != null) {
+                        switch (user.getRole().getRoleID()) {
+                            case 1: 
+                                homeLink = "adminDashboard.jsp";
+                                break;
+                            case 3: 
+                                homeLink = "staffDashboard";
+                                break;
+                            case 4: 
+                                homeLink = "doctorIndex.jsp";
+                                break;
+                        }
+                    }
+                %>
+                <a href="<%= homeLink %>" class="btn btn-secondary me-2"><i class="fas fa-home"></i> Trang chủ</a>
                 <a href="logout" class="btn btn-custom"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
             </div>
         </div>
