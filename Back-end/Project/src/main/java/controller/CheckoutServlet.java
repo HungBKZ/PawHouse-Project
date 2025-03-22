@@ -103,6 +103,11 @@ public class CheckoutServlet extends HttpServlet {
 
                 //Xóa bản ghi trong Cart
                 cartDAO.removeFromCart(cart.getCartID());
+                
+                //Cập nhật stock cho Product
+                int remainStock=product.getStock() - cart.getQuantity();
+                product.setStock(remainStock);
+                productDAO.updateProduct(product);
 
                 //Tính tổng tiền cho đơn hàng
                 totalAmount += orderDetails.getPrice() * orderDetails.getQuantity();
