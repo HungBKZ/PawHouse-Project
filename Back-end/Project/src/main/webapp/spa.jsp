@@ -114,7 +114,7 @@
                                     <h5 class="card-title">${service.serviceName}</h5>
                                     <p class="card-text">${service.description}</p>
                                     <p class="price">${service.price} VND</p>
-                                    <a href="bookSpa.jsp?id=${service.serviceID}" class="btn btn-success w-100">Đặt Lịch</a>
+                                    <a href="BookService?id=${service.serviceID}" class="btn btn-success w-100">Đặt Lịch</a>
                                 </div>
                             </div>
                         </div>

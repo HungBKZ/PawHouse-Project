@@ -231,15 +231,16 @@ public class ProductDAO extends DBContext {
     // Cập nhật sản phẩm
     public boolean updateProduct(Product product) {
         boolean success = false;
-        String query = "UPDATE Products SET CategoryID = ?, ProductName = ?, Description = ?, Price = ?, Stock = ?, ProductImage = ?, ProductStatus = ? WHERE ProductID = ?";
+        String query = "UPDATE Products SET CategoryID = ?, ProductName = ?, Description = ?, Price = ?, Stock = ?, "
+                + "ProductImage = ?, ProductStatus = ? WHERE ProductID = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, product.getCategory().getCategoryID());
             ps.setString(2, product.getProductName());
             ps.setString(3, product.getDescription());
             ps.setDouble(4, product.getPrice());
-            ps.setString(5, product.getProductImage());
-            ps.setInt(6, product.getStock());
+            ps.setInt(5, product.getStock());
+            ps.setString(6, product.getProductImage());
             ps.setBoolean(7, product.isProductStatus());
             ps.setInt(8, product.getProductID());
             int rows = ps.executeUpdate();

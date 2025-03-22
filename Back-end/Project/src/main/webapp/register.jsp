@@ -117,6 +117,11 @@
                                pattern="[0-9]{10}"
                                title="Chỉ Được Nhập 10 số">
                     </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label required">Địa Chỉ</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+
 
                     <button type="submit" class="btn btn-register">Tạo Tài Khoản</button>
                 </form>
@@ -129,28 +134,28 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-        document.getElementById('registerForm').addEventListener('submit', function (event) {
-            var password = document.getElementById('password').value;
-            var confirmPassword = document.getElementById('confirmPassword').value;
+                            document.getElementById('registerForm').addEventListener('submit', function (event) {
+                                var password = document.getElementById('password').value;
+                                var confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (password !== confirmPassword) {
-                event.preventDefault();
-                alert('Passwords do not match!');
-            }
-        });
-        
-        function togglePasswordVisibility() {
-    var passwordField = document.getElementById("password");
-    var confirmPasswordField = document.getElementById("confirmPassword");
+                                if (password !== confirmPassword) {
+                                    event.preventDefault();
+                                    alert('Passwords do not match!');
+                                }
+                            });
 
-    if (passwordField.type === "password") {
-        passwordField.type = "text";
-        confirmPasswordField.type = "text";
-    } else {
-        passwordField.type = "password";
-        confirmPasswordField.type = "password";
-    }
-}
+                            function togglePasswordVisibility() {
+                                var passwordField = document.getElementById("password");
+                                var confirmPasswordField = document.getElementById("confirmPassword");
+
+                                if (passwordField.type === "password") {
+                                    passwordField.type = "text";
+                                    confirmPasswordField.type = "text";
+                                } else {
+                                    passwordField.type = "password";
+                                    confirmPasswordField.type = "password";
+                                }
+                            }
 
         </script>
     </body>

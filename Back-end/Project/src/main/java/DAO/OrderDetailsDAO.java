@@ -34,4 +34,27 @@ public class OrderDetailsDAO extends DBContext {
         }
         return orderDetailsList;
     }
+
+    public boolean addOrderDetail(OrderDetails orderDetails) {
+        String sql = "INSERT INTO [dbo].[OrderDetails]\n"
+                + "           ([OrderID]\n"
+                + "           ,[ProductID]\n"
+                + "           ,[Quantity]\n"
+                + "           ,[Price])\n"
+                + "     VALUES\n"
+                + "           (?,?,?,?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, orderDetails.getOrder().getOrderID());
+            ps.setInt(2, orderDetails.getProduct().getProductID());
+            ps.setInt(3, orderDetails.getQuantity());
+            ps.setDouble(4, orderDetails.getPrice());
+
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            System.err.println("addOrderDetail: " + e.getMessage());
+        }
+        return false;
+    }
 }

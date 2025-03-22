@@ -37,6 +37,7 @@ public class UpdateProfileServlet extends HttpServlet {
 
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
+          String address = request.getParameter("address");
         
         // Xử lý upload file
         Part filePart = request.getPart("avatar");
@@ -64,6 +65,7 @@ public class UpdateProfileServlet extends HttpServlet {
             // Cập nhật thông tin user
             user.setFullName(fullName);
             user.setPhone(phone);
+            user.setAddress(address);
             user.setAvatar(avatarPath); // Cập nhật ảnh mới
 
             boolean success = userDAO.updateUserProfile(user);
