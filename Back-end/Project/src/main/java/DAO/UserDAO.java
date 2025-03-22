@@ -99,8 +99,8 @@ public class UserDAO extends DBContext {
     }
 
     public boolean registerUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, UserStatus, RoleID) "
-                + "VALUES (?, ?, ?, ?, ?, ?, 2)"; // RoleID 2 for regular user
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Address,UserStatus, RoleID) "
+                + "VALUES (?, ?, ?, ?, ?, ?,?, 2)"; // RoleID 2 for regular user
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
@@ -108,7 +108,8 @@ public class UserDAO extends DBContext {
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
-            ps.setBoolean(6, user.isUserStatus());
+            ps.setString(6,user.getAddress());
+            ps.setBoolean(7, user.isUserStatus());
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -321,13 +322,15 @@ public class UserDAO extends DBContext {
     }
 
     public boolean updateUserProfile(User user) {
-        String sql = "UPDATE Users SET FullName = ?, Phone = ?, Avatar = ? WHERE UserID = ?";
+        String sql = "UPDATE Users SET FullName = ?, Phone = ?,Address=?, Avatar = ? WHERE UserID = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getPhone());
-            stmt.setString(3, user.getAvatar());
-            stmt.setInt(4, user.getUserID());
+             stmt.setString(3, user.getAddress());
+            stmt.setString(4, user.getAvatar());
+           
+            stmt.setInt(5, user.getUserID());
 
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;

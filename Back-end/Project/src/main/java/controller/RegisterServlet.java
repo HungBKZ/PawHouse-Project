@@ -34,6 +34,7 @@ public class RegisterServlet extends HttpServlet {
         String confirmPassword = request.getParameter("confirmPassword");
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
 
         // Kiểm tra mật khẩu có khớp không
         if (!password.equals(confirmPassword)) {
@@ -70,6 +71,7 @@ public class RegisterServlet extends HttpServlet {
             session.setAttribute("email", email);
             session.setAttribute("fullName", fullName);
             session.setAttribute("phone", phone);
+            session.setAttribute("address", address);
 
             // Gửi email chứa OTP
             String subject = "🐾 Xác Thực Đăng Ký - PawHouse 🐾";

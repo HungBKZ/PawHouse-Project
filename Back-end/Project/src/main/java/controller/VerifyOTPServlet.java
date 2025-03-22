@@ -28,8 +28,9 @@ public class VerifyOTPServlet extends HttpServlet {
             String email = (String) session.getAttribute("email");
             String fullName = (String) session.getAttribute("fullName");
             String phone = (String) session.getAttribute("phone");
+            String address = (String) session.getAttribute("address");
 
-            User newUser = new User(username, password, email, fullName, phone, true);
+            User newUser = new User(username, password, email, fullName, phone,address, true);
             UserDAO userDAO = new UserDAO();
             try {
                 userDAO.registerUser(newUser);
@@ -39,6 +40,7 @@ public class VerifyOTPServlet extends HttpServlet {
                 session.removeAttribute("email");
                 session.removeAttribute("fullName");
                 session.removeAttribute("phone");
+                 session.removeAttribute("address");
                 response.sendRedirect("index.jsp");
             } catch (SQLException e) {
                 request.setAttribute("error", "Error while registering: " + e.getMessage());

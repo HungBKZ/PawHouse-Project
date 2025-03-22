@@ -206,6 +206,11 @@
                            required>
                     <small class="text-muted">Vui lòng nhập đúng 10 chữ số.</small>
                 </div>
+                           
+                  <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-user"></i> Địa Chỉ</label>
+                    <input type="text" name="address" class="form-control" value="<%= user.getAddress()%>" required>
+                </div>
                 <button type="submit" class="btn btn-custom btn-edit w-100">Cập nhật thông tin</button>
             </form>
 

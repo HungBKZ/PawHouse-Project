@@ -34,12 +34,13 @@ public class User {
         this.address = address;
     }
 
-    public User(String username, String password, String email, String fullName, String phone, boolean userStatus) {
+    public User(String username, String password, String email, String fullName, String phone,String address, boolean userStatus) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
+         this.address = address;
         this.userStatus = userStatus;
     }
 
