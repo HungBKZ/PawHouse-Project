@@ -142,7 +142,7 @@ public class PetDAO extends DBContext {
 
     public List<Pet> getPetsByUserId(int userId) {
         List<Pet> pets = new ArrayList<>();
-        String query = "SELECT * FROM Pets WHERE UserID = ?";
+        String query = "SELECT p.*, pc.CategoryName FROM Pets p LEFT JOIN PetCategories pc ON p.CategoryID = pc.CategoryID WHERE UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {

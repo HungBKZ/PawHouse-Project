@@ -6,7 +6,6 @@ package DAO;
 
 import Model.Cart;
 import Model.Product;
-import Model.User;
 import Utils.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
@@ -133,6 +132,17 @@ public class CartDAO extends DBContext {
                 System.out.println("❌ Không tìm thấy sản phẩm trong giỏ hàng!");
             }
         }
+    }
+
+    public boolean removeFromCart(int cartID) {
+        String query = "DELETE FROM Cart WHERE CartID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, cartID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("removeFromCart: " + e.getMessage());
+        }
+        return false;
     }
 
     public Cart getCartItem(int userId, int productId) {

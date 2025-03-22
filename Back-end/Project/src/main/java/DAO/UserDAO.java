@@ -143,7 +143,7 @@ public class UserDAO extends DBContext {
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
                     user.setFullName(rs.getString("fullName"));
-                    user.setPhone(rs.getString("phoneNumber"));
+                    user.setPhone(rs.getString("phone"));
                     user.setAddress(rs.getString("address"));
                     Role role = new Role();
                     role.setRoleID(rs.getInt("RoleID"));
@@ -212,6 +212,7 @@ public class UserDAO extends DBContext {
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
                     user.setUserStatus(rs.getBoolean("UserStatus"));
+                    user.setAddress(rs.getString("address"));
                     
                     // Set role information
                     Role role = new Role();

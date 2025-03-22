@@ -127,9 +127,9 @@
                                     </td>
                                     <td><img src="${cart.product.productImage}" width="80" class="img-thumbnail"></td>
                                     <td>${cart.product.productName}</td>
-                                    <td><fmt:formatNumber value="${cart.product.price}" type="number" pattern="#,##0" /> VNĐ</td>
+                                    <td><fmt:formatNumber value="${cart.product.price}" type="number" pattern="#,##0" />đ</td>
                                     <td>${cart.quantity}</td>
-                                    <td><fmt:formatNumber value="${subtotal}" type="number" pattern="#,##0" /> VNĐ</td>
+                                    <td><fmt:formatNumber value="${subtotal}" type="number" pattern="#,##0" />đ</td>
                                     <td>
                                         <a href="DeleteFromCart?id=${cart.product.productID}" class="btn btn-delete">
                                             <i class="fas fa-trash"></i> Xóa
@@ -149,11 +149,10 @@
             </div>
 
             <div class="text-end">
-                <h4>Tổng Cộng: <span class="total-amount" id="totalAmount">0 VNĐ</span></h4>
-                <form id="checkout-form" action="checkout.jsp" method="POST">
+                <form id="checkout-form" action="Checkout" method="POST">
                     <input type="hidden" name="selectedProducts">
                     <button type="button" class="btn btn-primary mt-3" onclick="submitSelected()">
-                        <i class="fas fa-credit-card"></i> Tiến Hành Thanh Toán
+                        <i class="fas fa-credit-card"></i> Xác nhận mua hàng
                     </button>
                 </form>
             </div>

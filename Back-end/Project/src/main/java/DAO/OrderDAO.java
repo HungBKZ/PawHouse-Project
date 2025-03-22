@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OrderDAO {
@@ -89,4 +90,57 @@ public class OrderDAO {
         return revenue;
     }
 
+    public boolean addOrder(Orders orders) {
+        String sql = "INSERT INTO Orders(UserID, OrderDate, OrderStatus) VALUES (?,?,?)";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orders.getUser().getUserID());
+            ps.setTimestamp(2, new java.sql.Timestamp(new Date().getTime()));
+            ps.setBoolean(3, false);
+
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            System.err.println("addOrder: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public Orders getLastestOrderByUser(User user) {
+        String sql = "SELECT TOP 1 * FROM Orders WHERE UserID=? ORDER BY OrderID DESC";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, user.getUserID());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Orders order = new Orders();
+                order.setOrderID(rs.getInt("OrderID"));
+                order.setUser(user);
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
+                order.setTotalAmount(rs.getDouble("TotalAmount"));
+                order.setOrderStatus(rs.getBoolean("OrderStatus"));
+                order.setNotes(rs.getString("Notes"));
+                return order;
+            }
+        } catch (SQLException e) {
+            System.err.println("getLastestOrder: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean updateOrder(Orders order) {
+        String sql = "UPDATE Orders SET TotalAmount=?, OrderStatus=?, Notes=? WHERE OrderID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setDouble(1, order.getTotalAmount());
+            ps.setBoolean(2, order.isOrderStatus());
+            ps.setString(3, order.getNotes());
+            ps.setInt(4, order.getOrderID());
+
+            return ps.executeUpdate()>0;
+        } catch (SQLException e) {
+           System.err.println("updateOrder: " + e.getMessage());
+        }
+        return false;
+    }
 }

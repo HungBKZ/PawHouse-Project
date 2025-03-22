@@ -103,7 +103,7 @@
                             <h5>${service.serviceName}</h5>
                             <p>${service.description}</p>
                             <p class="price">${service.price} VND</p>
-                            <a href="bookService.jsp?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
+                            <a href="BookService?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
                         </div>
                     </div>
                 </c:forEach>
@@ -120,7 +120,7 @@
                             <h5>${service.serviceName}</h5>
                             <p>${service.description}</p>
                             <p class="price">${service.price} VND</p>
-                            <a href="bookService.jsp?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
+                            <a href="BookService?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
                         </div>
                     </div>
                 </c:forEach>
