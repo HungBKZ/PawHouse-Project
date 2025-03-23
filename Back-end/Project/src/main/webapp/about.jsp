@@ -54,7 +54,7 @@
             .rounded.shadow:hover {
                 transform: translateY(-10px);
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            }
+            }   
             .btn-square {
                 width: 40px;
                 height: 40px;
@@ -172,7 +172,7 @@
                     <div class="col-lg-2 col-md-6 wow fadeInUp" data-wow-delay="0.9s">
                         <div class="rounded shadow overflow-hidden">
                             <div class="position-relative">
-                                <img class="img-fluid" src="img/about_us/aboutHung.jpg" alt="Chấn Hưng">
+                                <img class="img-fluid" src="imgs/avatar/avata3.jpg" alt="Phú Hưng">
                                 <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
                                     <a target="_blank" class="btn btn-square btn-primary mx-1" href="https://www.facebook.com/profile.php?id=100033289996509">
                                         <i class="fab fa-facebook-f"></i>
