@@ -95,65 +95,42 @@
 
         <section class="container py-5">
             <h2 class="section-title">Dịch Vụ Y Tế</h2>
-            <div class="row">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
                 <c:forEach var="service" items="${medicalList}">
-                    <div class="col-md-4 mb-4">
-                        <div class="service-card">
-                            <img src="${service.serviceImage}" alt="${service.serviceName}">
-                            <h5>${service.serviceName}</h5>
-                            <p>${service.description}</p>
-                            <p class="price">${service.price} VND</p>
-                            <a href="BookService?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
+                    <div class="col">
+                        <div class="card h-100 service-card text-center">
+                            <img src="${service.serviceImage}" class="card-img-top" alt="${service.serviceName}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${service.serviceName}</h5>
+                                <p class="card-text">${service.description}</p>
+                                <p class="price mt-auto fw-bold text-success">${service.price} VND</p>
+                                <a href="BookService?id=${service.serviceID}" class="btn btn-custom mt-2 w-100">Đặt Lịch</a>
+                            </div>
                         </div>
                     </div>
                 </c:forEach>
             </div>
+
         </section>
 
         <section class="container py-5">
             <h2 class="section-title">Dịch Vụ Spa</h2>
-            <div class="row">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
                 <c:forEach var="service" items="${spaList}">
-                    <div class="col-md-4 mb-4">
-                        <div class="service-card">
-                            <img src="${service.serviceImage}" alt="${service.serviceName}">
-                            <h5>${service.serviceName}</h5>
-                            <p>${service.description}</p>
-                            <p class="price">${service.price} VND</p>
-                            <a href="BookService?id=${service.serviceID}" class="btn btn-custom w-100">Đặt Lịch</a>
+                    <div class="col">
+                        <div class="card h-100 service-card text-center">
+                            <img src="${service.serviceImage}" class="card-img-top" alt="${service.serviceName}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${service.serviceName}</h5>
+                                <p class="card-text">${service.description}</p>
+                                <p class="price mt-auto fw-bold text-success">${service.price} VND</p>
+                                <a href="BookService?id=${service.serviceID}" class="btn btn-custom mt-2 w-100">Đặt Lịch</a>
+                            </div>
                         </div>
                     </div>
                 </c:forEach>
             </div>
-        </section>
 
-
-        <!-- Gói dịch vụ phổ biến -->
-        <section class="container py-5">
-            <h2 class="section-title text-center mb-4">Gói Dịch Vụ Phổ Biến</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="package-card">
-                        <h5>Gói Spa Toàn Diện</h5>
-                        <p>Tắm, cắt tỉa, massage thư giãn cho thú cưng.</p>
-                        <p class="price">500.000 VND</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="package-card">
-                        <h5>Gói Khám Tổng Quát</h5>
-                        <p>Kiểm tra sức khỏe, xét nghiệm cơ bản, tư vấn dinh dưỡng.</p>
-                        <p class="price">300.000 VND</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="package-card">
-                        <h5>Gói Tiêm Phòng</h5>
-                        <p>Tiêm vaccine phòng bệnh, đảm bảo sức khỏe dài lâu.</p>
-                        <p class="price">200.000 VND</p>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- Câu hỏi thường gặp -->

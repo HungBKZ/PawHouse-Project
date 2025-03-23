@@ -57,7 +57,8 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="profile.jsp"><i class="bi bi-person"></i> Hồ sơ</a></li>
-                    <li><a class="dropdown-item" href="orders.jsp"><i class="bi bi-receipt"></i> Đơn hàng</a></li>
+                    <li><a class="dropdown-item" href="/ViewOrder"><i class="bi bi-receipt"></i> Đơn hàng</a></li>
+                    <li><a class="dropdown-item" href="/ViewAppointment"><i class="bi-calendar-week"></i> Lịch hẹn</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/MyPet"><i class="bi bi-house-heart"></i> Thú cưng của tôi</a></li>
                     <li><hr class="dropdown-divider"></li>

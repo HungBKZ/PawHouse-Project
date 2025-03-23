@@ -87,14 +87,14 @@ public class StaffManageAdoptionServlet extends HttpServlet {
                 success = adoptionDAO.updateAdoptionStatus(adoptionId, status, notes);
                 if (success) {
                     // Then update pet status if adoption update was successful
-                    success = adoptionDAO.updatePetAdoptionStatus(adoptionId, "Adopted");
+                    success = adoptionDAO.updatePetAdoptionStatus(adoptionId, "Đã nhận nuôi");
                 }
             } else if ("reject".equals(action)) {
                 status = "Rejected";
                 success = adoptionDAO.updateAdoptionStatus(adoptionId, status, notes);
                 if (success) {
                     // Reset pet status to available if rejection was successful
-                    success = adoptionDAO.updatePetAdoptionStatus(adoptionId, "Available");
+                    success = adoptionDAO.updatePetAdoptionStatus(adoptionId, "Chưa nhận nuôi");
                 }
             }
             

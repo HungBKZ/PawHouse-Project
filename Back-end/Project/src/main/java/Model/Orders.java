@@ -5,6 +5,7 @@
 package Model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -18,6 +19,7 @@ public class Orders {
     private double totalAmount;
     private boolean orderStatus;
     private String notes;
+    private List<OrderDetails> orderDetails;
 
     public Orders() {
     }
@@ -78,6 +80,14 @@ public class Orders {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<OrderDetails> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetails> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 
 }

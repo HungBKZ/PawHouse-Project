@@ -216,4 +216,63 @@ public class AppointmentDAO extends DBContext {
             return false;
         }
     }
+
+    public List<Appointment> getAppointmentsByCustomerId(int customerId) throws SQLException {
+        List<Appointment> list = new ArrayList<>();
+        String query = "SELECT a.*, " +
+                       "       p.PetName, p.PetImage, s.ServiceName, s.Price, " +
+                       "       d.FullName AS DoctorName, st.FullName AS StaffName " +
+                       "FROM Appointments a " +
+                       "JOIN Pets p ON a.PetID = p.PetID " +
+                       "JOIN Services s ON a.ServiceID = s.ServiceID " +
+                       "LEFT JOIN Users d ON a.DoctorID = d.UserID " +
+                       "LEFT JOIN Users st ON a.StaffID = st.UserID " +
+                       "WHERE a.CustomerID = ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, customerId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Pet pet = new Pet();
+                pet.setPetID(rs.getInt("PetID"));
+                pet.setPetImage(rs.getNString("PetImage"));
+                pet.setPetName(rs.getString("PetName"));
+
+                Service service = new Service();
+                service.setServiceID(rs.getInt("ServiceID"));
+                service.setServiceName(rs.getString("ServiceName"));
+                service.setPrice(rs.getDouble("Price"));
+
+                User doctor = null;
+                if (rs.getString("DoctorName") != null) {
+                    doctor = new User();
+                    doctor.setUserID(rs.getInt("DoctorID"));
+                    doctor.setFullName(rs.getString("DoctorName"));
+                }
+
+                User staff = null;
+                if (rs.getString("StaffName") != null) {
+                    staff = new User();
+                    staff.setUserID(rs.getInt("StaffID"));
+                    staff.setFullName(rs.getString("StaffName"));
+                }
+
+                Appointment a = new Appointment();
+                a.setAppointmentID(rs.getInt("AppointmentID"));
+                a.setPet(pet);
+                a.setService(service);
+                a.setAppointmentDate(rs.getTimestamp("AppointmentDate"));
+                a.setBookingDate(rs.getTimestamp("BookingDate"));
+                a.setAppointmentStatus(rs.getString("AppointmentStatus"));
+                a.setNotes(rs.getString("Notes"));
+                a.setPrice(rs.getDouble("Price"));
+                a.setDoctor(doctor);
+                a.setStaff(staff);
+
+                list.add(a);
+            }
+
+        return list;
+    }
 }
+

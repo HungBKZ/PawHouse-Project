@@ -2,8 +2,10 @@ package controller;
 
 import DAO.PetDAO;
 import DAO.AdoptionDAO;
+import DAO.MedicalRecordDAO;
 import Model.Pet;
 import Model.AdoptionHistory;
+import Model.MedicalRecords;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -14,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "PetDetailServlet", urlPatterns = {"/PetDetailServlet"})
 public class PetDetailServlet extends HttpServlet {
+
     private PetDAO petDAO;
     private AdoptionDAO adoptionDAO;
 
@@ -34,8 +37,10 @@ public class PetDetailServlet extends HttpServlet {
                 response.sendRedirect("adoption.jsp?error=notfound");
                 return;
             }
-
+            MedicalRecordDAO dao = new MedicalRecordDAO();
+            List<MedicalRecords> medicalRecords = dao.getMedicalRecordsByPetId(petId);
             request.setAttribute("petDetail", pet);
+            request.setAttribute("medicalRecords", medicalRecords);
             request.setAttribute("adoptionHistory", adoptionHistory);
             request.getRequestDispatcher("/petDetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {

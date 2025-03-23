@@ -415,7 +415,7 @@
                         <a href="/SuppliesProduct"><img src="./imgs/toy_.jpg" class="card-img-top" alt="Đồ chơi"></a>
                         <div class="card-body text-center">
                             <h5 class="card-title">Đồ Dùng Cho Thú Cưng</h5>
-                            <p class="card-text">Giúp thú cưng vui chơi và đảm bảo sức khỏe.</p>
+                            <p class="card-text">Đồ dùng hằng ngày, giúp thú cưng vui chơi và đảm bảo sức khỏe.</p>
                             <a href="/SuppliesProduct" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
                         </div>
                     </div>
@@ -506,42 +506,6 @@
                 </div>
                 <% }%>
             </div>
-        </section>
-
-
-        <!-- Đánh giá khách hàng -->
-        <section id="reviews" class="container py-5">
-            <h2 class="text-center fw-bold mb-4">Đánh giá từ khách hàng</h2>
-            <div class="row g-4">
-                <!-- Form đánh giá -->
-                <div class="mt-5">
-                    <h4 class="text-center">Chia sẻ đánh giá của bạn</h4>
-                    <form class="mt-3">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Tên của bạn *">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="email" class="form-control" placeholder="Email *">
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-select">
-                                    <option>Chọn dịch vụ</option>
-                                    <option>Thú y</option>
-                                    <option>Spa & Grooming</option>
-                                    <option>Nhận nuôi</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <textarea class="form-control" rows="4" placeholder="Viết đánh giá của bạn"></textarea>
-                        </div>
-
-                        <div class="mt-3 text-center">
-                            <button class="btn btn-warning">Gửi đánh giá</button>
-                        </div>
-                    </form>
-                </div>
         </section>
 
         <!-- Footer -->

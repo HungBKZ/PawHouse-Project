@@ -4,7 +4,9 @@
  */
 package DAO;
 
+import Model.OrderDetails;
 import Model.Orders;
+import Model.Product;
 import Model.User;
 import Utils.DBContext;
 import java.sql.Connection;
@@ -137,10 +139,104 @@ public class OrderDAO {
             ps.setString(3, order.getNotes());
             ps.setInt(4, order.getOrderID());
 
-            return ps.executeUpdate()>0;
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-           System.err.println("updateOrder: " + e.getMessage());
+            System.err.println("updateOrder: " + e.getMessage());
         }
         return false;
     }
+
+    // Lấy danh sách đơn hàng theo UserID
+    public List<Orders> getOrdersByUserId(int userId) {
+        List<Orders> ordersList = new ArrayList<>();
+        String query = "SELECT * FROM Orders WHERE UserID = ? ORDER BY OrderDate DESC";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Orders order = new Orders();
+                order.setOrderID(rs.getInt("OrderID"));
+
+                User user = new User();
+                user.setUserID(userId);
+                order.setUser(user);
+
+                order.setOrderDate(rs.getTimestamp("OrderDate"));
+                order.setTotalAmount(rs.getDouble("TotalAmount"));
+                order.setOrderStatus(rs.getBoolean("OrderStatus"));
+                order.setNotes(rs.getString("Notes"));
+
+                ordersList.add(order);
+            }
+        } catch (SQLException e) {
+            System.err.println("getOrdersByUserId: " + e.getMessage());
+        }
+
+        return ordersList;
+    }
+
+    // Lấy danh sách chi tiết đơn hàng theo OrderID
+    public List<OrderDetails> getOrderDetailsByOrderId(int orderId) {
+        List<OrderDetails> detailsList = new ArrayList<>();
+        String sql = "SELECT od.OrderDetailID, od.OrderID, od.ProductID, od.Quantity, od.Price, "
+                + "p.ProductName, p.ProductImage "
+                + "FROM OrderDetails od "
+                + "JOIN Products p ON od.ProductID = p.ProductID "
+                + "WHERE od.OrderID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                OrderDetails detail = new OrderDetails();
+                detail.setOrderDetailID(rs.getInt("OrderDetailID"));
+
+                Orders order = new Orders();
+                order.setOrderID(rs.getInt("OrderID"));
+                detail.setOrder(order);
+
+                Product product = new Product();
+                product.setProductID(rs.getInt("ProductID"));
+                product.setProductName(rs.getString("ProductName"));
+                product.setProductImage(rs.getString("ProductImage"));
+                detail.setProduct(product);
+
+                detail.setQuantity(rs.getInt("Quantity"));
+                detail.setPrice(rs.getDouble("Price"));
+
+                detailsList.add(detail);
+            }
+        } catch (SQLException e) {
+            System.err.println("getOrderDetailsByOrderId: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return detailsList;
+    }
+
+    // Lấy toàn bộ thông tin đơn hàng + chi tiết theo UserID
+    public List<Orders> getFullOrderInfoByUserId(int userId) {
+        List<Orders> orders = new ArrayList<>();
+        try {
+            orders = getOrdersByUserId(userId);
+
+            for (Orders order : orders) {
+                System.out.println("🟢 Order ID: " + order.getOrderID());
+                List<OrderDetails> details = getOrderDetailsByOrderId(order.getOrderID());
+                order.setOrderDetails(details); // ❗ Phải có dòng này
+            }
+
+        } catch (Exception e) {
+            System.err.println("getFullOrderInfoByUserId: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return orders;
+    }
+
 }

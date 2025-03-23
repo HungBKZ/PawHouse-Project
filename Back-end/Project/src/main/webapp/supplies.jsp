@@ -162,7 +162,7 @@
                     padding: 12px 30px; /* Điều chỉnh kích thước nút nhỏ hơn */
                 }
             }
-            
+
             /* Tiêu đề */
             .section-title {
                 font-size: 2rem;
@@ -321,58 +321,59 @@
     </section>
 
     <!-- Danh sách sản phẩm -->
-        <div class="container mt-4">
-            <div class="row">
-                <!-- Sidebar Categories -->
-                <div class="col-md-3">
-                    <div class="category-sidebar">
-                        <h5>Danh Mục</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="SuppliesProduct?category=">Tất cả danh mục</a></li>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Sidebar Categories -->
+            <div class="col-md-3">
+                <div class="category-sidebar">
+                    <h5>Danh Mục</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="SuppliesProduct?category=">Tất cả danh mục</a></li>
                             <c:forEach var="category" items="${categoryList}">
-                                
-                                <li> <a href="SuppliesProduct?category=${category.categoryID}" 
-                                        class="${category.categoryID == param.category ? 'active' : ''}">${category.categoryName}</a></li>
-                                </c:forEach>
-                        </ul>
-                    </div>
+
+                            <li> <a href="SuppliesProduct?category=${category.categoryID}" 
+                                    class="${category.categoryID == param.category ? 'active' : ''}">${category.categoryName}</a></li>
+                            </c:forEach>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Search and Sort -->
+            <div class="col-md-9">
+                <div class="search-sort-container d-flex justify-content-between mb-3">
+                    <input type="text" class="form-control w-50" id="searchBox" placeholder="Tìm kiếm sản phẩm...">
+                    <select class="form-select w-25" id="sortOptions">
+                        <option value="name_asc">Tên (A-Z)</option>
+                        <option value="name_desc">Tên (Z-A)</option>
+                        <option value="price_low">Giá - Thấp đến Cao</option>
+                        <option value="price_high">Giá - Cao đến Thấp</option>
+                    </select>
                 </div>
 
-                <!-- Search and Sort -->
-                <div class="col-md-9">
-                    <div class="search-sort-container d-flex justify-content-between mb-3">
-                        <input type="text" class="form-control w-50" id="searchBox" placeholder="Tìm kiếm sản phẩm...">
-                        <select class="form-select w-25" id="sortOptions">
-                            <option value="name_asc">Tên (A-Z)</option>
-                            <option value="name_desc">Tên (Z-A)</option>
-                            <option value="price_low">Giá - Thấp đến Cao</option>
-                            <option value="price_high">Giá - Cao đến Thấp</option>
-                        </select>
-                    </div>
+                <!-- Product List -->
+                <div class="row" id="productGrid">
+                    <c:choose>
+                        <c:when test="${not empty suppliesList}">
+                            <c:forEach var="p" items="${suppliesList}">
 
-                    <!-- Product List -->
-                    <div class="row" id="productGrid">
-                        <c:choose>
-                            <c:when test="${not empty suppliesList}">
-                                <c:forEach var="p" items="${suppliesList}">
-
-                                    <div class="col-md-4 mb-4 product-item" data-name="${p.productName}" data-price="${p.price}">
-                                        <div class="product-card shadow">
-                                            <a href="ProductDetail?id=${p.productID}">
-                                                <img src="${p.productImage}" class="card-img-top" alt="${p.productName}">
-                                                <div class="card-body text-center">
-                                                    <h5 class="card-title">${p.productName}</h5>
-                                                    <p class="card-text">${p.description}</p>
-                                                    <p class="price">${p.price} VND</p>
-                                                    <p class="stock">${p.stock} sản phẩm</p>
-                                                    <button class="btn btn-success w-100">Mua Ngay</button>
-                                                    <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">
-                                                        🛒 Thêm vào Giỏ
-                                                    </button>
-                                            </a>
+                                <div class="col-md-4 mb-4 product-item" data-name="${p.productName}" data-price="${p.price}">
+                                    <div class="product-card shadow d-flex flex-column h-100">
+                                        <a href="ProductDetail?id=${p.productID}">
+                                            <img src="${p.productImage}" class="card-img-top" alt="${p.productName}">
+                                        </a>
+                                        <div class="card-body text-center d-flex flex-column flex-grow-1">
+                                            <h5 class="card-title">${p.productName}</h5>
+                                            <p class="card-text">${p.description}</p>
+                                            <p class="price mt-auto">${p.price} VND</p>
+                                            <p class="stock">${p.stock} sản phẩm</p>
+                                            <button class="btn btn-success w-100 mt-2">Mua Ngay</button>
+                                            <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">
+                                                🛒 Thêm vào Giỏ
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+
 
                             </c:forEach>
                         </c:when>
@@ -387,7 +388,7 @@
     </div>
 
     <script>
-        
+
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".add-to-cart-btn").forEach(button => {
                 button.addEventListener("click", function (event) {

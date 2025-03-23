@@ -488,4 +488,44 @@ public class PetDAO extends DBContext {
         return pets;
     }
 
+    public Pet getPetById(int petId) {
+        Pet pet = null;
+        String query = "SELECT * FROM Pets WHERE PetID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, petId);  // Gán giá trị petId
+            System.out.println("🟢 Query: SELECT * FROM Pets WHERE PetID = " + petId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                pet = new Pet();
+                pet.setPetID(rs.getInt("PetID"));
+
+                // Gán Category
+                PetCategories category = new PetCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                pet.setCategory(category);
+
+                pet.setPetName(rs.getString("PetName"));
+                pet.setSpecies(rs.getString("Species"));
+                pet.setBreed(rs.getString("Breed"));
+                pet.setAge(rs.getInt("Age"));
+                pet.setGender(rs.getString("Gender"));
+                pet.setAdoptionStatus(rs.getNString("AdoptionStatus"));
+                pet.setPetImage(rs.getString("PetImage"));
+                pet.setInUseService(rs.getString("InUseService"));
+
+                // Gán Owner (User)
+                User owner = new User();
+                owner.setUserID(rs.getInt("UserID"));
+                pet.setOwner(owner);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi khi lấy thông tin thú cưng PetID = " + petId + ": " + e.getMessage());
+        }
+
+        return pet;  // Trả về đối tượng Pet hoặc null nếu không tìm thấy
+    }
+
 }
