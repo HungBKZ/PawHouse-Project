@@ -82,4 +82,11 @@ public class UpdateProfileServlet extends HttpServlet {
         
         request.getRequestDispatcher("profile.jsp").forward(request, response);
     }
+    
+    @Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    // Chuyển hướng người dùng đến trang profile.jsp
+    request.getRequestDispatcher("profile.jsp").forward(request, response);
+}
 }

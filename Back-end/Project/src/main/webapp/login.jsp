@@ -197,7 +197,7 @@
                         <label class="form-check-label" for="rememberMe">Lưu mật khẩu</label>
                     </div>
                     <div class="forgot-password">
-                        <a href="forgotPassword.jsp">Quên mật khẩu?</a>
+                        <a href="forgotPassword">Quên mật khẩu?</a>
                     </div>
                     <button type="submit" class="btn btn-primary btn-login">Đăng nhập</button>
                 </form>
@@ -215,8 +215,8 @@
 
 
                 <div class="register-link">
-                    <p>Bạn chưa có tài khoản? <a href="register.jsp">Đăng ký ngay tại đây</a></p>
-                    <a href="index.jsp" class="btn btn-outline-secondary mt-3">
+                    <p>Bạn chưa có tài khoản? <a href="register">Đăng ký ngay tại đây</a></p>
+                    <a href="home" class="btn btn-outline-secondary mt-3">
                         <i class="fas fa-arrow-left"></i> Quay Lại Trang Chủ
                     </a>
                 </div>

@@ -84,8 +84,8 @@
         <div class="container-xxl py-5">
             <div class="container">
                 <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h6 class="section-title text-center text-primary text-uppercase">Our Team</h6>
-                    <h1 class="mb-5">Explore Our <span class="text-primary text-uppercase">Staffs</span></h1>
+                    <h6 class="section-title text-center text-primary text-uppercase">Nhóm Chúng Tôi</h6>
+                    <h1 class="mb-5">Khám Phá <span class="text-primary text-uppercase">Về Chúng Tôi</span></h1>
                 </div>
                 <div class="row g-4">
                     <!-- Member 1 -->

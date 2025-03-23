@@ -32,6 +32,6 @@ public class HomePageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Handle any POST requests if needed
-        doGet(request, response);
+     request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 }
