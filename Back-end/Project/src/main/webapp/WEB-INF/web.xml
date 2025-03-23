@@ -15,6 +15,15 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/uploads/*</url-pattern>
     </servlet-mapping>
+<servlet>
+    <servlet-name>MedicalRecordServlet</servlet-name>
+    <servlet-class>controller.MedicalRecordServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>MedicalRecordServlet</servlet-name>
+    <url-pattern>/medical-record</url-pattern>
+</servlet-mapping>
 
     <servlet>
         <servlet-name>OrderServlet</servlet-name>

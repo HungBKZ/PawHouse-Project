@@ -90,7 +90,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title"><i class="bi bi-file-medical"></i> Hồ Sơ Bệnh Án</h5>
                             <p>Quản lý hồ sơ bệnh án</p>
-                            <a href="doctorMedical_records.jsp" class="btn btn-primary">Xem chi tiết</a>
+                <a href="medical-record" class="btn btn-primary">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>
