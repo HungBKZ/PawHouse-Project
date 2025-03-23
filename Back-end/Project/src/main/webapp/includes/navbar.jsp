@@ -17,13 +17,13 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg fixed-top navbar-custom">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index.jsp">🐾 PawHouse</a>
+        <a class="navbar-brand fw-bold" href="home">🐾 PawHouse</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="index.jsp">Trang Chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="home">Trang Chủ</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="/Product" id="productDropdown" role="button">
                         Sản Phẩm
@@ -49,14 +49,14 @@
             </ul>
 
             <% if (user == null && googleUsername == null) { %>
-            <a class="btn btn-primary text-white px-4" href="login.jsp">Đăng Nhập</a>
+            <a class="btn btn-primary text-white px-4" href="login">Đăng Nhập</a>
             <% } else {%>
             <div class="dropdown">
                 <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
                     <i class="bi bi-person-circle"></i> <%= googleUsername != null ? googleUsername : user.getFullName()%>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="profile.jsp"><i class="bi bi-person"></i> Hồ sơ</a></li>
+                    <li><a class="dropdown-item" href="/UpdateProfileServlet"><i class="bi bi-person"></i> Hồ sơ</a></li>
                     <li><a class="dropdown-item" href="/ViewOrder"><i class="bi bi-receipt"></i> Đơn hàng</a></li>
                     <li><a class="dropdown-item" href="/ViewAppointment"><i class="bi-calendar-week"></i> Lịch hẹn</a></li>
                     <li><hr class="dropdown-divider"></li>

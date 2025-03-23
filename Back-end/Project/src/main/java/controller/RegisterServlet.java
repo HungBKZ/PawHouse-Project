@@ -86,7 +86,7 @@ public class RegisterServlet extends HttpServlet {
                     + "<p style='font-size: 16px; color: #333; margin-top: 20px;'>Vui lòng nhập mã này để hoàn tất đăng ký tài khoản PawHouse.</p>"
                     + "<p style='font-size: 14px; color: #666;'>Lưu ý: Mã OTP có hiệu lực trong <b>5 phút</b>.</p>"
                     + "<p style='margin-top: 20px; font-size: 14px; color: #666;'>Cảm ơn bạn đã tham gia cộng đồng PawHouse! 🐾</p>"
-//                    + "<a href='http://localhost:8080/index.jsp' style='display: inline-block; margin-top: 15px; padding: 10px 20px; font-size: 16px; color: white; background-color: #FF8000; text-decoration: none; border-radius: 5px;'>Xác Thực Ngay</a>"
+//                    + "<a href='http://localhost:8080/home' style='display: inline-block; margin-top: 15px; padding: 10px 20px; font-size: 16px; color: white; background-color: #FF8000; text-decoration: none; border-radius: 5px;'>Xác Thực Ngay</a>"
                     + "<hr style='border: 1px solid #FF8000; margin-top: 20px;'>"
                     + "<p style='font-size: 12px; color: #999;'>Nếu bạn không yêu cầu đăng ký, vui lòng bỏ qua email này.</p>"
                     + "</div>"
@@ -95,7 +95,7 @@ public class RegisterServlet extends HttpServlet {
             EmailUtility.sendEmail(email, subject, content);
 
             // Chuyển hướng đến trang nhập OTP
-            response.sendRedirect("verifyOTP.jsp");
+            response.sendRedirect("verifyOTP");
 
         } catch (SQLException e) {
             request.setAttribute("error", "Database error occurred: " + e.getMessage());

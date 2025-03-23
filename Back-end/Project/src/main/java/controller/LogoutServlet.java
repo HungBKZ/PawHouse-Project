@@ -48,8 +48,8 @@ public class LogoutServlet extends HttpServlet {
             }
         }
 
-        // Chuyển hướng về trang chủ hoặc trang đăng nhập (ở đây chuyển về index.jsp)
-        response.sendRedirect("index.jsp");
+        // Chuyển hướng về trang chủ hoặc trang đăng nhập (ở đây chuyển về home)
+        response.sendRedirect("home");
     }
 
     @Override

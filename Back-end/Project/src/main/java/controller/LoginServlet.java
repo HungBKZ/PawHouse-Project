@@ -159,7 +159,7 @@ public class LoginServlet extends HttpServlet {
 
     private void handleUserLogin(User user, HttpServletResponse response) throws IOException {
         if (user.getRole() == null) {
-            response.sendRedirect("index.jsp");
+            response.sendRedirect("home");
             return;
         }
 
@@ -168,7 +168,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("adminDashboard.jsp");
                 break;
             case 2:
-                response.sendRedirect("index.jsp");
+                response.sendRedirect("home");
                 break;
             case 3:
                 response.sendRedirect("staffDashboard");
@@ -177,7 +177,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("doctorIndex.jsp");
                 break;
             default:
-                response.sendRedirect("index.jsp");
+                response.sendRedirect("home");
                 break;
         }
     }
