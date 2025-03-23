@@ -2,6 +2,7 @@ package DAO;
 
 import Model.Pet;
 import Model.PetCategories;
+import Model.Role;
 import Model.User;
 import Utils.DBContext;
 
@@ -488,4 +489,95 @@ public class PetDAO extends DBContext {
         return pets;
     }
 
+public Pet getPetById(int petId) {
+        Pet pet = null;
+        String sql = "SELECT PetID, Species, Breed, Age FROM Pets WHERE PetID = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, petId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                pet = new Pet(
+                    rs.getInt("PetID"),
+                    rs.getString("Species"),
+                    rs.getString("Breed"),
+                    rs.getInt("Age")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi truy vấn database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return pet;
+    }
+
+    public Pet getPetDetailsById(int petId) {
+        Pet pet = null;
+        String sql = "SELECT p.PetID, p.CategoryID, p.PetName, p.Species, p.Breed, p.Age, p.Gender, " +
+                    "p.PetImage, p.AdoptionStatus, p.UserID, p.InUseService, " +
+                    "c.CategoryName, c.Description, " +
+                    "u.RoleID, u.Username, u.Password, u.Email, u.FullName, u.Phone, u.Avatar, u.UserStatus, u.Address, " +
+                    "r.RoleName " +
+                    "FROM Pets p " +
+                    "LEFT JOIN PetCategories c ON p.CategoryID = c.CategoryID " +
+                    "LEFT JOIN Users u ON p.UserID = u.UserID " +
+                    "LEFT JOIN Roles r ON u.RoleID = r.RoleID " +
+                    "WHERE p.PetID = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, petId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Tạo đối tượng PetCategories
+                PetCategories category = new PetCategories(
+                    rs.getInt("CategoryID"),
+                    rs.getString("CategoryName"),
+                    rs.getString("Description")
+                );
+
+                // Tạo đối tượng Role
+                Role role = new Role(
+                    rs.getInt("RoleID"),
+                    rs.getString("RoleName")
+                );
+
+                // Tạo đối tượng User
+                User owner = new User(
+                    rs.getInt("UserID"),
+                    role,
+                    rs.getString("Username"),
+                    rs.getString("Password"), // Nếu không cần Password, có thể dùng constructor khác
+                    rs.getString("Email"),
+                    rs.getString("FullName"),
+                    rs.getString("Phone"),
+                    rs.getString("Avatar"),
+                    rs.getBoolean("UserStatus"),
+                    rs.getString("Address")
+                );
+
+                // Tạo đối tượng Pet
+                pet = new Pet(
+                    rs.getInt("PetID"),
+                    category,
+                    rs.getString("PetName"),
+                    rs.getString("Species"),
+                    rs.getString("Breed"),
+                    rs.getInt("Age"),
+                    rs.getString("Gender"),
+                    rs.getString("PetImage"),
+                    rs.getString("AdoptionStatus"),
+                    owner,
+                    rs.getString("InUseService")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi truy vấn database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return pet;
+    }
 }

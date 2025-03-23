@@ -38,6 +38,14 @@ public class Pet {
         this.owner = owner;
         this.inUseService = null; // Default value
     }
+    
+    // Constructor for health prediction (minimal fields)
+    public Pet(int petID, String species, String breed, int age) {
+        this.petID = petID;
+        this.species = species;
+        this.breed = breed;
+        this.age = age;
+    }
 
     public Pet(int petID, PetCategories category, String petName, String species, String breed, int age, String gender, String petImage, String adoptionStatus, User owner, String inUseService) {
         this.petID = petID;
