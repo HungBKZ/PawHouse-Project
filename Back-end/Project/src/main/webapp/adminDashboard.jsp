@@ -223,8 +223,8 @@
                     <li>
                         <a href="#systemSubmenu" data-bs-toggle="collapse"><i class="fas fa-cogs"></i> System Management</a>
                         <ul class="collapse list-unstyled" id="systemSubmenu">
-                            <li><a href="profile.jsp">Update Profile</a></li>
-                            <li><a href="login.jsp">Logout</a></li>
+                            <li><a href="/UpdateProfileServlet">Update Profile</a></li>
+                            <li><a href="/logout">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -253,9 +253,9 @@
                         <i class="fas fa-user-circle"></i> Admin
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="profile.jsp">Profile</a></li>
+                        <li><a class="dropdown-item" href="/UpdateProfileServlet">Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="login.jsp">Logout</a></li>
+                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -279,8 +279,9 @@
             </div>
         </div>
 
-        <%@ include file="includes/footer.jsp" %>
+    
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
+      
 </html>
