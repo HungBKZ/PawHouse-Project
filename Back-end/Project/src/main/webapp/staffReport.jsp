@@ -3,29 +3,111 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Báo Cáo Doanh Thu - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
-            .report-card { border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s; }
-            .report-card:hover { transform: translateY(-5px); }
-            .chart-container { position: relative; height: 300px; margin: 20px 0; }
-            .navbar { background-color: #0056b3; }
-            body { background-color: #f8f9fa; padding-bottom: 70px; }
+            body {
+                background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+                font-family: 'Poppins', sans-serif;
+                min-height: 100vh;
+                padding-bottom: 70px;
+                overflow-x: hidden;
+            }
+            /* Style lại navbar */
+            .navbar {
+                background: #17a2b8; /* Nền trắng */
+                padding: 0.8rem 1.5rem; /* Giảm padding để nhỏ gọn */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow nhẹ */
+                border-bottom: 1px solid #dee2e6; /* Đường viền dưới */
+            }
+            .navbar-brand, .nav-link {
+                color: #000 !important; /* Chữ màu đen */
+                font-weight: 600;
+                font-size: 1rem;
+                letter-spacing: 0.5px;
+                transition: all 0.3s ease;
+                padding: 0.5rem 1rem;
+            }
+            .navbar-brand i, .nav-link i {
+                color: #000; /* Icon màu đen */
+                margin-right: 5px;
+            }
+            .navbar-brand:hover, .nav-link:hover {
+                color: #007bff !important; /* Hover đổi màu xanh */
+            }
+            .navbar-brand:hover i, .nav-link:hover i {
+                color: #007bff; /* Icon cũng đổi màu xanh khi hover */
+            }
+            .navbar-toggler {
+                padding: 0.25rem 0.5rem;
+                border: none;
+            }
+            .navbar-toggler-icon {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            }
+            .report-card {
+                border-radius: 15px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s;
+            }
+            .report-card:hover {
+                transform: translateY(-5px);
+            }
+            .chart-container {
+                position: relative;
+                height: 300px;
+                margin: 20px 0;
+            }
+            .container-fluid {
+                padding: 40px 20px;
+            }
+            h1 {
+                color: #0056b3;
+                font-weight: 700;
+                margin-bottom: 40px;
+                letter-spacing: 1px;
+            }
+            .form-select, .form-control {
+                border-radius: 10px;
+                box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+            .btn-primary {
+                background: #007bff;
+                border: none;
+                border-radius: 25px;
+                padding: 10px 20px;
+            }
+            .bg-primary {
+                background: linear-gradient(90deg, #007bff, #0056b3) !important;
+            }
+            .bg-success {
+                background: linear-gradient(90deg, #28a745, #218838) !important;
+            }
+            .bg-info {
+                background: linear-gradient(90deg, #17a2b8, #138496) !important;
+            }
+            .bg-warning {
+                background: linear-gradient(90deg, #ffc107, #e0a800) !important;
+            }
+            .text-white h5 {
+                font-weight: 600;
+                color: #fff;
+            }
+            .text-white h3 {
+                font-weight: 700;
+            }
         </style>
     </head>
- 
-    <body class="bg-light">
-        <!-- Thêm Navbar với PawHouse không điều hướng -->
-        <nav class="navbar navbar-expand-lg navbar-dark">
+    <body>
+        <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <span class="navbar-brand">
-                    <i class="fas fa-paw"></i> PawHouse
-                </span>
+                <span class="navbar-brand"><i class="fas fa-paw"></i> PawHouse</span>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -34,22 +116,13 @@
                         <li class="nav-item">
                             <c:choose>
                                 <c:when test="${sessionScope.user.role.roleID == 1}">
-                                    <!-- Admin: RoleID = 1 -->
-                                    <a class="nav-link" href="/adminDashboard.jsp">
-                                        <i class="fas fa-home"></i> Trang chủ Admin
-                                    </a>
+                                    <a class="nav-link" href="/adminDashboard.jsp"><i class="fas fa-home"></i> Trang chủ Admin</a>
                                 </c:when>
                                 <c:when test="${sessionScope.user.role.roleID == 3}">
-                                    <!-- Staff: RoleID = 3 -->
-                                    <a class="nav-link" href="/staffDashboard">
-                                        <i class="fas fa-home"></i> Trang chủ Staff
-                                    </a>
+                                    <a class="nav-link" href="/staffDashboard"><i class="fas fa-home"></i> Trang chủ Staff</a>
                                 </c:when>
                                 <c:otherwise>
-                                    <!-- Trường hợp không xác định được vai trò -->
-                                    <a class="nav-link" href="/">
-                                        <i class="fas fa-home"></i> Trang chủ
-                                    </a>
+                                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Trang chủ</a>
                                 </c:otherwise>
                             </c:choose>
                         </li>
@@ -58,7 +131,6 @@
             </div>
         </nav>
 
-        <!-- Giữ nguyên mã gốc -->
         <div class="container-fluid py-4">
             <h1 class="mb-4"><i class="fas fa-chart-line"></i> Báo Cáo Doanh Thu</h1>
 
@@ -174,11 +246,6 @@
                                 <i class="fas fa-clipboard-list"></i> Dịch vụ
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/staff/report">
-                                <i class="fas fa-chart-bar"></i> Reports
-                            </a>
-                        </li>
                     </ul>
 
                     <!-- Tab content -->
@@ -256,50 +323,50 @@
                 </div>
             </div>
         </div>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            const dates = <c:out value="${report.reportDatesJson}" escapeXml="false"/>;
-            const productRevs = <c:out value="${report.productRevenuesJson}" escapeXml="false"/>;
-            const serviceRevs = <c:out value="${report.serviceRevenuesJson}" escapeXml="false"/>;
-            const prodRev = <c:out value="${report.productRevenue}"/>;
-            const servRev = <c:out value="${report.serviceRevenue}"/>;
+        const dates = <c:out value="${report.reportDatesJson}" escapeXml="false"/>;
+        const productRevs = <c:out value="${report.productRevenuesJson}" escapeXml="false"/>;
+        const serviceRevs = <c:out value="${report.serviceRevenuesJson}" escapeXml="false"/>;
+        const prodRev = <c:out value="${report.productRevenue}"/>;
+        const servRev = <c:out value="${report.serviceRevenue}"/>;
 
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-            new Chart(revenueCtx, {
-                type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [
-                        { label: 'Doanh thu sản phẩm', data: productRevs, borderColor: 'rgb(40, 167, 69)', tension: 0.1 },
-                        { label: 'Doanh thu dịch vụ', data: serviceRevs, borderColor: 'rgb(23, 162, 184)', tension: 0.1 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-                                }
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {label: 'Doanh thu sản phẩm', data: productRevs, borderColor: 'rgb(40, 167, 69)', tension: 0.1},
+                    {label: 'Doanh thu dịch vụ', data: serviceRevs, borderColor: 'rgb(23, 162, 184)', tension: 0.1}
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(value);
                             }
                         }
                     }
                 }
-            });
+            }
+        });
 
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Sản phẩm', 'Dịch vụ'],
-                    datasets: [{ data: [prodRev, servRev], backgroundColor: ['rgb(40, 167, 69)', 'rgb(23, 162, 184)'] }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Sản phẩm', 'Dịch vụ'],
+                datasets: [{data: [prodRev, servRev], backgroundColor: ['rgb(40, 167, 69)', 'rgb(23, 162, 184)']}]
+            },
+            options: {responsive: true, maintainAspectRatio: false}
+        });
         </script>
     </body>
 </html>

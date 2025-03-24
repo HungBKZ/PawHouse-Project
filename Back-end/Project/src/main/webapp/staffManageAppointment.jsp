@@ -1,48 +1,157 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Quản Lý Lịch Hẹn - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> <!-- Bộ lịch -->
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <!-- JavaScript của Flatpickr -->
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <style>
             body {
-                background-color: #f8f9fa;
-                padding-bottom: 70px;
+                background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+                font-family: 'Poppins', sans-serif;
+                min-height: 100vh;
+                padding-bottom: 100px;
+                overflow-x: hidden;
             }
             .navbar {
-                background-color: #0056b3;
+                background: linear-gradient(90deg, #007bff, #004085);
+                padding: 1.2rem 2rem;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             }
-            .navbar-brand, .nav-link {
-                color: white !important;
-                font-weight: bold;
+            .navbar-brand {
+                color: #fff !important;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                transition: all 0.3s ease;
+            }
+            .navbar-brand:hover {
+                color: #ffd700 !important;
+                transform: scale(1.05);
+            }
+            .container {
+                margin-top: 50px;
+                max-width: 1400px;
+                animation: fadeIn 0.8s ease-in-out;
+            }
+            h2 {
+                color: #0056b3;
+                font-weight: 700;
+                text-align: center;
+                margin-bottom: 40px;
+                letter-spacing: 1px;
+            }
+            .row.g-2 {
+                background: #fff;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+                margin-bottom: 30px;
+            }
+            .form-control, .form-select {
+                border-radius: 10px;
+                box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+            .form-control:focus, .form-select:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            }
+            .table {
+                background: #fff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+                animation: slideUp 1s ease-out;
+            }
+            .table thead {
+                background: linear-gradient(90deg, #007bff, #0056b3);
+                color: #fff;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .table th, .table td {
+                vertical-align: middle;
+                padding: 15px;
+            }
+            .table-striped tbody tr:nth-of-type(odd) {
+                background-color: #f8f9fa;
+            }
+            .table-hover tbody tr:hover {
+                background-color: #e9ecef;
+                transition: background-color 0.3s ease;
+            }
+            .form-select.appointment-status {
+                max-width: 200px;
+                border-radius: 10px;
+                padding: 8px;
+                font-weight: 500;
+            }
+            .btn-primary {
+                background: #007bff;
+                border: none;
+                border-radius: 25px;
+                padding: 8px 20px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            .btn-primary:hover {
+                background: #0056b3;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
             }
             footer {
+                background: linear-gradient(90deg, #0056b3, #003d80);
+                color: #fff;
                 text-align: center;
-                padding: 20px;
-                background-color: #0056b3;
-                color: white;
+                padding: 20px 0;
                 position: fixed;
-                width: 100%;
                 bottom: 0;
+                width: 100%;
+                box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            @keyframes slideUp {
+                from {
+                    transform: translateY(50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            .flatpickr-calendar {
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+            .flatpickr-day.selected {
+                background: #007bff !important;
+                border-color: #007bff !important;
             }
         </style>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-paw"></i> PawHouse Staff</a>
-
+                <a class="navbar-brand" href="${pageContext.request.contextPath}/staffDashboard"><i class="fas fa-paw"></i> PawHouse</a>
             </div>
         </nav>
 
         <div class="container mt-5">
-            <h2 class="text-center">Quản Lý Lịch Hẹn</h2>
+            <h2><i class="fas fa-calendar-check"></i> Quản Lý Lịch Hẹn</h2>
 
             <!-- 🔎 Bộ lọc tìm kiếm -->
             <div class="row g-2 mb-3">
@@ -110,9 +219,10 @@
         </div>
 
         <footer>
-            <p>&copy; 2025 PawHouse. All rights reserved.</p>
+            <p>© 2025 PawHouse. Mọi quyền được bảo lưu.</p>
         </footer>
 
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             // 🌟 Bắt sự kiện thay đổi trạng thái để cập nhật giá trị vào input ẩn
             document.querySelectorAll(".appointment-status").forEach(select => {
@@ -122,12 +232,13 @@
                 });
             });
 
-            // 📅 Kích hoạt Date Picker với format giống Google Form
+            // 📅 Kích hoạt Date Picker với style đẹp hơn
             flatpickr("#searchDate", {
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d/m/Y",
-                allowInput: false
+                allowInput: false,
+                disableMobile: true
             });
 
             // 🔎 Hàm lọc dữ liệu theo bộ lọc nhập liệu

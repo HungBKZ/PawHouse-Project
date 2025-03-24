@@ -142,9 +142,9 @@
                 <hr/>
                 <h2 class="mb-1">Thông Tin Cửa Hàng</h2>
                 <p><strong>Cửa hàng:</strong> PawHouse</p>
-                <p><strong>Địa chỉ:</strong> xxx_Team_Fix_Later_xxx</p>
-                <p><strong>Số điện thoại:</strong> xxx_Team_Fix_Later_xxx</p>
-                <p><strong>Email:</strong> xxx_Team_Fix_Later_xxx</p>
+                <p><strong>Địa chỉ:</strong> 31/18 Huynh Phan Ho, TP.Can Tho</p>
+                <p><strong>Số điện thoại:</strong> 077-296-7049</p>
+                <p><strong>Email:</strong>group3vodich@gmail.com</p>
             </div>
 
             <!-- Danh sách sản phẩm -->
