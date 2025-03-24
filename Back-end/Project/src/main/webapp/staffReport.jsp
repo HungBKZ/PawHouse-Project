@@ -11,38 +11,61 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
-            .report-card {
-                border-radius: 15px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                transition: transform 0.2s;
-            }
-            .report-card:hover {
-                transform: translateY(-5px);
-            }
-            .chart-container {
-                position: relative;
-                height: 300px;
-                margin: 20px 0;
-            }
-           .navbar {
-                background-color: #0056b3;
-            }
-            body {
-                background-color: #f8f9fa;
-                padding-bottom: 70px;
-            }
-            
+            .report-card { border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s; }
+            .report-card:hover { transform: translateY(-5px); }
+            .chart-container { position: relative; height: 300px; margin: 20px 0; }
+            .navbar { background-color: #0056b3; }
+            body { background-color: #f8f9fa; padding-bottom: 70px; }
         </style>
     </head>
  
     <body class="bg-light">
+        <!-- Thêm Navbar với PawHouse không điều hướng -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <span class="navbar-brand">
+                    <i class="fas fa-paw"></i> PawHouse
+                </span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <c:choose>
+                                <c:when test="${sessionScope.user.role.roleID == 1}">
+                                    <!-- Admin: RoleID = 1 -->
+                                    <a class="nav-link" href="/adminDashboard.jsp">
+                                        <i class="fas fa-home"></i> Trang chủ Admin
+                                    </a>
+                                </c:when>
+                                <c:when test="${sessionScope.user.role.roleID == 3}">
+                                    <!-- Staff: RoleID = 3 -->
+                                    <a class="nav-link" href="/staffDashboard">
+                                        <i class="fas fa-home"></i> Trang chủ Staff
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <!-- Trường hợp không xác định được vai trò -->
+                                    <a class="nav-link" href="/">
+                                        <i class="fas fa-home"></i> Trang chủ
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Giữ nguyên mã gốc -->
         <div class="container-fluid py-4">
             <h1 class="mb-4"><i class="fas fa-chart-line"></i> Báo Cáo Doanh Thu</h1>
 
             <!-- Bộ lọc thời gian -->
             <div class="card report-card mb-4">
                 <div class="card-body">
-                    <form action="${pageContext.request.contextPath}/staff/report" method="GET" class="row g-3">
+                    <form action="/staff/report" method="GET" class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label"><i class="fas fa-filter"></i> Loại báo cáo</label>
                             <select name="type" class="form-select">
@@ -152,7 +175,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/staff/report">
+                            <a class="nav-link" href="/staff/report">
                                 <i class="fas fa-chart-bar"></i> Reports
                             </a>
                         </li>
@@ -236,32 +259,20 @@
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            // Khởi tạo dữ liệu từ server
             const dates = <c:out value="${report.reportDatesJson}" escapeXml="false"/>;
             const productRevs = <c:out value="${report.productRevenuesJson}" escapeXml="false"/>;
             const serviceRevs = <c:out value="${report.serviceRevenuesJson}" escapeXml="false"/>;
             const prodRev = <c:out value="${report.productRevenue}"/>;
             const servRev = <c:out value="${report.serviceRevenue}"/>;
 
-            // Biểu đồ doanh thu theo thời gian
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
             new Chart(revenueCtx, {
                 type: 'line',
                 data: {
                     labels: dates,
                     datasets: [
-                        {
-                            label: 'Doanh thu sản phẩm',
-                            data: productRevs,
-                            borderColor: 'rgb(40, 167, 69)',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Doanh thu dịch vụ',
-                            data: serviceRevs,
-                            borderColor: 'rgb(23, 162, 184)',
-                            tension: 0.1
-                        }
+                        { label: 'Doanh thu sản phẩm', data: productRevs, borderColor: 'rgb(40, 167, 69)', tension: 0.1 },
+                        { label: 'Doanh thu dịch vụ', data: serviceRevs, borderColor: 'rgb(23, 162, 184)', tension: 0.1 }
                     ]
                 },
                 options: {
@@ -271,11 +282,8 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function (value) {
-                                    return new Intl.NumberFormat('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND'
-                                    }).format(value);
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
                                 }
                             }
                         }
@@ -283,24 +291,14 @@
                 }
             });
 
-            // Biểu đồ tỷ lệ doanh thu
             const pieCtx = document.getElementById('pieChart').getContext('2d');
             new Chart(pieCtx, {
                 type: 'pie',
                 data: {
                     labels: ['Sản phẩm', 'Dịch vụ'],
-                    datasets: [{
-                            data: [prodRev, servRev],
-                            backgroundColor: [
-                                'rgb(40, 167, 69)',
-                                'rgb(23, 162, 184)'
-                            ]
-                        }]
+                    datasets: [{ data: [prodRev, servRev], backgroundColor: ['rgb(40, 167, 69)', 'rgb(23, 162, 184)'] }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         </script>
     </body>
