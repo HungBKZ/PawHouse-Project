@@ -57,7 +57,7 @@ public class BookServiceServlet extends HttpServlet {
 
         // Nếu vẫn chưa có user, chuyển hướng về trang đăng nhập
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("/login");
             return;
         }
         
