@@ -435,47 +435,72 @@
 
 
         <!-- Dịch Vụ -->
-        <section id="services" class="container py-5">
-            <h2 class="text-center fw-bold mb-4">Dịch Vụ Chúng Tôi Cung Cấp</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="service-card card border-0 shadow">
-                        <a href="/MedicalServlet">
-                            <img src="./imgs/thuy.png" class="card-img-top" alt="Thú y">
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Thú Y</h5>
-                            <p class="card-text">Dịch vụ khám chữa bệnh chuyên nghiệp giúp thú cưng khỏe mạnh.</p>
-                            <a href="/MedicalServlet" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="service-card card border-0 shadow">
-                        <a href="/SpaServlet">
-                            <img src="./imgs/spapet.jpg" class="card-img-top" alt="Spa">
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Spa & Grooming</h5>
-                            <p class="card-text">Dịch vụ tắm, cắt tỉa lông, giúp thú cưng luôn sạch sẽ và đáng yêu.</p>
-                            <a href="/SpaServlet" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="service-card card border-0 shadow">
-                        <a href="/AdoptionServlet">
-                            <img src="./imgs/takecare.jpg" class="card-img-top" alt="Nhận nuôi">
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title fw-bold">Nhận Nuôi</h5>
-                            <p class="card-text">Giúp thú cưng tìm mái ấm yêu thương, mang đến niềm vui cho gia đình bạn.</p>
-                            <a href="/AdoptionServlet" class="btn btn-primary btn-custom">Tìm hiểu thêm</a>
-                        </div>
-                    </div>
+       <%
+    User currentUser = getAuthenticatedUser(request);
+    boolean isLoggedIn = (currentUser != null);
+%>
+<section id="services" class="container py-5">
+    <h2 class="text-center fw-bold mb-4">Dịch Vụ Chúng Tôi Cung Cấp</h2>
+    <div class="row g-4">
+        <!-- Thú Y -->
+        <div class="col-md-4">
+            <div class="service-card card border-0 shadow">
+                <a href="<%= isLoggedIn ? "/MedicalServlet" : "#" %>"
+                   onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
+                    <img src="./imgs/thuy.png" class="card-img-top" alt="Thú y">
+                </a>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Thú Y</h5>
+                    <p class="card-text">Dịch vụ khám chữa bệnh chuyên nghiệp giúp thú cưng khỏe mạnh.</p>
+                    <a href="<%= isLoggedIn ? "/MedicalServlet" : "#" %>"
+                       class="btn btn-primary btn-custom"
+                       onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
+                        Tìm hiểu thêm
+                    </a>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <!-- Spa & Grooming -->
+        <div class="col-md-4">
+            <div class="service-card card border-0 shadow">
+                <a href="<%= isLoggedIn ? "/SpaServlet" : "#" %>"
+                   onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
+                    <img src="./imgs/spapet.jpg" class="card-img-top" alt="Spa">
+                </a>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Spa & Grooming</h5>
+                    <p class="card-text">Dịch vụ tắm, cắt tỉa lông, giúp thú cưng luôn sạch sẽ và đáng yêu.</p>
+                    <a href="<%= isLoggedIn ? "/SpaServlet" : "#" %>"
+                       class="btn btn-primary btn-custom"
+                       onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
+                        Tìm hiểu thêm
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nhận Nuôi -->
+        <div class="col-md-4">
+            <div class="service-card card border-0 shadow">
+                <a href="<%= isLoggedIn ? "/AdoptionServlet" : "#" %>"
+                   onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
+                    <img src="./imgs/takecare.jpg" class="card-img-top" alt="Nhận nuôi">
+                </a>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Nhận Nuôi</h5>
+                    <p class="card-text">Giúp thú cưng tìm mái ấm yêu thương, mang đến niềm vui cho gia đình bạn.</p>
+                    <a href="<%= isLoggedIn ? "/AdoptionServlet" : "#" %>"
+                       class="btn btn-primary btn-custom"
+                       onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
+                        Tìm hiểu thêm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
         <!-- Section: Đánh giá khách hàng -->
         <section id="reviews" class="container py-5">

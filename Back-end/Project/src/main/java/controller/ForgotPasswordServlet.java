@@ -65,17 +65,17 @@ public class ForgotPasswordServlet extends HttpServlet {
                
             String content = "<html><body style='font-family: Arial, sans-serif; background-color: #FFF3CD; padding: 20px;'>"
                     + "<div style='max-width: 500px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); text-align: center;'>"
-                    + "<h2 style='color: #FF8000;'>🐶 Xác Thực Đăng Ký PawHouse 🐱</h2>"
+                    + "<h2 style='color: #FF8000;'>🐶 Xác Thực Quên Mật Khẩu PawHouse 🐱</h2>"
                     + "<p style='font-size: 16px; color: #333; margin-bottom: 10px;'>Xin chào,</p>"
                     + "<p style='font-size: 16px; color: #333;'>Mã OTP của bạn là:</p>"
                     + "<p style='font-size: 24px; font-weight: bold; color: #FF5733; background-color: #fff; padding: 15px; display: inline-block; border-radius: 8px; border: 2px dashed #FF5733; letter-spacing: 3px;'>"
                     + otp + "</p>"
-                    + "<p style='font-size: 16px; color: #333; margin-top: 20px;'>Vui lòng nhập mã này để hoàn tất đăng ký tài khoản PawHouse.</p>"
+                    + "<p style='font-size: 16px; color: #333; margin-top: 20px;'>Vui lòng nhập mã này để hoàn tất lấy lại tài khoản PawHouse.</p>"
                     + "<p style='font-size: 14px; color: #666;'>Lưu ý: Mã OTP có hiệu lực trong <b>5 phút</b>.</p>"
                     + "<p style='margin-top: 20px; font-size: 14px; color: #666;'>Cảm ơn bạn đã tham gia cộng đồng PawHouse! 🐾</p>"
 //                    + "<a href='http://localhost:8080/home' style='display: inline-block; margin-top: 15px; padding: 10px 20px; font-size: 16px; color: white; background-color: #FF8000; text-decoration: none; border-radius: 5px;'>Xác Thực Ngay</a>"
                     + "<hr style='border: 1px solid #FF8000; margin-top: 20px;'>"
-                    + "<p style='font-size: 12px; color: #999;'>Nếu bạn không yêu cầu đăng ký, vui lòng bỏ qua email này.</p>"
+                    + "<p style='font-size: 12px; color: #999;'>Nếu bạn không yêu cầu lấy lại mật khẩu, vui lòng bỏ qua email này.</p>"
                     + "</div>"
                     + "</body></html>";
                 EmailUtility.sendEmail(email, subject, content);
@@ -83,7 +83,7 @@ public class ForgotPasswordServlet extends HttpServlet {
                 // Redirect to OTP verification page
                 request.getRequestDispatcher("verifyOTPForgotPassword.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "No account found with this email address.");
+                request.setAttribute("error", "Không Tìm Thấy Tài Khoản Của Bạn Trong Hệ Thống.");
                 request.getRequestDispatcher("forgotPassword.jsp").forward(request, response);
             }
         } catch (SQLException e) {
