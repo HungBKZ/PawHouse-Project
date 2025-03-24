@@ -89,6 +89,11 @@
         </style>
     </head>
     <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/adminDashboard.jsp">PawHouse</a>
+            </div>
+        </nav>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12 mt-4">
