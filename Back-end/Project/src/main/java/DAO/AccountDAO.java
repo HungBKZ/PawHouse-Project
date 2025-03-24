@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import Utils.DBContext;
+import java.sql.SQLException;
 
 public class AccountDAO {
     private Connection conn;
@@ -42,7 +43,9 @@ public class AccountDAO {
         }
         return accounts;
     }
+    
 
+    
     // 🟢 Cập nhật trạng thái tài khoản (Enable = 1, Disable = 0)
     public boolean updateAccountStatus(int userID, int newStatus) {
     String query = "UPDATE Users SET UserStatus = ? WHERE UserID = ?";
