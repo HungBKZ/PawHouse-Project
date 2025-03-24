@@ -127,7 +127,7 @@
                 </form>
 
                 <div class="login-link">
-                    Nếu Đã Có Tài Khoản? <a href="login.jsp">Đăng Nhập ở đây</a>
+                    Nếu Đã Có Tài Khoản? <a href="login">Đăng Nhập ở đây</a>
                 </div>
             </div>
         </div>

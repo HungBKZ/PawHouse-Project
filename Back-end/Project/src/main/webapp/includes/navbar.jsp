@@ -35,17 +35,20 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="/Service" id="productDropdown" role="button">
+                    <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button">
+
                         Dịch vụ
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="productDropdown">
-                        <li><a class="dropdown-item" href="/MedicalServlet">Thú y</a></li>
-                        <li><a class="dropdown-item" href="/SpaServlet">Spa & Grooming</a></li>
-                        <li><a class="dropdown-item" href="/AdoptionServlet">Nhận nuôi</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="serviceDropdown">
+                        <li><a class="dropdown-item" href="/MedicalServlet" id="medicalLink">Thú y</a></li>
+                        <li><a class="dropdown-item" href="/SpaServlet" id="spaLink">Spa & Grooming</a></li>
+                        <li><a class="dropdown-item" href="/AdoptionServlet" id="adoptionLink">Nhận nuôi</a></li>
                     </ul>
+
                 </li>
                 <li class="nav-item"><a class="nav-link" href="about.jsp">Thông tin</a></li>
-                <li class="nav-item"><a class="nav-link" href="/Cart"><i class="bi bi-cart"></i> Giỏ Hàng</a></li>
+              <a class="nav-link" href="/Cart" id="cartLink"><i class="bi bi-cart"></i> Giỏ Hàng</a>
+
             </ul>
 
             <% if (user == null && googleUsername == null) { %>
@@ -103,13 +106,13 @@
         margin: 0 10px;
         transition: all 0.3s;
     }
-    
-     /* Dropdown khi hover */
+
+    /* Dropdown khi hover */
     .dropdown:hover .dropdown-menu {
         display: block;
         margin-top: 0;
     }
-    
+
     /* Hover cho Navbar */
     .navbar-nav .nav-link:hover {
         color: #2e2e2e !important; /* Đổi thành màu xám đậm khi hover */
@@ -160,4 +163,52 @@
             navbar.classList.remove("scrolled");
         }
     });
+
+
 </script>
+
+<script>
+    const isLoggedIn = <%= (user != null || googleUsername != null) %>; // true or false
+
+    // Chặn mở dropdown dịch vụ nếu chưa đăng nhập
+    document.getElementById("serviceDropdown").addEventListener("click", function (event) {
+        if (!isLoggedIn) {
+            event.preventDefault();
+            alert("Vui lòng đăng nhập để sử dụng dịch vụ.");
+        }
+    });
+
+    // Hàm xử lý chung cho từng link
+    function protectLink(linkId) {
+        const link = document.getElementById(linkId);
+        if (link) {
+            link.addEventListener("click", function (event) {
+                if (!isLoggedIn) {
+                    event.preventDefault();
+                    alert("Vui lòng đăng nhập để sử dụng dịch vụ.");
+                }
+            });
+        }
+    }
+
+    // Gọi hàm cho từng link
+    protectLink("medicalLink");
+    protectLink("spaLink");
+    protectLink("adoptionLink");
+    
+        // Chặn vào trang giỏ hàng nếu chưa đăng nhập
+    const cartLink = document.getElementById("cartLink");
+    if (cartLink) {
+        cartLink.addEventListener("click", function (event) {
+            if (!isLoggedIn) {
+                event.preventDefault();
+                alert("Vui lòng đăng nhập để xem giỏ hàng.");
+            }
+        });
+    }
+
+</script>
+
+
+
+
