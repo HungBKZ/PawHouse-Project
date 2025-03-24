@@ -2,6 +2,7 @@ package controller;
 
 import DAO.ReportDAO;
 import Model.ReportDTO;
+import Model.User;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -34,6 +36,16 @@ public class ReportServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Thêm logic kiểm tra quyền truy cập
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null || user.getRole() == null || 
+            (user.getRole().getRoleID() != 1 && user.getRole().getRoleID() != 3)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        // Giữ nguyên logic gốc
         try {
             // Lấy và xử lý tham số ngày
             String startDateStr = request.getParameter("startDate");
@@ -51,7 +63,6 @@ public class ReportServlet extends HttpServlet {
             } else {
                 startDate = new Timestamp(dateFormat.parse(startDateStr).getTime());
                 endDate = new Timestamp(dateFormat.parse(endDateStr).getTime());
-
             }
 
             // Lấy dữ liệu báo cáo
