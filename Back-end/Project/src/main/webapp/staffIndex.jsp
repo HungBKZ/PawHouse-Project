@@ -206,7 +206,7 @@
                     <div class="stats-card text-center">
                         <i class="fas fa-heart stats-icon"></i>
                         <h3>Nhận Nuôi Đang Chờ</h3>
-                        <h2>${pendingAdoptions}</h2>
+                        <h2>${pendingAdoptions != null ? pendingAdoptions : 0}</h2>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -219,7 +219,7 @@
                 <div class="col-md-3">
                     <div class="stats-card text-center">
                         <i class="fas fa-box stats-icon"></i>
-                        <h3>Sản Phẩm</h3>
+                        <h3>Sản Phẩm Của Shop</h3>
                         <h2>${totalProducts}</h2>
                     </div>
                 </div>
@@ -286,7 +286,7 @@
             });
         </script>
         <footer>
-            <p class="m-0">© 2025 PawHouse. Mọi quyền được bảo lưu.</p>
+            <p class="m-0"> 2025 PawHouse. Mọi quyền được bảo lưu.</p>
         </footer>
     </body>
 </html>

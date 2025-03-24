@@ -13,9 +13,9 @@
             <!-- Thông tin liên hệ -->
             <div class="col-md-4">
                 <h5 class="fw-bold">Liên hệ</h5>
-                <p><i class="bi bi-geo-alt"></i> 123 Đường ABC, TP. Hồ Chí Minh</p>
-                <p><i class="bi bi-phone"></i> 0123 456 789</p>
-                <p><i class="bi bi-envelope"></i> support@pawhouse.com</p>
+                <p><i class="bi bi-geo-alt"></i>  31/18 Huynh Phan Ho, TP.Can Tho</p>
+                <p><i class="bi bi-phone"></i> 077-296-7049</p>
+                <p><i class="bi bi-envelope"></i> group3vodich@pawhouse.com</p>
             </div>
 
             <!-- Giờ mở cửa -->

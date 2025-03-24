@@ -51,6 +51,7 @@ public class StaffDashboardServlet extends HttpServlet {
 
             // Lấy số lượng yêu cầu nhận nuôi đang chờ duyệt
             int pendingAdoptions = adoptionDAO.getPendingAdoptions().size();
+            System.out.println("Debug - Number of pending adoptions: " + pendingAdoptions);
 
             // Lấy số lượng cuộc hẹn trong hôm nay
             int todayAppointments = appointmentDAO.getAllAppointments().size(); // Cần sửa logic để lấy đúng hôm nay

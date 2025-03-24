@@ -140,7 +140,7 @@ public class AdoptionDAO {
 
     public List<AdoptionHistory> getPendingAdoptions() {
         List<AdoptionHistory> pendingList = new ArrayList<>();
-        String query = "SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.Status, ah.Notes, " +
+        String query = "SELECT ah.AdoptionID, ah.PetID, ah.AdoptionDate, ah.AdoptionStatus, ah.Notes, " +
                 "p.CategoryID, pc.CategoryName, p.PetName, p.Species, p.Breed, p.Age, p.Gender, " +
                 "p.PetImage, p.AdoptionStatus, p.UserID, p.InUseService, " +
                 "u.FullName as CustomerName, u.Email as CustomerEmail " +
@@ -148,13 +148,17 @@ public class AdoptionDAO {
                 "JOIN Pets p ON ah.PetID = p.PetID " +
                 "JOIN PetCategories pc ON p.CategoryID = pc.CategoryID " +
                 "JOIN Users u ON p.UserID = u.UserID " +
-                "WHERE ah.Status = 'Pending' ORDER BY ah.AdoptionDate DESC";
-
+                "WHERE ah.AdoptionStatus = N'Đang chờ' ORDER BY ah.AdoptionDate DESC";
+        
+        System.out.println("Debug - Executing query: " + query);
         try {
             PreparedStatement ps = connection.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
-
+            int count = 0;
+            
             while (rs.next()) {
+                count++;
+                
                 Pet pet = new Pet(
                     rs.getInt("PetID"),
                     new PetCategories(rs.getInt("CategoryID"), rs.getString("CategoryName"), ""),
@@ -172,7 +176,7 @@ public class AdoptionDAO {
                 adoption.setAdoptionID(rs.getInt("AdoptionID"));
                 adoption.setPet(pet);
                 adoption.setAdoptionDate(rs.getTimestamp("AdoptionDate"));
-                adoption.setAdoptionStatus(rs.getString("Status"));
+                adoption.setAdoptionStatus(rs.getString("AdoptionStatus"));
                 adoption.setNotes(rs.getString("Notes"));
                 
                 // Add customer information
@@ -183,6 +187,7 @@ public class AdoptionDAO {
                 
                 pendingList.add(adoption);
             }
+            System.out.println("Debug - Total pending adoptions found: " + count);
         } catch (SQLException e) {
             e.printStackTrace();
         }
