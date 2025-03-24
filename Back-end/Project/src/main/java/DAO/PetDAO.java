@@ -489,21 +489,20 @@ public class PetDAO extends DBContext {
         return pets;
     }
 
-public Pet getPetById(int petId) {
+    public Pet getPetById(int petId) {
         Pet pet = null;
         String sql = "SELECT PetID, Species, Breed, Age FROM Pets WHERE PetID = ?";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, petId);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
                 pet = new Pet(
-                    rs.getInt("PetID"),
-                    rs.getString("Species"),
-                    rs.getString("Breed"),
-                    rs.getInt("Age")
+                        rs.getInt("PetID"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age")
                 );
             }
         } catch (SQLException e) {
@@ -515,63 +514,62 @@ public Pet getPetById(int petId) {
 
     public Pet getPetDetailsById(int petId) {
         Pet pet = null;
-        String sql = "SELECT p.PetID, p.CategoryID, p.PetName, p.Species, p.Breed, p.Age, p.Gender, " +
-                    "p.PetImage, p.AdoptionStatus, p.UserID, p.InUseService, " +
-                    "c.CategoryName, c.Description, " +
-                    "u.RoleID, u.Username, u.Password, u.Email, u.FullName, u.Phone, u.Avatar, u.UserStatus, u.Address, " +
-                    "r.RoleName " +
-                    "FROM Pets p " +
-                    "LEFT JOIN PetCategories c ON p.CategoryID = c.CategoryID " +
-                    "LEFT JOIN Users u ON p.UserID = u.UserID " +
-                    "LEFT JOIN Roles r ON u.RoleID = r.RoleID " +
-                    "WHERE p.PetID = ?";
+        String sql = "SELECT p.PetID, p.CategoryID, p.PetName, p.Species, p.Breed, p.Age, p.Gender, "
+                + "p.PetImage, p.AdoptionStatus, p.UserID, p.InUseService, "
+                + "c.CategoryName, c.Description, "
+                + "u.RoleID, u.Username, u.Password, u.Email, u.FullName, u.Phone, u.Avatar, u.UserStatus, u.Address, "
+                + "r.RoleName "
+                + "FROM Pets p "
+                + "LEFT JOIN PetCategories c ON p.CategoryID = c.CategoryID "
+                + "LEFT JOIN Users u ON p.UserID = u.UserID "
+                + "LEFT JOIN Roles r ON u.RoleID = r.RoleID "
+                + "WHERE p.PetID = ?";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, petId);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
                 // Tạo đối tượng PetCategories
                 PetCategories category = new PetCategories(
-                    rs.getInt("CategoryID"),
-                    rs.getString("CategoryName"),
-                    rs.getString("Description")
+                        rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"),
+                        rs.getString("Description")
                 );
 
                 // Tạo đối tượng Role
                 Role role = new Role(
-                    rs.getInt("RoleID"),
-                    rs.getString("RoleName")
+                        rs.getInt("RoleID"),
+                        rs.getString("RoleName")
                 );
 
                 // Tạo đối tượng User
                 User owner = new User(
-                    rs.getInt("UserID"),
-                    role,
-                    rs.getString("Username"),
-                    rs.getString("Password"), // Nếu không cần Password, có thể dùng constructor khác
-                    rs.getString("Email"),
-                    rs.getString("FullName"),
-                    rs.getString("Phone"),
-                    rs.getString("Avatar"),
-                    rs.getBoolean("UserStatus"),
-                    rs.getString("Address")
+                        rs.getInt("UserID"),
+                        role,
+                        rs.getString("Username"),
+                        rs.getString("Password"), // Nếu không cần Password, có thể dùng constructor khác
+                        rs.getString("Email"),
+                        rs.getString("FullName"),
+                        rs.getString("Phone"),
+                        rs.getString("Avatar"),
+                        rs.getBoolean("UserStatus"),
+                        rs.getString("Address")
                 );
 
                 // Tạo đối tượng Pet
                 pet = new Pet(
-                    rs.getInt("PetID"),
-                    category,
-                    rs.getString("PetName"),
-                    rs.getString("Species"),
-                    rs.getString("Breed"),
-                    rs.getInt("Age"),
-                    rs.getString("Gender"),
-                    rs.getString("PetImage"),
-                    rs.getString("AdoptionStatus"),
-                    owner,
-                    rs.getString("InUseService")
+                        rs.getInt("PetID"),
+                        category,
+                        rs.getString("PetName"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age"),
+                        rs.getString("Gender"),
+                        rs.getString("PetImage"),
+                        rs.getString("AdoptionStatus"),
+                        owner,
+                        rs.getString("InUseService")
                 );
             }
         } catch (SQLException e) {
@@ -579,5 +577,45 @@ public Pet getPetById(int petId) {
             e.printStackTrace();
         }
         return pet;
+    }
+
+    public Pet getPetById2(int petId) {
+        Pet pet = null;
+        String query = "SELECT * FROM Pets WHERE PetID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, petId);  // Gán giá trị petId
+            System.out.println("🟢 Query: SELECT * FROM Pets WHERE PetID = " + petId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                pet = new Pet();
+                pet.setPetID(rs.getInt("PetID"));
+
+                // Gán Category
+                PetCategories category = new PetCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                pet.setCategory(category);
+
+                pet.setPetName(rs.getString("PetName"));
+                pet.setSpecies(rs.getString("Species"));
+                pet.setBreed(rs.getString("Breed"));
+                pet.setAge(rs.getInt("Age"));
+                pet.setGender(rs.getString("Gender"));
+                pet.setAdoptionStatus(rs.getNString("AdoptionStatus"));
+                pet.setPetImage(rs.getString("PetImage"));
+                pet.setInUseService(rs.getString("InUseService"));
+
+                // Gán Owner (User)
+                User owner = new User();
+                owner.setUserID(rs.getInt("UserID"));
+                pet.setOwner(owner);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi khi lấy thông tin thú cưng PetID = " + petId + ": " + e.getMessage());
+        }
+
+        return pet;  // Trả về đối tượng Pet hoặc null nếu không tìm thấy
     }
 }

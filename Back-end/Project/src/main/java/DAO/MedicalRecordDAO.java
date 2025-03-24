@@ -2,7 +2,6 @@ package DAO;
 
 import Model.*;
 import Utils.DBContext;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +10,16 @@ public class MedicalRecordDAO extends DBContext {
 
     public List<MedicalRecords> getAllWithPetAndDoctor() {
         List<MedicalRecords> recordList = new ArrayList<>();
-        String query =
-            "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, " +
-            "mr.Weight, mr.Temperature, mr.Notes, mr.RecordDate, " +
-            "p.PetID, p.PetName, p.Species, p.Breed, p.PetImage, " +
-            "u.UserID, u.FullName AS OwnerName " +
-            "FROM MedicalRecords mr " +
-            "LEFT JOIN Pets p ON mr.PetID = p.PetID " +
-            "LEFT JOIN Users u ON p.UserID = u.UserID";
+        String query
+                = "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, "
+                + "mr.Weight, mr.Temperature, mr.Notes, mr.RecordDate, "
+                + "p.PetID, p.PetName, p.Species, p.Breed, p.PetImage, "
+                + "u.UserID, u.FullName AS OwnerName "
+                + "FROM MedicalRecords mr "
+                + "LEFT JOIN Pets p ON mr.PetID = p.PetID "
+                + "LEFT JOIN Users u ON p.UserID = u.UserID";
 
-        try (PreparedStatement ps = connection.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 MedicalRecords record = new MedicalRecords();
                 record.setRecordID(rs.getInt("RecordID"));
@@ -55,25 +53,78 @@ public class MedicalRecordDAO extends DBContext {
         return recordList;
     }
 
+    public List<MedicalRecords> getMedicalRecordsByPetId(int petId) {
+        List<MedicalRecords> medicalRecords = new ArrayList<>();
+        String query = " SELECT mr.RecordID, mr.AppointmentID, mr.DoctorID, mr.PetID, mr.Diagnosis, mr.Treatment, "
+                + "mr.Prescription, mr.VaccinationDetails, mr.NextVaccinationDate, mr.Weight, mr.Temperature, mr.Notes, "
+                + "mr.RecordDate, a.AppointmentDate, u.FullName, u.Phone FROM MedicalRecords mr LEFT JOIN Appointments a "
+                + "ON mr.AppointmentID = a.AppointmentID LEFT JOIN Users u ON mr.DoctorID = u.UserID WHERE mr.PetID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, petId);  // Gán giá trị petId
+            System.out.println("🟢 Query: SELECT * FROM MedicalRecords WHERE PetID = " + petId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                MedicalRecords record = new MedicalRecords();
+                record.setRecordID(rs.getInt("RecordID"));
+
+                // Gán Appointment
+                Appointment appointment = new Appointment();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));  // Giả sử AppointmentID được lưu trong bảng MedicalRecords
+                record.setAppointment(appointment);
+
+                // Gán Doctor (User)
+                User doctor = new User();
+                doctor.setUserID(rs.getInt("DoctorID"));
+                doctor.setFullName(rs.getString("FullName"));
+                doctor.setPhone(rs.getString("Phone"));// Giả sử DoctorID là ID của bác sĩ trong bảng MedicalRecords
+                record.setDoctor(doctor);
+
+                // Gán Pet
+                Pet pet = new Pet();
+                pet.setPetID(rs.getInt("PetID"));
+                record.setPet(pet);
+
+                record.setDiagnosis(rs.getString("Diagnosis"));
+                record.setTreatment(rs.getString("Treatment"));
+                record.setPrescription(rs.getString("Prescription"));
+                record.setVaccinationDetails(rs.getString("VaccinationDetails"));
+                record.setNextVaccinationDate(rs.getTimestamp("NextVaccinationDate"));
+                record.setWeight(rs.getDouble("Weight"));
+                record.setTemperature(rs.getDouble("Temperature"));
+                record.setNotes(rs.getString("Notes"));
+                record.setRecordDate(rs.getTimestamp("RecordDate"));
+
+                medicalRecords.add(record);  // Thêm vào danh sách hồ sơ bệnh án
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Lỗi khi lấy hồ sơ bệnh án cho PetID = " + petId + ": " + e.getMessage());
+        }
+
+        return medicalRecords;  // Trả về danh sách hồ sơ bệnh án (có thể rỗng nếu không có)
+    }
+
     public MedicalRecords getRecordById(int recordId) {
-        String query =
-            "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, " +
-            "mr.VaccinationDetails, mr.NextVaccinationDate, " +
-            "mr.Weight, mr.Temperature, mr.Notes, mr.RecordDate, " +
-            "p.PetID, p.PetName, p.Species, p.Breed, p.Age, p.Gender, p.PetImage, " +
-            "pc.CategoryName, " +
-            "u.UserID, u.FullName AS OwnerName, u.Email AS OwnerEmail, u.Phone AS OwnerPhone, " +
-            "d.UserID AS DoctorID, d.FullName AS DoctorName, d.Email AS DoctorEmail, " +
-            "a.AppointmentID, a.AppointmentDate, a.BookingDate, a.AppointmentStatus, a.Notes AS AppointmentNotes, " +
-            "s.ServiceID, s.ServiceName, s.Description AS ServiceDescription " +
-            "FROM MedicalRecords mr " +
-            "LEFT JOIN Pets p ON mr.PetID = p.PetID " +
-            "LEFT JOIN PetCategories pc ON p.CategoryID = pc.CategoryID " +
-            "LEFT JOIN Users u ON p.UserID = u.UserID " +
-            "LEFT JOIN Users d ON mr.DoctorID = d.UserID " +
-            "LEFT JOIN Appointments a ON mr.AppointmentID = a.AppointmentID " +
-            "LEFT JOIN Services s ON a.ServiceID = s.ServiceID " +
-            "WHERE mr.RecordID = ?";
+        String query
+                = "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, "
+                + "mr.VaccinationDetails, mr.NextVaccinationDate, "
+                + "mr.Weight, mr.Temperature, mr.Notes, mr.RecordDate, "
+                + "p.PetID, p.PetName, p.Species, p.Breed, p.Age, p.Gender, p.PetImage, "
+                + "pc.CategoryName, "
+                + "u.UserID, u.FullName AS OwnerName, u.Email AS OwnerEmail, u.Phone AS OwnerPhone, "
+                + "d.UserID AS DoctorID, d.FullName AS DoctorName, d.Email AS DoctorEmail, "
+                + "a.AppointmentID, a.AppointmentDate, a.BookingDate, a.AppointmentStatus, a.Notes AS AppointmentNotes, "
+                + "s.ServiceID, s.ServiceName, s.Description AS ServiceDescription "
+                + "FROM MedicalRecords mr "
+                + "LEFT JOIN Pets p ON mr.PetID = p.PetID "
+                + "LEFT JOIN PetCategories pc ON p.CategoryID = pc.CategoryID "
+                + "LEFT JOIN Users u ON p.UserID = u.UserID "
+                + "LEFT JOIN Users d ON mr.DoctorID = d.UserID "
+                + "LEFT JOIN Appointments a ON mr.AppointmentID = a.AppointmentID "
+                + "LEFT JOIN Services s ON a.ServiceID = s.ServiceID "
+                + "WHERE mr.RecordID = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, recordId);
@@ -100,7 +151,7 @@ public class MedicalRecordDAO extends DBContext {
                     pet.setAge(rs.getInt("Age"));
                     pet.setGender(rs.getString("Gender"));
                     pet.setPetImage(rs.getString("PetImage"));
-                    
+
                     // Pet Category
                     PetCategories category = new PetCategories();
                     category.setCategoryName(rs.getString("CategoryName"));
@@ -129,14 +180,14 @@ public class MedicalRecordDAO extends DBContext {
                         appointment.setBookingDate(rs.getTimestamp("BookingDate"));
                         appointment.setAppointmentStatus(rs.getString("AppointmentStatus"));
                         appointment.setNotes(rs.getString("AppointmentNotes"));
-                        
+
                         // Service information
                         Service service = new Service();
                         service.setServiceID(rs.getInt("ServiceID"));
                         service.setServiceName(rs.getString("ServiceName"));
                         service.setDescription(rs.getString("ServiceDescription"));
                         appointment.setService(service);
-                        
+
                         record.setAppointment(appointment);
                     }
 
@@ -153,10 +204,10 @@ public class MedicalRecordDAO extends DBContext {
     }
 
     public boolean addMedicalRecord(MedicalRecords record) {
-        String query = "INSERT INTO MedicalRecords (PetID, DoctorID, AppointmentID, Diagnosis, Treatment, " +
-                      "Prescription, Weight, Temperature, Notes, RecordDate) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        String query = "INSERT INTO MedicalRecords (PetID, DoctorID, AppointmentID, Diagnosis, Treatment, "
+                + "Prescription, Weight, Temperature, Notes, RecordDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, record.getPet().getPetID());
             ps.setInt(2, record.getDoctor().getUserID());
@@ -168,7 +219,7 @@ public class MedicalRecordDAO extends DBContext {
             ps.setDouble(8, record.getTemperature());
             ps.setString(9, record.getNotes());
             ps.setTimestamp(10, record.getRecordDate());
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -177,9 +228,9 @@ public class MedicalRecordDAO extends DBContext {
     }
 
     public boolean updateMedicalRecord(MedicalRecords record) {
-        String query = "UPDATE MedicalRecords SET Diagnosis = ?, Treatment = ?, Prescription = ?, " +
-                      "Weight = ?, Temperature = ?, Notes = ? WHERE RecordID = ?";
-        
+        String query = "UPDATE MedicalRecords SET Diagnosis = ?, Treatment = ?, Prescription = ?, "
+                + "Weight = ?, Temperature = ?, Notes = ? WHERE RecordID = ?";
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, record.getDiagnosis());
             ps.setString(2, record.getTreatment());
@@ -188,7 +239,7 @@ public class MedicalRecordDAO extends DBContext {
             ps.setDouble(5, record.getTemperature());
             ps.setString(6, record.getNotes());
             ps.setInt(7, record.getRecordID());
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -198,7 +249,7 @@ public class MedicalRecordDAO extends DBContext {
 
     public boolean deleteMedicalRecord(int recordId) {
         String query = "DELETE FROM MedicalRecords WHERE RecordID = ?";
-        
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, recordId);
             return ps.executeUpdate() > 0;
@@ -208,5 +259,3 @@ public class MedicalRecordDAO extends DBContext {
         }
     }
 }
-
-

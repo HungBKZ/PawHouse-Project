@@ -1,30 +1,30 @@
+<%-- 
+    Document   : MyPetDetail
+    Created on : Mar 24, 2025, 11:16:05 AM
+    Author     : hungv
+--%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="Model.Pet, Model.AdoptionHistory, Model.PetCategories" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>  
 <%@ page import="java.util.List" %>
 
-<%
-    Pet pet = (Pet) request.getAttribute("petDetail");
-    List<AdoptionHistory> adoptionHistory = (List<AdoptionHistory>) request.getAttribute("adoptionHistory");
+<!-- Lấy pet và medicalRecords từ request -->
+<c:set var="pet" value="${requestScope.petDetail}" />
+<c:set var="medicalRecords" value="${requestScope.medicalRecords}" />
 
-    if (pet == null) {
-        response.sendRedirect("adoption.jsp?error=notfound");
-        return;
-    }
-%>
+<c:if test="${empty pet}">
+    <c:redirect url="adoption.jsp?error=notfound" />
+</c:if>
 
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <title>Chi tiết thú cưng</title>
-
-        <!-- Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
-
             .pet-image {
                 width: 100%;
                 max-height: 400px;
@@ -34,6 +34,12 @@
             .btn-adopt {
                 width: 100%;
                 font-size: 18px;
+            }
+            .table {
+                width: 100%;
+                margin: 20px 0;
+                border-collapse: collapse;
+                font-family: Arial, sans-serif;
             }
             .table th, .table td {
                 padding: 12px;
@@ -81,56 +87,30 @@
             <div class="row">
                 <!-- Ảnh thú cưng -->
                 <div class="col-md-6">
-                    <img src="<%= pet.getPetImage() != null ? pet.getPetImage() : "assets/img/default-pet.jpg"%>" class="pet-image">
+                    <img src="<c:out value="${pet.petImage != null ? pet.petImage : 'assets/img/default-pet.jpg'}" />" class="pet-image">
                 </div>
 
                 <!-- Thông tin thú cưng -->
                 <div class="col-md-6">
-                    <h2 class="text-primary"><%= pet.getPetName()%></h2>
-                    <p><strong>Loài:</strong> <%= pet.getSpecies()%></p>
-                    <p><strong>Giống:</strong> <%= pet.getBreed()%></p>
-                    <p><strong>Tuổi:</strong> <%= pet.getAge()%> năm</p>
-                    <p><strong>Giới tính:</strong> <%= pet.getGender()%></p>
+                    <h2 class="text-primary"><c:out value="${pet.petName}" /></h2>
+                    <p><strong>Loài:</strong> <c:out value="${pet.species}" /></p>
+                    <p><strong>Giống:</strong> <c:out value="${pet.breed}" /></p>
+                    <p><strong>Tuổi:</strong> <c:out value="${pet.age}" /> năm</p>
+                    <p><strong>Giới tính:</strong> <c:out value="${pet.gender}" /></p>
                     <p><strong>Trạng thái:</strong> 
-                        <span class="badge bg-<%= pet.getAdoptionStatus().equals("Chưa nhận nuôi") ? "danger" : "success"%>">
-                            <%= pet.getAdoptionStatus()%>
+                        <span class="badge bg-${pet.adoptionStatus == 'Chưa nhận nuôi' ? 'danger' : 'success'}">
+                            <c:out value="${pet.adoptionStatus}" />
                         </span>
                     </p>
 
-                    <% if (pet.getAdoptionStatus().equals("Chưa nhận nuôi")) {%>
-                    <form action="AdoptPetServlet" method="post">
-                        <input type="hidden" name="petId" value="<%= pet.getPetID()%>">
-                        <button type="submit" class="btn btn-success btn-adopt">Nhận nuôi ngay</button>
-                    </form>
-                    <% } %>
+                    <c:if test="${pet.adoptionStatus == 'Chưa nhận nuôi'}">
+                        <form action="AdoptPetServlet" method="post">
+                            <input type="hidden" name="petId" value="${pet.petID}">
+                            <button type="submit" class="btn btn-success btn-adopt">Nhận nuôi ngay</button>
+                        </form>
+                    </c:if>
                 </div>
             </div>
-
-            <!-- Lịch sử nhận nuôi -->
-            <div class="mt-4">
-                <h3 class="text-secondary">Lịch sử nhận nuôi</h3>
-                <% if (adoptionHistory != null && !adoptionHistory.isEmpty()) { %>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Ngày nhận nuôi</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for (AdoptionHistory history : adoptionHistory) {%>
-                        <tr>
-                            <td><%= history.getAdoptionDate()%></td>
-                            <td><%= history.getAdoptionStatus()%></td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-                <% } else { %>
-                <p class="text-muted">Chưa có lịch sử nhận nuôi.</p>
-                <% }%>
-            </div>
-
 
             <!-- Hồ sơ bệnh án -->
             <div class="mt-4">
