@@ -36,7 +36,6 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button">
-
                         Dịch vụ
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="serviceDropdown">
@@ -44,11 +43,9 @@
                         <li><a class="dropdown-item" href="/SpaServlet" id="spaLink">Spa & Grooming</a></li>
                         <li><a class="dropdown-item" href="/AdoptionServlet" id="adoptionLink">Nhận nuôi</a></li>
                     </ul>
-
                 </li>
                 <li class="nav-item"><a class="nav-link" href="about.jsp">Thông tin</a></li>
-              <a class="nav-link" href="/Cart" id="cartLink"><i class="bi bi-cart"></i> Giỏ Hàng</a>
-
+                <a class="nav-link" href="/Cart" id="cartLink"><i class="bi bi-cart"></i> Giỏ Hàng</a>
             </ul>
 
             <% if (user == null && googleUsername == null) { %>
@@ -68,92 +65,94 @@
                     <li><a class="dropdown-item text-danger" href="logout"><i class="bi bi-box-arrow-right"></i> Đăng Xuất</a></li>
                 </ul>
             </div>
-            <% }%>
+            <% } %>
         </div>
     </div>
 </nav>
 
-<!-- Thêm div để đẩy nội dung xuống -->
+<!-- Toast thông báo -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+    <div id="loginToast" class="toast align-items-center text-bg-danger border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Vui lòng đăng nhập để sử dụng dịch vụ.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Đẩy nội dung xuống -->
 <div style="height: 70px;"></div>
 
 <!-- CSS -->
 <style>
-    /* Navbar tùy chỉnh */
     .navbar-custom {
         position: fixed;
         width: 100%;
         top: 0;
         left: 0;
-        z-index: 1000; /* Giúp navbar luôn nổi trên các phần khác */
-        background: linear-gradient(135deg, #ffcc00, #ff9a00); /* Màu nền gradient */
+        z-index: 1000;
+        background: linear-gradient(135deg, #ffcc00, #ff9a00);
     }
 
     .navbar-custom.scrolled {
         background: rgba(0, 0, 0, 1);
     }
 
-    /* Logo */
     .navbar-brand {
         font-size: 1.5rem;
-        color: #ffffff !important; /* Đổi màu chữ */
+        color: #ffffff !important;
     }
 
-    /* Màu chữ trong Navbar */
     .navbar-nav .nav-link {
-        color: #ffffff !important; /* Màu trắng */
+        color: #ffffff !important;
         font-size: 1.1rem;
         font-weight: bold;
         margin: 0 10px;
         transition: all 0.3s;
     }
 
-    /* Dropdown khi hover */
     .dropdown:hover .dropdown-menu {
         display: block;
         margin-top: 0;
     }
 
-    /* Hover cho Navbar */
     .navbar-nav .nav-link:hover {
-        color: #2e2e2e !important; /* Đổi thành màu xám đậm khi hover */
+        color: #2e2e2e !important;
         text-decoration: underline;
     }
 
-    /* Màu chữ trong dropdown menu */
     .dropdown-menu {
         min-width: 200px;
         border-radius: 8px;
         overflow: hidden;
-        background: #ffffff; /* Nền trắng */
+        background: #ffffff;
         border: 1px solid #e0e0e0;
     }
 
-    /* Đổi màu chữ trong dropdown */
     .dropdown-item {
         font-size: 1rem;
         padding: 10px 20px;
-        color: #333 !important; /* Màu chữ xám đậm */
+        color: #333 !important;
     }
 
-    /* Hover trong dropdown */
     .dropdown-item:hover {
         background: #ffcc00;
         color: #000 !important;
     }
 
-    /* Đổi màu chữ của "Đăng Xuất" */
     .dropdown-item.text-danger {
         color: red !important;
         font-weight: bold;
     }
 
-    /* Hiệu ứng cuộn thay đổi nền */
-    .navbar.scrolled {
-        background: rgba(0, 0, 0, 0.9);
+    .toast-body {
+        font-weight: bold;
     }
 </style>
 
-<!-- Script giúp navbar thay đổi màu khi cuộn -->
+<!-- JS cuộn navbar -->
 <script>
     window.addEventListener("scroll", function () {
         let navbar = document.querySelector(".navbar-custom");
@@ -163,52 +162,48 @@
             navbar.classList.remove("scrolled");
         }
     });
-
-
 </script>
 
+<!-- JS kiểm tra đăng nhập & toast -->
 <script>
-    const isLoggedIn = <%= (user != null || googleUsername != null) %>; // true or false
+    const isLoggedIn = <%= (user != null || googleUsername != null) %>;
 
-    // Chặn mở dropdown dịch vụ nếu chưa đăng nhập
+    function showLoginToast() {
+        const toastElement = document.getElementById('loginToast');
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+
     document.getElementById("serviceDropdown").addEventListener("click", function (event) {
         if (!isLoggedIn) {
             event.preventDefault();
-            alert("Vui lòng đăng nhập để sử dụng dịch vụ.");
+            showLoginToast();
         }
     });
 
-    // Hàm xử lý chung cho từng link
     function protectLink(linkId) {
         const link = document.getElementById(linkId);
         if (link) {
             link.addEventListener("click", function (event) {
                 if (!isLoggedIn) {
                     event.preventDefault();
-                    alert("Vui lòng đăng nhập để sử dụng dịch vụ.");
+                    showLoginToast();
                 }
             });
         }
     }
 
-    // Gọi hàm cho từng link
     protectLink("medicalLink");
     protectLink("spaLink");
     protectLink("adoptionLink");
-    
-        // Chặn vào trang giỏ hàng nếu chưa đăng nhập
+
     const cartLink = document.getElementById("cartLink");
     if (cartLink) {
         cartLink.addEventListener("click", function (event) {
             if (!isLoggedIn) {
                 event.preventDefault();
-                alert("Vui lòng đăng nhập để xem giỏ hàng.");
+                showLoginToast();
             }
         });
     }
-
 </script>
-
-
-
-
