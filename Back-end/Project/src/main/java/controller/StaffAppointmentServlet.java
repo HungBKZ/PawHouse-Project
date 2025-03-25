@@ -28,7 +28,7 @@ public class StaffAppointmentServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             // Lấy danh sách lịch hẹn từ database
-            List<Appointment> appointments = appointmentDAO.getAllAppointments();
+            List<Appointment> appointments = appointmentDAO.getAppointmentsSpa();
 
             // Đẩy danh sách lên request
             request.setAttribute("appointments", appointments);
@@ -60,7 +60,10 @@ public class StaffAppointmentServlet extends HttpServlet {
             }
 
             int appointmentID = Integer.parseInt(idParam);
-            String status = statusParam.equals("1") ? "Đang sử dụng" : "Đã sử dụng";
+            String status = statusParam;
+            if (statusParam.equals("null")) {
+                status = null;
+            }
 
             // Cập nhật trạng thái trong database
             boolean success = appointmentDAO.updateAppointmentStatus(appointmentID, status);
