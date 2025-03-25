@@ -30,7 +30,7 @@ public class VerifyOTPServlet extends HttpServlet {
             String phone = (String) session.getAttribute("phone");
             String address = (String) session.getAttribute("address");
 
-            User newUser = new User(username, password, email, fullName, phone,address, true);
+            User newUser = new User(username, password, email, fullName, phone, address, 1); // Thay true thành 1
             UserDAO userDAO = new UserDAO();
             try {
                 userDAO.registerUser(newUser);
@@ -40,7 +40,7 @@ public class VerifyOTPServlet extends HttpServlet {
                 session.removeAttribute("email");
                 session.removeAttribute("fullName");
                 session.removeAttribute("phone");
-                 session.removeAttribute("address");
+                session.removeAttribute("address");
                 response.sendRedirect("index.jsp");
             } catch (SQLException e) {
                 request.setAttribute("error", "Error while registering: " + e.getMessage());

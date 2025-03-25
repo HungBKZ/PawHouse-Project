@@ -18,10 +18,10 @@ public class User {
     private String fullName;
     private String phone;
     private String avatar;
-    private boolean userStatus;
+    private int userStatus; // Đổi từ boolean sang int để tương ứng với BIT
     private String address;
 
-    public User(int userID, Role role, String username, String password, String email, String fullName, String phone, String avatar, boolean userStatus, String address) {
+    public User(int userID, Role role, String username, String password, String email, String fullName, String phone, String avatar, int userStatus, String address) {
         this.userID = userID;
         this.role = role;
         this.username = username;
@@ -34,13 +34,13 @@ public class User {
         this.address = address;
     }
 
-    public User(String username, String password, String email, String fullName, String phone,String address, boolean userStatus) {
+    public User(String username, String password, String email, String fullName, String phone, String address, int userStatus) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.fullName = fullName;
         this.phone = phone;
-         this.address = address;
+        this.address = address;
         this.userStatus = userStatus;
     }
 
@@ -117,11 +117,11 @@ public class User {
         this.avatar = avatar;
     }
 
-    public boolean isUserStatus() {
+    public int getUserStatus() { // Đổi từ isUserStatus() sang getUserStatus()
         return userStatus;
     }
 
-    public void setUserStatus(boolean userStatus) {
+    public void setUserStatus(int userStatus) { // Đổi từ boolean sang int
         this.userStatus = userStatus;
     }
 
@@ -136,5 +136,4 @@ public class User {
     public User(int userID) {
         this.userID = userID;
     }
-
 }

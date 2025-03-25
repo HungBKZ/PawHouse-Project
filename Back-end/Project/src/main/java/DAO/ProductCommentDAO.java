@@ -39,7 +39,7 @@ public class ProductCommentDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setUserStatus(rs.getBoolean("UserStatus"));
+                user.setUserStatus(rs.getInt("UserStatus")); // Thay getBoolean thành getInt
                 comment.setUser(user);
 
                 // Set Product details

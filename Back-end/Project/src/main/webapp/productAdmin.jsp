@@ -12,10 +12,10 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="/adminDashboard.jsp">PawHouse</a>
-            </div>
-        </nav>
+        <div class="container">
+            <a class="navbar-brand" href="/adminDashboard.jsp">PawHouse</a>
+        </div>
+    </nav>
     <div class="container mt-4">
         <h2 class="text-center">Quản Lý Sản Phẩm</h2>
         <button class="btn btn-primary mb-3" onclick="openAddModal()">Thêm Sản Phẩm</button>
@@ -39,7 +39,28 @@
                        for(ProductAdmin product : productList) { %>
                 <tr>
                     <td><%= product.getProductID() %></td>
-                    <td><%= product.getCategoryID() %></td>
+                    <td>
+                        <% 
+                            switch(product.getCategoryID()) {
+                                case 1: out.print("Thức ăn cho chó"); break;
+                                case 2: out.print("Thức ăn cho mèo"); break;
+                                case 3: out.print("Thức ăn cho bò sát"); break;
+                                case 4: out.print("Bát ăn, khay ăn"); break;
+                                case 5: out.print("Sữa tắm, dầu gội"); break;
+                                case 6: out.print("Cát vệ sinh cho mèo"); break;
+                                case 7: out.print("Phụ kiện thời trang"); break;
+                                case 8: out.print("Ba lô, túi vận chuyển"); break;
+                                case 9: out.print("Dây dắt, vòng cổ, rọ mõm"); break;
+                                case 10: out.print("Đồ chơi tương tác"); break;
+                                case 11: out.print("Đồ chơi nhai"); break;
+                                case 12: out.print("Bỉm, lót vệ sinh, túi phân"); break;
+                                case 13: out.print("Dụng cụ sưởi ấm và đèn UV"); break;
+                                case 14: out.print("Sản phẩm chăm sóc bò sát"); break;
+                                case 15: out.print("Thức ăn cho chuột"); break;
+                                default: out.print("Không xác định"); break;
+                            }
+                        %>
+                    </td>
                     <td><%= product.getProductName() %></td>
                     <td><%= product.getDescription() %></td>
                     <td><%= product.getPrice() %></td>
@@ -53,12 +74,14 @@
                     </td>
                     <td><%= product.getProductStatus() %></td>
                     <td>
-                        <button class="btn btn-warning" onclick="openEditModal('<%= product.getProductID() %>', '<%= product.getCategoryID() %>', '<%= product.getProductName() %>', '<%= product.getDescription() %>', '<%= product.getPrice() %>', '<%= product.getStock() %>', '<%= product.getProductImage() %>', '<%= product.getProductStatus() %>')">Sửa</button>
-                        <form method="post" action="/admin/products" style="display:inline;">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="id" value="<%= product.getProductID() %>">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
-                        </form>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-warning" onclick="openEditModal('<%= product.getProductID() %>', '<%= product.getCategoryID() %>', '<%= product.getProductName() %>', '<%= product.getDescription() %>', '<%= product.getPrice() %>', '<%= product.getStock() %>', '<%= product.getProductImage() %>', '<%= product.getProductStatus() %>')">Sửa</button>
+                            <form method="post" action="/admin/products" style="display:inline;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="id" value="<%= product.getProductID() %>">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <% } } %>
@@ -81,9 +104,21 @@
                         <div class="mb-3">
                             <label class="form-label">Danh Mục</label>
                             <select class="form-control" id="categoryID" name="categoryID" required>
-                                <% for(int i = 1; i <= 15; i++) { %>
-                                    <option value="<%= i %>"><%= i %></option>
-                                <% } %>
+                                <option value="1">Thức ăn cho chó</option>
+                                <option value="2">Thức ăn cho mèo</option>
+                                <option value="3">Thức ăn cho bò sát</option>
+                                <option value="4">Bát ăn, khay ăn</option>
+                                <option value="5">Sữa tắm, dầu gội</option>
+                                <option value="6">Cát vệ sinh cho mèo</option>
+                                <option value="7">Phụ kiện thời trang</option>
+                                <option value="8">Ba lô, túi vận chuyển</option>
+                                <option value="9">Dây dắt, vòng cổ, rọ mõm</option>
+                                <option value="10">Đồ chơi tương tác</option>
+                                <option value="11">Đồ chơi nhai</option>
+                                <option value="12">Bỉm, lót vệ sinh, túi phân</option>
+                                <option value="13">Dụng cụ sưởi ấm và đèn UV</option>
+                                <option value="14">Sản phẩm chăm sóc bò sát</option>
+                                <option value="15">Thức ăn cho chuột</option>
                             </select>
                         </div>
                         <div class="mb-3">

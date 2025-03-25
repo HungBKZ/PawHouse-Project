@@ -61,7 +61,7 @@ public class AdoptionDAO {
                         rs.getString("Gender"),
                         rs.getString("PetImage"),
                         rs.getString("AdoptionStatus"),
-                        new User(rs.getInt("UserID"), null, "", "", "", "", "", "", true, ""),
+                        new User(rs.getInt("UserID"), null, "", "", "", "", "", "", 1, ""), // Đổi true thành 1
                         rs.getString("InUseService")
                 );
 
@@ -116,7 +116,9 @@ public class AdoptionDAO {
             ps.setString(2, notes);
             ps.setInt(3, adoptionId);
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            return rowsAffected
+
+ > 0;
         } catch (SQLException e) {
             System.out.println("Error updating adoption status: " + e.getMessage());
             e.printStackTrace();
@@ -169,7 +171,7 @@ public class AdoptionDAO {
                     rs.getString("Gender"),
                     rs.getString("PetImage"),
                     rs.getString("AdoptionStatus"),
-                    new User()
+                    new User() // Không cần truyền đầy đủ tham số ở đây
                 );
 
                 AdoptionHistory adoption = new AdoptionHistory();

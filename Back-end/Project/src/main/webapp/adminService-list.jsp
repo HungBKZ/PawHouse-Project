@@ -38,7 +38,25 @@
                            for(ServiceAdmin service : serviceList) { %>
                     <tr>
                         <td><%= service.getServiceID() %></td>
-                        <td><%= service.getCategoryID() %></td>
+                        <td>
+                            <% 
+                                switch(service.getCategoryID()) {
+                                    case 1: out.print("Chăm sóc lông"); break;
+                                    case 2: out.print("Vệ sinh"); break;
+                                    case 3: out.print("Huấn luyện"); break;
+                                    case 4: out.print("Giữ thú cưng"); break;
+                                    case 5: out.print("Massage & Thư giãn"); break;
+                                    case 6: out.print("Vận chuyển"); break;
+                                    case 7: out.print("Khám tổng quát"); break;
+                                    case 8: out.print("Tiêm phòng"); break;
+                                    case 9: out.print("Chữa bệnh"); break;
+                                    case 10: out.print("Phẫu thuật"); break;
+                                    case 11: out.print("Xét nghiệm"); break;
+                                    case 12: out.print("Nha khoa"); break;
+                                    default: out.print("Không xác định"); break;
+                                }
+                            %>
+                        </td>
                         <td><%= service.getServiceName() %></td>
                         <td><%= service.getDescription() %></td>
                         <td><%= service.getPrice() %></td>
@@ -51,8 +69,10 @@
                         </td>
                         <td><%= (service.getServiceStatus() == 1) ? "Hoạt động" : "Không hoạt động" %></td>
                         <td>
-                            <button class="btn btn-warning" onclick="openEditModal('<%= service.getServiceID() %>', '<%= service.getCategoryID() %>', '<%= service.getServiceName() %>', '<%= service.getDescription() %>', '<%= service.getPrice() %>', '<%= service.getServiceImage() %>', '<%= service.getServiceStatus() %>')">Sửa</button>
-                            <button class="btn btn-danger" onclick="confirmDelete('<%= service.getServiceID() %>')">Xóa</button>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-warning" onclick="openEditModal('<%= service.getServiceID() %>', '<%= service.getCategoryID() %>', '<%= service.getServiceName() %>', '<%= service.getDescription() %>', '<%= service.getPrice() %>', '<%= service.getServiceImage() %>', '<%= service.getServiceStatus() %>')">Sửa</button>
+                                <button class="btn btn-danger" onclick="confirmDelete('<%= service.getServiceID() %>')">Xóa</button>
+                            </div>
                         </td>
                     </tr>
                     <% } } %>
@@ -76,9 +96,18 @@
                             <div class="mb-3">
                                 <label class="form-label">Danh Mục</label>
                                 <select class="form-control" id="categoryID" name="categoryID" required>
-                                    <% for(int i = 1; i <= 12; i++) { %>
-                                        <option value="<%= i %>"><%= i %></option>
-                                    <% } %>
+                                    <option value="1">Chăm sóc lông</option>
+                                    <option value="2">Vệ sinh</option>
+                                    <option value="3">Huấn luyện</option>
+                                    <option value="4">Giữ thú cưng</option>
+                                    <option value="5">Massage & Thư giãn</option>
+                                    <option value="6">Vận chuyển</option>
+                                    <option value="7">Khám tổng quát</option>
+                                    <option value="8">Tiêm phòng</option>
+                                    <option value="9">Chữa bệnh</option>
+                                    <option value="10">Phẫu thuật</option>
+                                    <option value="11">Xét nghiệm</option>
+                                    <option value="12">Nha khoa</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -131,7 +160,7 @@
                 document.getElementById("serviceStatus").value = status;
                 new bootstrap.Modal(document.getElementById("serviceModal")).show();
             }
-             function confirmDelete(id) {
+            function confirmDelete(id) {
                 if (confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
                     let form = document.createElement("form");
                     form.method = "POST";

@@ -554,7 +554,7 @@ public class PetDAO extends DBContext {
                         rs.getString("FullName"),
                         rs.getString("Phone"),
                         rs.getString("Avatar"),
-                        rs.getBoolean("UserStatus"),
+                        rs.getInt("UserStatus"), // Thay rs.getBoolean thành rs.getInt
                         rs.getString("Address")
                 );
 
