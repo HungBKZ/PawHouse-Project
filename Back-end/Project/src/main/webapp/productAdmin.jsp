@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Model.ProductAdmin" %>
+<%@ page import="Model.ProductCategories" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -18,7 +19,13 @@
     </nav>
     <div class="container mt-4">
         <h2 class="text-center">Quản Lý Sản Phẩm</h2>
-        <button class="btn btn-primary mb-3" onclick="openAddModal()">Thêm Sản Phẩm</button>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-primary" onclick="openAddModal()">Thêm Sản Phẩm</button>
+            <form method="get" action="/admin/products" class="d-flex gap-2">
+                <input type="text" class="form-control" name="search" placeholder="Tìm kiếm theo tên" value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+                <button type="submit" class="btn btn-success">Tìm</button>
+            </form>
+        </div>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -39,28 +46,7 @@
                        for(ProductAdmin product : productList) { %>
                 <tr>
                     <td><%= product.getProductID() %></td>
-                    <td>
-                        <% 
-                            switch(product.getCategoryID()) {
-                                case 1: out.print("Thức ăn cho chó"); break;
-                                case 2: out.print("Thức ăn cho mèo"); break;
-                                case 3: out.print("Thức ăn cho bò sát"); break;
-                                case 4: out.print("Bát ăn, khay ăn"); break;
-                                case 5: out.print("Sữa tắm, dầu gội"); break;
-                                case 6: out.print("Cát vệ sinh cho mèo"); break;
-                                case 7: out.print("Phụ kiện thời trang"); break;
-                                case 8: out.print("Ba lô, túi vận chuyển"); break;
-                                case 9: out.print("Dây dắt, vòng cổ, rọ mõm"); break;
-                                case 10: out.print("Đồ chơi tương tác"); break;
-                                case 11: out.print("Đồ chơi nhai"); break;
-                                case 12: out.print("Bỉm, lót vệ sinh, túi phân"); break;
-                                case 13: out.print("Dụng cụ sưởi ấm và đèn UV"); break;
-                                case 14: out.print("Sản phẩm chăm sóc bò sát"); break;
-                                case 15: out.print("Thức ăn cho chuột"); break;
-                                default: out.print("Không xác định"); break;
-                            }
-                        %>
-                    </td>
+                    <td><%= product.getCategoryName() %></td>
                     <td><%= product.getProductName() %></td>
                     <td><%= product.getDescription() %></td>
                     <td><%= product.getPrice() %></td>
@@ -104,21 +90,11 @@
                         <div class="mb-3">
                             <label class="form-label">Danh Mục</label>
                             <select class="form-control" id="categoryID" name="categoryID" required>
-                                <option value="1">Thức ăn cho chó</option>
-                                <option value="2">Thức ăn cho mèo</option>
-                                <option value="3">Thức ăn cho bò sát</option>
-                                <option value="4">Bát ăn, khay ăn</option>
-                                <option value="5">Sữa tắm, dầu gội</option>
-                                <option value="6">Cát vệ sinh cho mèo</option>
-                                <option value="7">Phụ kiện thời trang</option>
-                                <option value="8">Ba lô, túi vận chuyển</option>
-                                <option value="9">Dây dắt, vòng cổ, rọ mõm</option>
-                                <option value="10">Đồ chơi tương tác</option>
-                                <option value="11">Đồ chơi nhai</option>
-                                <option value="12">Bỉm, lót vệ sinh, túi phân</option>
-                                <option value="13">Dụng cụ sưởi ấm và đèn UV</option>
-                                <option value="14">Sản phẩm chăm sóc bò sát</option>
-                                <option value="15">Thức ăn cho chuột</option>
+                                <% List<ProductCategories> categoryList = (List<ProductCategories>) request.getAttribute("categoryList");
+                                   if (categoryList != null) {
+                                       for(ProductCategories category : categoryList) { %>
+                                    <option value="<%= category.getCategoryID() %>"><%= category.getCategoryName() %></option>
+                                <% } } %>
                             </select>
                         </div>
                         <div class="mb-3">

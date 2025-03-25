@@ -49,7 +49,20 @@ public class AdminPetServlet extends HttpServlet {
             }
         }
         
-        List<AdminPet> petList = new AdminPetDAO().getAllPets();
+        // Lấy tham số tìm kiếm
+        String petName = request.getParameter("petName");
+        String species = request.getParameter("species");
+        
+        AdminPetDAO dao = new AdminPetDAO();
+        List<AdminPet> petList;
+        
+        // Nếu có tham số tìm kiếm, gọi phương thức lọc, nếu không thì lấy tất cả
+        if ((petName != null && !petName.trim().isEmpty()) || (species != null && !species.trim().isEmpty())) {
+            petList = dao.searchPets(petName, species);
+        } else {
+            petList = dao.getAllPets();
+        }
+        
         List<Integer> userIds = getUserIdsFromDatabase();
         request.setAttribute("petList", petList);
         request.setAttribute("userIds", userIds);
@@ -111,7 +124,8 @@ public class AdminPetServlet extends HttpServlet {
         if ("Chưa nhận nuôi".equals(adoptionStatus) || "Đang chờ duyệt".equals(adoptionStatus)) {
             userID = null; // Đặt null nếu chưa nhận nuôi hoặc đang chờ duyệt
         } else {
-            userID = Integer.parseInt(request.getParameter("userID"));
+            String userIdStr = request.getParameter("userID");
+            userID = (userIdStr != null && !userIdStr.isEmpty()) ? Integer.parseInt(userIdStr) : null;
         }
         
         String inUseService = request.getParameter("inUseService");

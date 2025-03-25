@@ -1,7 +1,9 @@
 package controller;
 
 import DAO.ProductAdminDAO;
+import DAO.ProductCategoriesDAO;
 import Model.ProductAdmin;
+import Model.ProductCategories;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,32 +27,41 @@ import jakarta.servlet.http.Part;
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
 public class AdminProductServlet extends HttpServlet {
 
-    // Phương thức đọc đường dẫn thư mục lưu ảnh từ config.properties hoặc mặc định vào webapp/imgs/product
     private String getUploadDirectory(HttpServletRequest request) {
         Properties properties = new Properties();
-        String configPath = "src/main/config/config.properties"; // Đường dẫn tương đối
+        String configPath = "src/main/config/config.properties";
 
         try (InputStream input = new FileInputStream(configPath)) {
             properties.load(input);
             String uploadPath = properties.getProperty("upload.directory");
-
             if (uploadPath == null || uploadPath.isEmpty()) {
-                // Nếu không có config, tự động lấy thư mục trong webapp
                 uploadPath = request.getServletContext().getRealPath("/imgs/product");
             }
-
             return uploadPath;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return request.getServletContext().getRealPath("/imgs/product"); // Nếu có lỗi, dùng thư mục trong webapp
+        return request.getServletContext().getRealPath("/imgs/product");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ProductAdminDAO productDAO = new ProductAdminDAO();
-        List<ProductAdmin> productList = productDAO.getAllProducts();
+        ProductCategoriesDAO categoryDAO = new ProductCategoriesDAO();
+
+        String searchTerm = request.getParameter("search");
+        List<ProductAdmin> productList;
+
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            productList = productDAO.searchProductsByName(searchTerm);
+        } else {
+            productList = productDAO.getAllProducts();
+        }
+
+        List<ProductCategories> categoryList = categoryDAO.getAllCategories();
+
         request.setAttribute("productList", productList);
+        request.setAttribute("categoryList", categoryList);
         request.getRequestDispatcher("/productAdmin.jsp").forward(request, response);
     }
 
@@ -75,17 +86,15 @@ public class AdminProductServlet extends HttpServlet {
                 int stock = Integer.parseInt(request.getParameter("stock"));
                 int status = Integer.parseInt(request.getParameter("status"));
 
-                if (categoryID < 1 || categoryID > 15 || (status != 0 && status != 1) || price < 0 || stock < 0) {
+                if (price < 0 || stock < 0) {
                     response.sendRedirect(request.getContextPath() + "/admin/products?error=InvalidValues");
                     return;
                 }
 
-                // Lấy thư mục lưu ảnh từ config hoặc mặc định vào webapp/imgs/product
                 String uploadPath = getUploadDirectory(request);
                 File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs(); // Tạo thư mục nếu chưa có
+                if (!uploadDir.exists()) uploadDir.mkdirs();
 
-                // Xử lý file ảnh
                 Part filePart = request.getPart("image");
                 String imagePath = request.getParameter("existingImage");
 
@@ -93,8 +102,6 @@ public class AdminProductServlet extends HttpServlet {
                     String fileName = "product" + System.currentTimeMillis() + ".jpg";
                     Path filePath = new File(uploadDir, fileName).toPath();
                     Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-                    // Cập nhật đường dẫn để lưu vào database (luôn lưu đường dẫn tương đối)
                     imagePath = "imgs/product/" + fileName;
                 }
 

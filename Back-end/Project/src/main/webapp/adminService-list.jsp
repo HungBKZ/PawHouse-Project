@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Model.ServiceAdmin" %>
+<%@ page import="Model.ServiceCategories" %> <!-- Đổi từ ServiceCategory sang ServiceCategories -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,7 +19,19 @@
         </nav>
         <div class="container mt-4">
             <h2 class="text-center">Quản Lý Dịch Vụ</h2>
-            <button class="btn btn-primary mb-3" onclick="openAddModal()">Thêm Dịch Vụ</button>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <button class="btn btn-primary" onclick="openAddModal()">Thêm Dịch Vụ</button>
+                </div>
+                <div class="col-md-6">
+                    <form method="get" action="/admin/services">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="Tìm kiếm tên dịch vụ" value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+                            <button class="btn btn-outline-secondary" type="submit">Tìm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -38,25 +51,7 @@
                            for(ServiceAdmin service : serviceList) { %>
                     <tr>
                         <td><%= service.getServiceID() %></td>
-                        <td>
-                            <% 
-                                switch(service.getCategoryID()) {
-                                    case 1: out.print("Chăm sóc lông"); break;
-                                    case 2: out.print("Vệ sinh"); break;
-                                    case 3: out.print("Huấn luyện"); break;
-                                    case 4: out.print("Giữ thú cưng"); break;
-                                    case 5: out.print("Massage & Thư giãn"); break;
-                                    case 6: out.print("Vận chuyển"); break;
-                                    case 7: out.print("Khám tổng quát"); break;
-                                    case 8: out.print("Tiêm phòng"); break;
-                                    case 9: out.print("Chữa bệnh"); break;
-                                    case 10: out.print("Phẫu thuật"); break;
-                                    case 11: out.print("Xét nghiệm"); break;
-                                    case 12: out.print("Nha khoa"); break;
-                                    default: out.print("Không xác định"); break;
-                                }
-                            %>
-                        </td>
+                        <td><%= service.getCategoryName() %></td>
                         <td><%= service.getServiceName() %></td>
                         <td><%= service.getDescription() %></td>
                         <td><%= service.getPrice() %></td>
@@ -96,18 +91,11 @@
                             <div class="mb-3">
                                 <label class="form-label">Danh Mục</label>
                                 <select class="form-control" id="categoryID" name="categoryID" required>
-                                    <option value="1">Chăm sóc lông</option>
-                                    <option value="2">Vệ sinh</option>
-                                    <option value="3">Huấn luyện</option>
-                                    <option value="4">Giữ thú cưng</option>
-                                    <option value="5">Massage & Thư giãn</option>
-                                    <option value="6">Vận chuyển</option>
-                                    <option value="7">Khám tổng quát</option>
-                                    <option value="8">Tiêm phòng</option>
-                                    <option value="9">Chữa bệnh</option>
-                                    <option value="10">Phẫu thuật</option>
-                                    <option value="11">Xét nghiệm</option>
-                                    <option value="12">Nha khoa</option>
+                                    <% List<ServiceCategories> categoryList = (List<ServiceCategories>) request.getAttribute("categoryList"); // Đổi từ ServiceCategory sang ServiceCategories
+                                       if (categoryList != null) {
+                                           for (ServiceCategories category : categoryList) { %>
+                                    <option value="<%= category.getCategoryID() %>"><%= category.getCategoryName() %></option>
+                                    <% } } %>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -160,22 +148,20 @@
                 document.getElementById("serviceStatus").value = status;
                 new bootstrap.Modal(document.getElementById("serviceModal")).show();
             }
+
             function confirmDelete(id) {
                 if (confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
                     let form = document.createElement("form");
                     form.method = "POST";
                     form.action = "/admin/services";
-                    
                     let actionInput = document.createElement("input");
                     actionInput.type = "hidden";
                     actionInput.name = "action";
                     actionInput.value = "delete";
-                    
                     let idInput = document.createElement("input");
                     idInput.type = "hidden";
                     idInput.name = "id";
                     idInput.value = id;
-                    
                     form.appendChild(actionInput);
                     form.appendChild(idInput);
                     document.body.appendChild(form);

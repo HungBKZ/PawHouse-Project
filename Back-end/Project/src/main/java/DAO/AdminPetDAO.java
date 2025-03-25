@@ -25,7 +25,7 @@ public class AdminPetDAO {
                     rs.getInt("CategoryID"),
                     rs.getString("PetName"),
                     rs.getString("Species"),
-                    rs.getString("Breed"),
+                    rs.getString("Breed"), // Thêm Breed vào đây
                     rs.getInt("Age"),
                     rs.getString("Gender"),
                     rs.getString("PetImage"),
@@ -236,5 +236,56 @@ public class AdminPetDAO {
                 }
             }
         }
+    }
+
+    public List<AdminPet> searchPets(String petName, String species) {
+        List<AdminPet> pets = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM Pets WHERE 1=1");
+        
+        // Thêm điều kiện tìm kiếm nếu có
+        if (petName != null && !petName.trim().isEmpty()) {
+            query.append(" AND PetName LIKE ?");
+        }
+        if (species != null && !species.trim().isEmpty()) {
+            query.append(" AND Species = ?");
+        }
+        
+        try (Connection conn = DBContext.getConnection()) {
+            if (conn == null) {
+                System.err.println("\u274C Không kết nối được database");
+                return pets;
+            }
+            PreparedStatement ps = conn.prepareStatement(query.toString());
+            
+            // Gán giá trị cho các tham số
+            int paramIndex = 1;
+            if (petName != null && !petName.trim().isEmpty()) {
+                ps.setString(paramIndex++, "%" + petName.trim() + "%");
+            }
+            if (species != null && !species.trim().isEmpty()) {
+                ps.setString(paramIndex++, species.trim());
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                pets.add(new AdminPet(
+                    rs.getInt("PetID"),
+                    rs.getInt("CategoryID"),
+                    rs.getString("PetName"),
+                    rs.getString("Species"),
+                    rs.getString("Breed"),
+                    rs.getInt("Age"),
+                    rs.getString("Gender"),
+                    rs.getString("PetImage"),
+                    rs.getString("AdoptionStatus"),
+                    rs.getObject("UserID") != null ? rs.getInt("UserID") : null,
+                    rs.getString("InUseService")
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("\u274C Lỗi SQL khi tìm kiếm thú cưng: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return pets;
     }
 }
