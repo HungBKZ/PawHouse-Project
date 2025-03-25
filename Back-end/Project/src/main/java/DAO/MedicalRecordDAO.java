@@ -10,22 +10,27 @@ public class MedicalRecordDAO extends DBContext {
 
     public List<MedicalRecords> getAllWithPetAndDoctor() {
         List<MedicalRecords> recordList = new ArrayList<>();
-        String query
-                = "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, "
+        String query = "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, mr.VaccinationDetails, mr.NextVaccinationDate, "
                 + "mr.Weight, mr.Temperature, mr.Notes, mr.RecordDate, "
                 + "p.PetID, p.PetName, p.Species, p.Breed, p.PetImage, "
-                + "u.UserID, u.FullName AS OwnerName "
+                + "u.UserID, u.FullName AS OwnerName, s.CategoryID "
                 + "FROM MedicalRecords mr "
                 + "LEFT JOIN Pets p ON mr.PetID = p.PetID "
-                + "LEFT JOIN Users u ON p.UserID = u.UserID";
+                + "LEFT JOIN Users u ON p.UserID = u.UserID "
+                + "LEFT JOIN Appointments a ON mr.AppointmentID = a.AppointmentID "
+                + "LEFT JOIN Services s ON a.ServiceID = s.ServiceID "
+                + "WHERE s.CategoryID != 8";
 
         try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 MedicalRecords record = new MedicalRecords();
                 record.setRecordID(rs.getInt("RecordID"));
                 record.setDiagnosis(rs.getString("Diagnosis"));
                 record.setTreatment(rs.getString("Treatment"));
                 record.setPrescription(rs.getString("Prescription"));
+                record.setVaccinationDetails(rs.getString("VaccinationDetails"));
+                record.setNextVaccinationDate(rs.getTimestamp("NextVaccinationDate"));
                 record.setWeight(rs.getDouble("Weight"));
                 record.setTemperature(rs.getDouble("Temperature"));
                 record.setNotes(rs.getString("Notes"));
@@ -45,6 +50,60 @@ public class MedicalRecordDAO extends DBContext {
                 pet.setOwner(owner);
                 record.setPet(pet);
 
+                // Optional: Bạn có thể lấy CategoryID nếu cần xử lý thêm
+                // int categoryId = rs.getInt("CategoryID");
+                recordList.add(record);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return recordList;
+    }
+
+    public List<MedicalRecords> getAllWithPetAndDoctor2() {
+        List<MedicalRecords> recordList = new ArrayList<>();
+        String query = "SELECT mr.RecordID, mr.Diagnosis, mr.Treatment, mr.Prescription, mr.VaccinationDetails, mr.NextVaccinationDate, "
+                + "mr.Weight, mr.Temperature, mr.Notes, mr.RecordDate, "
+                + "p.PetID, p.PetName, p.Species, p.Breed, p.PetImage, "
+                + "u.UserID, u.FullName AS OwnerName, s.CategoryID "
+                + "FROM MedicalRecords mr "
+                + "LEFT JOIN Pets p ON mr.PetID = p.PetID "
+                + "LEFT JOIN Users u ON p.UserID = u.UserID "
+                + "LEFT JOIN Appointments a ON mr.AppointmentID = a.AppointmentID "
+                + "LEFT JOIN Services s ON a.ServiceID = s.ServiceID "
+                + "WHERE s.CategoryID = 8";
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                MedicalRecords record = new MedicalRecords();
+                record.setRecordID(rs.getInt("RecordID"));
+                record.setDiagnosis(rs.getString("Diagnosis"));
+                record.setTreatment(rs.getString("Treatment"));
+                record.setPrescription(rs.getString("Prescription"));
+                record.setVaccinationDetails(rs.getString("VaccinationDetails"));
+                record.setNextVaccinationDate(rs.getTimestamp("NextVaccinationDate"));
+                record.setWeight(rs.getDouble("Weight"));
+                record.setTemperature(rs.getDouble("Temperature"));
+                record.setNotes(rs.getString("Notes"));
+                record.setRecordDate(rs.getTimestamp("RecordDate"));
+
+                Pet pet = new Pet();
+                pet.setPetID(rs.getInt("PetID"));
+                pet.setPetName(rs.getString("PetName"));
+                pet.setSpecies(rs.getString("Species"));
+                pet.setBreed(rs.getString("Breed"));
+                pet.setPetImage(rs.getString("PetImage"));
+
+                User owner = new User();
+                owner.setUserID(rs.getInt("UserID"));
+                owner.setFullName(rs.getString("OwnerName"));
+
+                pet.setOwner(owner);
+                record.setPet(pet);
+
+                // Optional: Bạn có thể lấy CategoryID nếu cần xử lý thêm
+                // int categoryId = rs.getInt("CategoryID");
                 recordList.add(record);
             }
         } catch (SQLException e) {
@@ -258,4 +317,29 @@ public class MedicalRecordDAO extends DBContext {
             return false;
         }
     }
+    
+    public boolean updateMedicalRecord2(MedicalRecords record) {
+    String query = "UPDATE MedicalRecords SET Diagnosis = ?, Treatment = ?, Prescription = ?, "
+                 + "VaccinationDetails = ?, NextVaccinationDate = ?, "
+                 + "Weight = ?, Temperature = ?, Notes = ? "
+                 + "WHERE RecordID = ?";
+
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setString(1, record.getDiagnosis());
+        ps.setString(2, record.getTreatment());
+        ps.setString(3, record.getPrescription());
+        ps.setString(4, record.getVaccinationDetails());
+        ps.setTimestamp(5, record.getNextVaccinationDate());
+        ps.setDouble(6, record.getWeight());
+        ps.setDouble(7, record.getTemperature());
+        ps.setString(8, record.getNotes());
+        ps.setInt(9, record.getRecordID());
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 }

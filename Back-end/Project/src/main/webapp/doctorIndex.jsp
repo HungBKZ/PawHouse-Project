@@ -234,7 +234,7 @@
                     <div class="card-body">
                         <h5 class="card-title"><i class="bi bi-syringe"></i> Tiêm Ngừa</h5>
                         <p class="card-text">Quản lý lịch tiêm ngừa</p>
-                        <a href="doctorVaccination.jsp" class="btn btn-primary">Xem lịch</a>
+                        <a href="DoctorVacxinServlet" class="btn btn-primary">Xem lịch</a>
                     </div>
                 </div>
             </div>
