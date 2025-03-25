@@ -62,6 +62,13 @@ public class UpdateProfileServlet extends HttpServlet {
         try {
             UserDAO userDAO = new UserDAO();
             
+            // Kiểm tra xem số điện thoại đã tồn tại chưa (ngoại trừ số điện thoại của user hiện tại)
+            if (userDAO.checkPhoneExistsExceptUser(phone, user.getUserID())) {
+                request.setAttribute("error", "Số điện thoại này đã được sử dụng bởi người dùng khác!!!!");
+                request.getRequestDispatcher("profile.jsp").forward(request, response);
+                return;
+            }
+            
             // Cập nhật thông tin user
             user.setFullName(fullName);
             user.setPhone(phone);
