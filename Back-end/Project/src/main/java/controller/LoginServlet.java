@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             error = "Vui lòng nhập email và mật khẩu!";
             session.setAttribute("error", error);
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login");
             return;
         }
 
@@ -86,7 +86,7 @@ public class LoginServlet extends HttpServlet {
                 if (role == null) {
                     error = "Tài khoản của bạn chưa được cấp quyền. Vui lòng liên hệ quản trị viên!";
                     session.setAttribute("error", error);
-                    response.sendRedirect("login.jsp");
+                    response.sendRedirect("login");
                     return;
                 }
 
@@ -113,12 +113,12 @@ public class LoginServlet extends HttpServlet {
             } else {
                 error = "Email hoặc mật khẩu không đúng!";
                 session.setAttribute("error", error);
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("login");
             }
         } catch (Exception e) {
             error = "Có lỗi xảy ra: " + e.getMessage();
             session.setAttribute("error", error);
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login");
         }
     }
 
