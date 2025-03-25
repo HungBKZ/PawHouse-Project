@@ -274,7 +274,7 @@
             <div class="container text-center position-relative">
                 <img src="imgs/dog.jpg" alt="Pet Food" class="banner-image">
                 <div class="section-title"></div>
-                <a href="products.jsp" class="btn order-btn">ORDER NOW</a>
+                <a href="FoodProducts" class="btn order-btn">ORDER NOW</a>
             </div>
         </section>
 
@@ -324,10 +324,22 @@
                                                 <p class="card-text">${p.description}</p>
                                                 <p class="price mt-auto">${p.price} VND</p>
                                                 <p class="stock">${p.stock} sản phẩm</p>
-                                                <button class="btn btn-success w-100 mt-2">Mua Ngay</button>
-                                                <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">
-                                                    🛒 Thêm vào Giỏ
-                                                </button>
+                                                <c:choose>
+                                                    <c:when test="${not empty sessionScope.user}">
+                                                        <button class="btn btn-success w-100 mt-2 buy-now-btn" 
+                                                                data-product-id="${p.productID}">Mua Ngay</button>
+                                                        <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" 
+                                                                data-product-id="${p.productID}">
+                                                            🛒 Thêm vào Giỏ
+                                                        </button>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
+                                                        <button class="btn btn-outline-primary w-100 mt-2 login-required">
+                                                            🛒 Thêm vào Giỏ
+                                                        </button>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
                                         </div>
                                     </div>
@@ -536,6 +548,79 @@
                 updateDisplay();
             });
 
+        </script>
+
+        <!-- Add Toastify CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+        <!-- Add Toastify JS -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script>
+            function showToast(message, type) {
+                const backgroundColor = type === 'success' ? '#28a745' : 
+                                     type === 'error' ? '#dc3545' : 
+                                     '#17a2b8'; // info color
+                
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: backgroundColor,
+                    stopOnFocus: true,
+                    close: true
+                }).showToast();
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                // Xử lý nút yêu cầu đăng nhập
+                document.querySelectorAll(".login-required").forEach(button => {
+                    button.addEventListener("click", function() {
+                        showToast("Vui lòng đăng nhập để thực hiện chức năng này!", "error");
+                    });
+                });
+
+                // Xử lý nút Mua Ngay
+                document.querySelectorAll(".buy-now-btn").forEach(button => {
+                    button.addEventListener("click", function() {
+                        const productId = this.getAttribute("data-product-id");
+                        // Thêm vào giỏ hàng và chuyển đến trang giỏ hàng
+                        fetch("AddToCart?productId=" + productId + "&quantity=1", {
+                            method: "GET"
+                        }).then(response => {
+                            if (response.ok) {
+                                window.location.href = "Cart";
+                            } else {
+                                showToast("Lỗi khi thêm vào giỏ hàng!", "error");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                            showToast("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                        });
+                    });
+                });
+
+                // Xử lý nút Thêm vào giỏ
+                document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                    button.addEventListener("click", function(event) {
+                        event.preventDefault();
+                        const productId = this.getAttribute("data-product-id");
+                        
+                        fetch("AddToCart?productId=" + productId + "&quantity=1", {
+                            method: "GET"
+                        }).then(response => {
+                            if (response.ok) {
+                                showToast("Đã thêm sản phẩm vào giỏ hàng!", "success");
+                            } else {
+                                showToast("Lỗi khi thêm vào giỏ hàng!", "error");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                            showToast("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                        });
+                    });
+                });
+            });
         </script>
 
         <%@ include file="includes/footer.jsp" %>
