@@ -4,14 +4,17 @@
 <%@page import="Model.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vn">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${product.productName} - Chi tiết sản phẩm</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <!-- Add Toastify CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <style>
             .product-image {
                 max-width: 100%;
@@ -157,32 +160,15 @@
         <%@ include file="includes/navbar.jsp" %>
 
         <div class="container my-5">
-            <!-- Display cart message if exists -->
-            <c:if test="${not empty sessionScope.cartMessage}">
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    ${sessionScope.cartMessage}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% session.removeAttribute("cartMessage");%>
-            </c:if>
-
-            <!-- Display error message if any -->
-            <c:if test="${not empty sessionScope.error}">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    ${sessionScope.error}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% session.removeAttribute("error"); %>
-            </c:if>
-
-            <!-- Display success message if any -->
-            <c:if test="${not empty sessionScope.message}">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    ${sessionScope.message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% session.removeAttribute("message"); %>
-            </c:if>
+            <!-- Hidden inputs for messages -->
+            <input type="hidden" id="cartMessage" value="${sessionScope.cartMessage}">
+            <input type="hidden" id="errorMessage" value="${sessionScope.error}">
+            <input type="hidden" id="successMessage" value="${sessionScope.message}">
+            <% 
+                session.removeAttribute("cartMessage");
+                session.removeAttribute("error");
+                session.removeAttribute("message");
+            %>
 
             <div class="row">
                 <!-- Product Details -->
@@ -402,241 +388,59 @@
         <!-- Include Footer -->
         <%@ include file="includes/footer.jsp" %>
 
+        <!-- Add Toastify JS -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            function incrementQuantity() {
-                const input = document.getElementById('quantity');
-                const max = parseInt(input.getAttribute('max'));
-                const currentValue = parseInt(input.value);
-                if (currentValue < max) {
-                    input.value = currentValue + 1;
+            // Function to show toast
+                function showToast(message, type) {
+                    if (!message) return;
+
+                    const backgroundColor = type === 'success' ? '#28a745' : 
+                                         type === 'error' ? '#dc3545' : 
+                                         '#17a2b8'; // info color
+
+                    Toastify({
+                        text: message,
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: backgroundColor,
+                        stopOnFocus: true,
+                        close: true
+                    }).showToast();
                 }
-            }
 
-            function decrementQuantity() {
-                const input = document.getElementById('quantity');
-                const currentValue = parseInt(input.value);
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                }
-            }
+                // Show messages if they exist
+                document.addEventListener('DOMContentLoaded', function() {
+                    const cartMessage = document.getElementById('cartMessage').value;
+                    const errorMessage = document.getElementById('errorMessage').value;
+                    const successMessage = document.getElementById('successMessage').value;
 
-            // Initialize star rating functionality
-            function initializeStarRating(container) {
-                const stars = container.querySelectorAll('.star-label');
-                stars.forEach(star => {
-                    star.addEventListener('click', function () {
-                        const input = this.previousElementSibling;
-                        input.checked = true;
-                        updateStars(container, input.value);
-                    });
-
-                    star.addEventListener('mouseover', function () {
-                        const value = this.previousElementSibling.value;
-                        updateStars(container, value);
-                    });
-
-                    star.addEventListener('mouseout', function () {
-                        const checkedInput = container.querySelector('.star-input:checked');
-                        updateStars(container, checkedInput ? checkedInput.value : 0);
-                    });
+                    if (cartMessage) showToast(cartMessage, 'info');
+                    if (errorMessage) showToast(errorMessage, 'error');
+                    if (successMessage) showToast(successMessage, 'success');
                 });
-            }
 
-            function updateStars(container, value) {
-                const stars = container.querySelectorAll('.star-label i');
-                stars.forEach((star, index) => {
-                    if (index < value) {
-                        star.classList.remove('far');
-                        star.classList.add('fas');
-                    } else {
-                        star.classList.remove('fas');
-                        star.classList.add('far');
+                function incrementQuantity() {
+                    const input = document.getElementById('quantity');
+                    const max = parseInt(input.getAttribute('max'));
+                    const currentValue = parseInt(input.value);
+                    if (currentValue < max) {
+                        input.value = currentValue + 1;
                     }
-                });
-            }
-
-            // Initialize star rating for new comment form
-            initializeStarRating(document.querySelector('form.mb-4'));
-
-            // Initialize star rating for edit modal
-            initializeStarRating(document.querySelector('#editCommentForm'));
-
-            // Handle edit button click
-            $('.edit-comment').click(function () {
-                const commentId = $(this).data('comment-id');
-                const content = $(this).data('content');
-                const star = $(this).data('star');
-
-                $('#editCommentId').val(commentId);
-                $('#editContent').val(content);
-
-                // Set star rating
-                const editForm = document.querySelector('#editCommentForm');
-                const starInput = editForm.querySelector(`input[value="${star}"]`);
-                if (starInput) {
-                    starInput.checked = true;
-                    updateStars(editForm, star);
                 }
 
-                $('#editCommentModal').modal('show');
-            });
-
-            // Handle edit form submission
-            $('#editCommentForm').on('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                const commentId = $('#editCommentId').val();
-
-                $.ajax({
-                    url: 'EditComment',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            const reviewDiv = $(`#review-${commentId}`);
-                            const stars = formData.get('star');
-                            const content = formData.get('content');
-                            
-                            // Update stars
-                            let starsHtml = '';
-                            for (let i = 1; i <= 5; i++) {
-                                starsHtml += `<i class="${i <= stars ? 'fas' : 'far'} fa-star"></i>`;
-                            }
-                            reviewDiv.find('.review-stars').html(starsHtml);
-                            
-                            // Update content
-                            reviewDiv.find('.review-content p').text(content);
-                            
-                            // Update image if a new one was uploaded
-                            const imageFile = formData.get('image');
-                            if (imageFile && imageFile.size > 0) {
-                                // The actual image URL will be set after page reload
-                                location.reload();
-                            }
-
-                            // Close modal and show success message
-                            $('#editCommentModal').modal('hide');
-                            const alertDiv = $(`
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    ${response.message}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            `);
-                            reviewDiv.after(alertDiv);
-                            setTimeout(() => alertDiv.alert('close'), 3000);
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function () {
-                        alert('Có lỗi xảy ra khi cập nhật đánh giá');
+                function decrementQuantity() {
+                    const input = document.getElementById('quantity');
+                    const currentValue = parseInt(input.value);
+                    if (currentValue > 1) {
+                        input.value = currentValue - 1;
                     }
-                });
-            });
-
-            // Image preview for new comment
-            document.getElementById('image').addEventListener('change', function(e) {
-                const preview = document.getElementById('imagePreview');
-                preview.innerHTML = '';
-                
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.maxWidth = '200px';
-                        img.classList.add('img-fluid');
-                        preview.appendChild(img);
-                    }
-                    reader.readAsDataURL(this.files[0]);
                 }
-            });
 
-            // Image preview for edit comment
-            document.getElementById('editImage').addEventListener('change', function(e) {
-                const preview = document.getElementById('editImagePreview');
-                preview.innerHTML = '';
-                
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.maxWidth = '200px';
-                        img.classList.add('img-fluid');
-                        preview.appendChild(img);
-                    }
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-
-            // Delete Comment
-            $('.delete-comment').click(function (e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                const commentId = form.find('[name="commentId"]').val();
-                const reviewDiv = $(`#review-${commentId}`);
-
-                const confirmModal = $(`
-                    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Xác nhận xóa</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).appendTo('body');
-
-                const modal = new bootstrap.Modal(confirmModal);
-                modal.show();
-
-                $('#confirmDelete').click(function () {
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: 'POST',
-                        data: form.serialize(),
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response && response.success) {
-                                modal.hide();
-                                confirmModal.remove();
-                                // Load lại trang sau khi xóa thành công
-                                location.reload();
-                            } else {
-                                alert(response ? response.message : 'Có lỗi xảy ra khi xóa đánh giá');
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error('Error:', error);
-                            alert('Có lỗi xảy ra khi xóa đánh giá. Vui lòng thử lại sau.');
-                        }
-                    });
-                });
-
-                confirmModal.on('hidden.bs.modal', function () {
-                    confirmModal.remove();
-                });
-            });
-
-         
-        </script>
-         <script>
-            $(document).ready(function () {
-                // Star rating functionality
+                // Initialize star rating functionality
                 function initializeStarRating(container) {
                     const stars = container.querySelectorAll('.star-label');
                     stars.forEach(star => {
@@ -671,43 +475,38 @@
                     });
                 }
 
-                // Initialize star rating for both forms
+                // Initialize star rating for new comment form
                 initializeStarRating(document.querySelector('form.mb-4'));
+
+                // Initialize star rating for edit modal
                 initializeStarRating(document.querySelector('#editCommentForm'));
 
-                // Xử lý form đánh giá sản phẩm
-                $('form[action="AddProductComment"]').on('submit', function (e) {
-                    e.preventDefault();
-                    
-                    var star = $('input[name="star"]:checked').val();
-                    if (!star) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Thông báo',
-                            text: 'Vui lòng chọn số sao đánh giá!'
-                        });
-                        return false;
+                // Handle edit button click
+                $('.edit-comment').click(function () {
+                    const commentId = $(this).data('comment-id');
+                    const content = $(this).data('content');
+                    const star = $(this).data('star');
+
+                    $('#editCommentId').val(commentId);
+                    $('#editContent').val(content);
+
+                    // Set star rating
+                    const editForm = document.querySelector('#editCommentForm');
+                    const starInput = editForm.querySelector(`input[value="${star}"]`);
+                    if (starInput) {
+                        starInput.checked = true;
+                        updateStars(editForm, star);
                     }
-                    
-                    // Nếu đã chọn sao thì submit form
-                    this.submit();
+
+                    $('#editCommentModal').modal('show');
                 });
 
-                // Xử lý form chỉnh sửa đánh giá
+                // Handle edit form submission
                 $('#editCommentForm').on('submit', function (e) {
                     e.preventDefault();
-                    
-                    var star = $('#editStar input[name="star"]:checked').val();
-                    if (!star) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Thông báo',
-                            text: 'Vui lòng chọn số sao đánh giá!'
-                        });
-                        return false;
-                    }
+                    const formData = new FormData(this);
+                    const commentId = $('#editCommentId').val();
 
-                    var formData = new FormData(this);
                     $.ajax({
                         url: 'EditComment',
                         type: 'POST',
@@ -716,34 +515,135 @@
                         contentType: false,
                         success: function (response) {
                             if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Thành công',
-                                    text: response.message
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
+                                const reviewDiv = $(`#review-${commentId}`);
+                                const stars = formData.get('star');
+                                const content = formData.get('content');
+
+                                // Update stars
+                                let starsHtml = '';
+                                for (let i = 1; i <= 5; i++) {
+                                    starsHtml += `<i class="${i <= stars ? 'fas' : 'far'} fa-star"></i>`;
+                                }
+                                reviewDiv.find('.review-stars').html(starsHtml);
+
+                                // Update content
+                                reviewDiv.find('.review-content p').text(content);
+
+                                // Update image if a new one was uploaded
+                                const imageFile = formData.get('image');
+                                if (imageFile && imageFile.size > 0) {
+                                    // The actual image URL will be set after page reload
+                                    location.reload();
+                                }
+
+                                // Close modal and show success message
+                                $('#editCommentModal').modal('hide');
+                                showToast(response.message, 'success');
                             } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Lỗi',
-                                    text: response.message
-                                });
+                                showToast(response.message, 'error');
                             }
                         },
                         error: function () {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi',
-                                text: 'Có lỗi xảy ra khi cập nhật đánh giá'
-                            });
+                            showToast('Có lỗi xảy ra khi cập nhật đánh giá', 'error');
                         }
                     });
                 });
 
-                // Preview ảnh trước khi upload
+                // Image preview for new comment
+                document.getElementById('image').addEventListener('change', function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = '';
+
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '200px';
+                            img.classList.add('img-fluid');
+                            preview.appendChild(img);
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+
+                // Image preview for edit comment
+                document.getElementById('editImage').addEventListener('change', function(e) {
+                    const preview = document.getElementById('editImagePreview');
+                    preview.innerHTML = '';
+
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '200px';
+                            img.classList.add('img-fluid');
+                            preview.appendChild(img);
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+
+                // Delete Comment
+                $('.delete-comment').click(function (e) {
+                    e.preventDefault();
+                    const form = $(this).closest('form');
+                    const commentId = form.find('[name="commentId"]').val();
+                    const reviewDiv = $(`#review-${commentId}`);
+
+                    const confirmModal = $(`
+                        <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Xác nhận xóa</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Bạn có chắc chắn muốn xóa đánh giá này?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).appendTo('body');
+
+                    const modal = new bootstrap.Modal(confirmModal);
+                    modal.show();
+
+                    $('#confirmDelete').click(function () {
+                        $.ajax({
+                            url: form.attr('action'),
+                            type: 'POST',
+                            data: form.serialize(),
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response && response.success) {
+                                    modal.hide();
+                                    confirmModal.remove();
+                                    // Load lại trang sau khi xóa thành công
+                                    location.reload();
+                                } else {
+                                    showToast(response.message, 'error');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                                showToast('Có lỗi xảy ra khi xóa đánh giá', 'error');
+                            }
+                        });
+                    });
+
+                    confirmModal.on('hidden.bs.modal', function () {
+                        confirmModal.remove();
+                    });
+                });
+
+
                 function readURL(input, previewId) {
                     if (input.files && input.files[0]) {
                         var reader = new FileReader();
@@ -763,40 +663,32 @@
                     readURL(this, "#editImagePreview");
                 });
 
-                // Auto-hide alerts after 3 seconds
-                setTimeout(function() {
-                    $('.alert').fadeOut('slow');
-                }, 3000);
-            });
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                // Xử lý sự kiện submit form đánh giá mới
-                document.querySelector("form.mb-4").addEventListener("submit", function (event) {
-                    const starChecked = document.querySelector('input[name="star"]:checked');
-                    if (!starChecked) {
-                        alert("Vui lòng chọn số sao trước khi gửi đánh giá!");
-                        event.preventDefault();
-                    }
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Xử lý sự kiện submit form đánh giá mới
+                    document.querySelector("form.mb-4").addEventListener("submit", function (event) {
+                        const starChecked = document.querySelector('input[name="star"]:checked');
+                        if (!starChecked) {
+                            showToast('Vui lòng chọn số sao trước khi gửi đánh giá!', 'error');
+                            event.preventDefault();
+                        }
+                    });
                 });
-            });
-            // Load lại trang sau khi thêm đánh giá thành công
-            document.querySelector("form.mb-4").addEventListener("submit", function (event) {
-                setTimeout(function () {
-                    location.reload();
-                }, 500);
-            });
+                // Load lại trang sau khi thêm đánh giá thành công
+                document.querySelector("form.mb-4").addEventListener("submit", function (event) {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 500);
+                });
 
-            // Load lại trang sau khi chỉnh sửa đánh giá
-            document.getElementById("editCommentForm").addEventListener("submit", function (event) {
-                setTimeout(function () {
-                    location.reload();
-                }, 500);
-            });
+                // Load lại trang sau khi chỉnh sửa đánh giá
+                document.getElementById("editCommentForm").addEventListener("submit", function (event) {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 500);
+                });
 
-            // Load lại trang sau khi xóa đánh giá
+                // Load lại trang sau khi xóa đánh giá
 
         </script>
-
     </body>
 </html>

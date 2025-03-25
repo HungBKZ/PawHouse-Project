@@ -8,6 +8,8 @@
         <title>Đồ Dùng Thú Cưng - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+        <!-- Add Toastify CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -366,10 +368,22 @@
                                             <p class="card-text">${p.description}</p>
                                             <p class="price mt-auto">${p.price} VND</p>
                                             <p class="stock">${p.stock} sản phẩm</p>
-                                            <button class="btn btn-success w-100 mt-2">Mua Ngay</button>
-                                            <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">
-                                                🛒 Thêm vào Giỏ
-                                            </button>
+                                            <c:choose>
+                                                <c:when test="${not empty sessionScope.user}">
+                                                    <button class="btn btn-success w-100 mt-2 buy-now-btn" 
+                                                            data-product-id="${p.productID}">Mua Ngay</button>
+                                                    <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" 
+                                                            data-product-id="${p.productID}">
+                                                        🛒 Thêm vào Giỏ
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
+                                                    <button class="btn btn-outline-primary w-100 mt-2 login-required">
+                                                        🛒 Thêm vào Giỏ
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -387,44 +401,75 @@
         </div>
     </div>
 
+    <!-- Add Toastify JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
+        function showToast(message, type) {
+            const backgroundColor = type === 'success' ? '#28a745' : 
+                                 type === 'error' ? '#dc3545' : 
+                                 '#17a2b8'; // info color
+            
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: backgroundColor,
+                stopOnFocus: true,
+                close: true
+            }).showToast();
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.preventDefault(); // Ngăn chặn điều hướng trang
+            // Xử lý nút yêu cầu đăng nhập
+            document.querySelectorAll(".login-required").forEach(button => {
+                button.addEventListener("click", function() {
+                    showToast("Vui lòng đăng nhập để thực hiện chức năng này!", "error");
+                });
+            });
 
-                    let productId = this.getAttribute("data-product-id");
-
+            // Xử lý nút Mua Ngay
+            document.querySelectorAll(".buy-now-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    const productId = this.getAttribute("data-product-id");
+                    // Thêm vào giỏ hàng và chuyển đến trang giỏ hàng
                     fetch("AddToCart?productId=" + productId + "&quantity=1", {
                         method: "GET"
                     }).then(response => {
                         if (response.ok) {
-                            showCustomAlert("Đã thêm sản phẩm vào giỏ hàng!", "success");
+                            window.location.href = "Cart";
                         } else {
-                            showCustomAlert("Lỗi khi thêm vào giỏ hàng.", "error");
+                            showToast("Lỗi khi thêm vào giỏ hàng!", "error");
                         }
                     }).catch(error => {
                         console.error("Error:", error);
-                        showCustomAlert("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                        showToast("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                    });
+                });
+            });
+
+            // Xử lý nút Thêm vào giỏ
+            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const productId = this.getAttribute("data-product-id");
+                    
+                    fetch("AddToCart?productId=" + productId + "&quantity=1", {
+                        method: "GET"
+                    }).then(response => {
+                        if (response.ok) {
+                            showToast("Đã thêm sản phẩm vào giỏ hàng!", "success");
+                        } else {
+                            showToast("Lỗi khi thêm vào giỏ hàng!", "error");
+                        }
+                    }).catch(error => {
+                        console.error("Error:", error);
+                        showToast("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
                     });
                 });
             });
         });
 
-// Hàm hiển thị thông báo đẹp hơn
-        function showCustomAlert(message, type) {
-            let alertBox = document.createElement("div");
-            alertBox.className = `custom-alert ${type}`;
-            alertBox.innerText = message;
-
-            document.body.appendChild(alertBox);
-
-            setTimeout(() => {
-                alertBox.classList.add("fade-out");
-                setTimeout(() => alertBox.remove(), 500);
-            }, 2000);
-        }
         document.addEventListener("DOMContentLoaded", function () {
             const PRODUCTS_PER_PAGE = 9;
             let currentPage = 1;
