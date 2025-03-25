@@ -170,8 +170,9 @@
                 <div class="col-md-3">
                     <select id="searchStatus" class="form-select">
                         <option value="">Tất cả trạng thái</option>
-                        <option value="1">Đang sử dụng dịch vụ</option>
-                        <option value="0">Đã sử dụng dịch vụ</option>
+                        <option value="0">Đang xử lý</option>
+                        <option value="1">Đã duyệt</option>
+                        <option value="null">Đã từ chối</option>   
                     </select>
                 </div>
             </div>
@@ -200,8 +201,9 @@
                             <td>${appointment.appointmentDate}</td>
                             <td data-status="${appointment.appointmentStatus}">
                                 <select class="form-select appointment-status">
-                                    <option value="1" ${appointment.appointmentStatus == '1' ? 'selected' : ''}>Đang sử dụng dịch vụ</option>
-                                    <option value="0" ${appointment.appointmentStatus == '0' ? 'selected' : ''}>Đã sử dụng dịch vụ</option>
+                                    <option value="0" ${appointment.appointmentStatus == '0' ? 'selected' : ''}>Đang xử lý</option>
+                                    <option value="1" ${appointment.appointmentStatus == '1' ? 'selected' : ''}>Duyệt</option>
+                                    <option value="null" ${appointment.appointmentStatus == null ? 'selected' : ''}>Từ chối</option>
                                 </select>
                             </td>
                             <td>${appointment.price} VND</td>
