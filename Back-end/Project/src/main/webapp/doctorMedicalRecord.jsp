@@ -53,6 +53,7 @@
                 letter-spacing: 2px;
                 background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
                 -webkit-background-clip: text;
+                background-clip: text;
                 -webkit-text-fill-color: transparent;
                 text-align: center;
                 margin-bottom: 3rem;
@@ -160,6 +161,7 @@
                 font-weight: 700;
                 background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
                 -webkit-background-clip: text;
+                background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
 
@@ -339,18 +341,64 @@
             }
 
             .nav-link {
+                font-size: 1.1rem;
                 font-weight: 600;
-                color: #333;
-                padding: 10px 20px;
-                transition: color 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                transition: all 0.3s ease;
             }
 
             .nav-link:hover {
                 color: #0072ff;
             }
+            
+            /* CSS cho popup thông báo */
+            .popup {
+                display: none;
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 8px;
+                color: white;
+                z-index: 9999;
+                animation: slideIn 0.5s ease-out;
+            }
+
+            .popup.error {
+                background-color: var(--danger-color);
+                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
         </style>
     </head>
     <body>
+        <!-- Popup for error messages -->
+        <div id="errorPopup" class="popup error"></div>
+
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top mb-3">
             <div class="container-fluid">
@@ -555,39 +603,58 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                        function viewRecord(recordId) {
-                                            window.location.href = '${pageContext.request.contextPath}/medical-record/' + recordId;
-                                        }
+            function viewRecord(recordId) {
+                window.location.href = '${pageContext.request.contextPath}/medical-record/' + recordId;
+            }
 
-                                        function editRecord(recordId) {
-                                            fetch('${pageContext.request.contextPath}/medical-record/' + recordId)
-                                                    .then((response) => response.json())
-                                                    .then((record) => {
-                                                        document.getElementById('editRecordId').value = record.recordID;
-                                                        document.getElementById('editWeight').value = record.weight;
-                                                        document.getElementById('editTemperature').value = record.temperature;
-                                                        document.getElementById('editDiagnosis').value = record.diagnosis;
-                                                        document.getElementById('editTreatment').value = record.treatment;
-                                                        document.getElementById('editPrescription').value = record.prescription;
-                                                        document.getElementById('editNotes').value = record.notes;
+            function editRecord(recordId) {
+                fetch('${pageContext.request.contextPath}/medical-record/' + recordId)
+                        .then((response) => response.json())
+                        .then((record) => {
+                            document.getElementById('editRecordId').value = record.recordID;
+                            document.getElementById('editWeight').value = record.weight;
+                            document.getElementById('editTemperature').value = record.temperature;
+                            document.getElementById('editDiagnosis').value = record.diagnosis;
+                            document.getElementById('editTreatment').value = record.treatment;
+                            document.getElementById('editPrescription').value = record.prescription;
+                            document.getElementById('editNotes').value = record.notes;
 
-                                                        new bootstrap.Modal(document.getElementById('editRecordModal')).show();
-                                                    });
-                                        }
+                            new bootstrap.Modal(document.getElementById('editRecordModal')).show();
+                        });
+            }
 
-                                        function deleteRecord(recordId) {
-                                            if (confirm('Bạn có chắc chắn muốn xóa hồ sơ bệnh án này không?')) {
-                                                fetch('${pageContext.request.contextPath}/medical-record/' + recordId, {
-                                                    method: 'DELETE'
-                                                }).then((response) => {
-                                                    if (response.ok) {
-                                                        window.location.reload();
-                                                    } else {
-                                                        alert('Có lỗi xảy ra khi xóa hồ sơ bệnh án');
-                                                    }
-                                                });
-                                            }
-                                        }
+            function deleteRecord(recordId) {
+                if (confirm('Bạn có chắc chắn muốn xóa hồ sơ bệnh án này không?')) {
+                    fetch('${pageContext.request.contextPath}/medical-record/' + recordId, {
+                        method: 'DELETE'
+                    }).then((response) => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('Có lỗi xảy ra khi xóa hồ sơ bệnh án');
+                        }
+                    });
+                }
+            }
+
+            function showErrorPopup(message) {
+                const popup = document.getElementById('errorPopup');
+                popup.textContent = message;
+                popup.style.display = 'block';
+                
+                setTimeout(() => {
+                    popup.style.animation = 'fadeOut 0.5s ease-out';
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                        popup.style.animation = '';
+                    }, 500);
+                }, 2000);
+            }
+
+            // Check for error message from server
+            <c:if test="${not empty errorMessage}">
+                showErrorPopup("${errorMessage}");
+            </c:if>
 
         </script>
         <div class="text-center mt-4">
