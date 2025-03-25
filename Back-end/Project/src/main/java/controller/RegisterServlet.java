@@ -38,14 +38,14 @@ public class RegisterServlet extends HttpServlet {
 
         // Kiểm tra mật khẩu có khớp không
         if (!password.equals(confirmPassword)) {
-            request.setAttribute("error", "Passwords do not match!");
+            request.setAttribute("error", "Mật Khẩu Không Trùng Khớp!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
         // Kiểm tra độ mạnh của mật khẩu
         if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
-            request.setAttribute("error", "Password must be at least 8 characters long and include both letters and numbers!");
+            request.setAttribute("error", "Mật khẩu phải dài ít nhất 8 ký tự và bao gồm cả chữ cái và số!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
@@ -54,7 +54,7 @@ public class RegisterServlet extends HttpServlet {
         try {
             // Kiểm tra xem username hoặc email đã tồn tại chưa
             if (userDAO.checkUserExists(username, email)) {
-                request.setAttribute("error", "Username or email already exists!");
+                request.setAttribute("error", "Tên tài khoản hoặc Email đã tồn tại!!!!");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
                 return;
             }

@@ -1,4 +1,4 @@
-<%@page import="Model.ProductComment"%>
+=<%@page import="Model.ProductComment"%>
 <%@page import="java.util.List"%>
 <%@page import="DAO.ProductCommentDAO"%>
 <%@page import="Model.User"%>

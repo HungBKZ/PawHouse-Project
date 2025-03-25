@@ -23,7 +23,7 @@ public class ChangePasswordServlet extends HttpServlet {
         User user = (User) session.getAttribute("loggedInUser");
         
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login");
             return;
         }
 

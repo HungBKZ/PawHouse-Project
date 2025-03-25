@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Register - PawHouse</title>
+        <title>Đăng Ký Ngay - PawHouse</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {
@@ -57,8 +57,8 @@
         <div class="container">
             <div class="register-container">
                 <div class="register-header">
-                    <img src="assets/images/logo.png" alt="PawHouse Logo">
-                    <h2>Create Your Account</h2>
+                    
+                    <h2>Tạo Tài Khoản Mới</h2>
                     <p class="text-muted">Đăng Ký PawHouse Và Bắt Đầu Qúa Trình Chăm Sóc Thú Cưng Của Bạn!</p>
                 </div>
 
@@ -140,7 +140,7 @@
 
                                 if (password !== confirmPassword) {
                                     event.preventDefault();
-                                    alert('Passwords do not match!');
+                                    alert('Mật khẩu không khớp!');
                                 }
                             });
 

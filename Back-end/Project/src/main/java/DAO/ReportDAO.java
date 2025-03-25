@@ -37,7 +37,7 @@ public class ReportDAO extends DBContext {
                             "FROM Orders o " +
                             "JOIN OrderDetails od ON o.OrderID = od.OrderID " +
                             "WHERE o.OrderDate BETWEEN ? AND ? " +
-                            "AND o.OrderStatus = N'Hoàn thành'";
+                            "AND o.OrderStatus = '1'";
         
         try (PreparedStatement stmt = connection.prepareStatement(productQuery)) {
             stmt.setTimestamp(1, new java.sql.Timestamp(startDate.getTime()));
@@ -71,7 +71,7 @@ public class ReportDAO extends DBContext {
                              "    SELECT DISTINCT o.UserID " +
                              "    FROM Orders o " +
                              "    WHERE o.OrderDate BETWEEN ? AND ? " +
-                             "    AND o.OrderStatus = N'Hoàn thành' " +
+                             "    AND o.OrderStatus = '1' " +
                              "    AND EXISTS (SELECT 1 FROM Users u WHERE u.UserID = o.UserID AND u.RoleID = 2) " +
                              "    UNION " +
                              "    SELECT DISTINCT a.CustomerID " +
@@ -122,7 +122,7 @@ public class ReportDAO extends DBContext {
                                 "FROM Orders o " +
                                 "JOIN OrderDetails od ON o.OrderID = od.OrderID " +
                                 "WHERE o.OrderDate BETWEEN ? AND ? " +
-                                "AND o.OrderStatus = N'Hoàn thành' " +
+                                "AND o.OrderStatus = '1' " +
                                 "GROUP BY " + groupBy + " " +
                                 "ORDER BY ReportDate";
 
@@ -195,7 +195,7 @@ public class ReportDAO extends DBContext {
                       "JOIN OrderDetails od ON o.OrderID = od.OrderID " +
                       "JOIN Products p ON od.ProductID = p.ProductID " +
                       "WHERE o.OrderDate BETWEEN ? AND ? " +
-                      "AND o.OrderStatus = N'Hoàn thành' " +
+                      "AND o.OrderStatus = '1' " +
                       "ORDER BY o.OrderDate DESC";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
