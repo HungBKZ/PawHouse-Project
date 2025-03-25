@@ -285,6 +285,30 @@ public class MedicalRecordDAO extends DBContext {
             return false;
         }
     }
+    
+    public boolean addVacxin(MedicalRecords record) {
+        String query = "INSERT INTO MedicalRecords (PetID, DoctorID, AppointmentID, Diagnosis, VaccinationDetails, "
+                + "NextVaccinationDate, Weight, Temperature, Notes, RecordDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, record.getPet().getPetID());
+            ps.setInt(2, record.getDoctor().getUserID());
+            ps.setInt(3, record.getAppointment().getAppointmentID());
+            ps.setString(4, record.getDiagnosis());
+            ps.setString(5, record.getVaccinationDetails());
+            ps.setTimestamp(6, record.getNextVaccinationDate());
+            ps.setDouble(7, record.getWeight());
+            ps.setDouble(8, record.getTemperature());
+            ps.setString(9, record.getNotes());
+            ps.setTimestamp(10, record.getRecordDate());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public boolean updateMedicalRecord(MedicalRecords record) {
         String query = "UPDATE MedicalRecords SET Diagnosis = ?, Treatment = ?, Prescription = ?, "

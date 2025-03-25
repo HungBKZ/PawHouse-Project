@@ -451,8 +451,8 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Thú cưng</label>
                                     <select name="petId" class="form-select" required>
-                                        <c:forEach items="${pets}" var="pet">
-                                            <option value="${pet.petID}">${pet.petName} - ${pet.breed}</option>
+                                        <c:forEach items="${pet}" var="pet">
+                                            <option value="${pet.petID}">${pet.petName} - ${pet.species} - ${pet.breed}</option>
                                         </c:forEach>
                                     </select>
                                 </div>
@@ -466,13 +466,17 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Cân nặng (kg)</label>
                                     <input type="number" step="0.1" name="weight" class="form-control" required>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Nhiệt độ (°C)</label>
                                     <input type="number" step="0.1" name="temperature" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Mã khám bệnh</label>
+                                    <input type="number" step="0.1" name="appointmentId" class="form-control" required>
                                 </div>
                             </div>
                             <div class="mb-3">

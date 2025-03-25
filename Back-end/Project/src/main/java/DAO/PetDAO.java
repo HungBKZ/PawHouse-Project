@@ -397,6 +397,7 @@ public class PetDAO extends DBContext {
                 category.setCategoryID(rs.getInt("CategoryID"));
                 pet.setCategory(category);
                 pet.setPetName(rs.getString("PetName"));
+                pet.setBreed(rs.getNString("Breed"));
                 pet.setSpecies(rs.getString("Species"));
                 pet.setAge(rs.getInt("Age"));
                 pet.setGender(rs.getString("Gender"));
