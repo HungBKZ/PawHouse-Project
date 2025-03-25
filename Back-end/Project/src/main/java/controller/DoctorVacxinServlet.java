@@ -18,24 +18,27 @@ import java.util.List;
 @WebServlet("/DoctorVacxinServlet/*")
 public class DoctorVacxinServlet extends HttpServlet {
 
+    private void loadAndSetLists(HttpServletRequest request) {
+        MedicalRecordDAO dao = new MedicalRecordDAO();
+        PetDAO pdao = new PetDAO();
+        UserDAO udao = new UserDAO();
+
+        List<Pet> Listp = pdao.getAllPets();
+        List<User> Listu = udao.getDoctor();
+        List<MedicalRecords> list = dao.getAllWithPetAndDoctor2();
+
+        request.setAttribute("pet", Listp);
+        request.setAttribute("doctors", Listu);
+        request.setAttribute("records", list);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            // List all records
-            MedicalRecordDAO dao = new MedicalRecordDAO();
-            PetDAO pdao = new PetDAO();
-            UserDAO udao = new UserDAO();
-
-            List<Pet> Listp = pdao.getAllPets();
-            List<User> Listu = udao.getDoctor();
-            List<MedicalRecords> list = dao.getAllWithPetAndDoctor2();
-
-            request.setAttribute("pet", Listp);
-            request.setAttribute("doctors", Listu);
-            request.setAttribute("records", list);
+            loadAndSetLists(request);
             request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
         } else {
             // Get record details
@@ -66,10 +69,14 @@ public class DoctorVacxinServlet extends HttpServlet {
 
                     request.getRequestDispatcher("/medicalRecordDetail.jsp").forward(request, response);
                 } else {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Medical record not found");
+                    request.setAttribute("errorMessage", "Hồ sơ bệnh án không tồn tại");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 }
             } catch (NumberFormatException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid record ID");
+                request.setAttribute("errorMessage", "ID hồ sơ không hợp lệ");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
             }
         }
     }
@@ -87,10 +94,18 @@ public class DoctorVacxinServlet extends HttpServlet {
             Pet pet = new Pet();
             String petIdStr = request.getParameter("petId");
             if (petIdStr != null && !petIdStr.isEmpty()) {
-                pet.setPetID(Integer.parseInt(petIdStr));
+                try {
+                    pet.setPetID(Integer.parseInt(petIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID thú cưng phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu petId không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Pet ID is required.");
+                request.setAttribute("errorMessage", "ID thú cưng là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 return;
             }
             record.setPet(pet);
@@ -99,10 +114,18 @@ public class DoctorVacxinServlet extends HttpServlet {
             User doctor = new User();
             String doctorIdStr = request.getParameter("doctorId");
             if (doctorIdStr != null && !doctorIdStr.isEmpty()) {
-                doctor.setUserID(Integer.parseInt(doctorIdStr));
+                try {
+                    doctor.setUserID(Integer.parseInt(doctorIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID bác sĩ phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu doctorId không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Doctor ID is required.");
+                request.setAttribute("errorMessage", "ID bác sĩ là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 return;
             }
             record.setDoctor(doctor);
@@ -110,10 +133,18 @@ public class DoctorVacxinServlet extends HttpServlet {
             Appointment appointment = new Appointment();
             String appointmentIdStr = request.getParameter("appointmentId");
             if (appointmentIdStr != null && !appointmentIdStr.isEmpty()) {
-                appointment.setAppointmentID(Integer.parseInt(appointmentIdStr));
+                try {
+                    appointment.setAppointmentID(Integer.parseInt(appointmentIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID lịch hẹn phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu appointmentId không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Appointment ID is required.");
+                request.setAttribute("errorMessage", "ID lịch hẹn là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 return;
             }
             record.setAppointment(appointment);
@@ -125,48 +156,80 @@ public class DoctorVacxinServlet extends HttpServlet {
 
             if (nextVaccinationDateStr != null && !nextVaccinationDateStr.isEmpty()) {
                 try {
-                    // Định dạng ngày tháng theo định dạng bạn muốn (ví dụ: "yyyy-MM-dd")
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    Date date = sdf.parse(nextVaccinationDateStr); // Chuyển đổi String thành Date
-                    Timestamp timestamp = new Timestamp(date.getTime()); // Chuyển Date thành Timestamp
-                    record.setNextVaccinationDate(timestamp); // Gán Timestamp vào đối tượng
+                    Date nextVaccinationDate = sdf.parse(nextVaccinationDateStr);
+                    
+                    // Lấy thời gian hiện tại
+                    Date currentDate = new Date();
+                    
+                    // Tính số ngày giữa nextVaccinationDate và ngày hiện tại
+                    long diffInMillies = nextVaccinationDate.getTime() - currentDate.getTime();
+                    long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
+                    
+                    if (diffInDays < 30) {
+                        request.setAttribute("errorMessage", "Ngày tiêm chủng tiếp theo phải cách ít nhất 30 ngày so với ngày hiện tại.");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                        return;
+                    }
+                    
+                    record.setNextVaccinationDate(new Timestamp(nextVaccinationDate.getTime()));
                 } catch (Exception e) {
-                    e.printStackTrace(); // Xử lý ngoại lệ nếu định dạng không hợp lệ
+                    request.setAttribute("errorMessage", "Định dạng ngày không hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
                 }
             }
+
             // Kiểm tra cân nặng
             String weightStr = request.getParameter("weight");
             if (weightStr != null && !weightStr.isEmpty()) {
-                double weight = Double.parseDouble(weightStr);
-                if (weight > 0) {
-                    record.setWeight(weight);
-                } else {
-                    // Cân nặng phải lớn hơn 0
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Weight must be greater than 0.");
+                try {
+                    double weight = Double.parseDouble(weightStr);
+                    if (weight > 0) {
+                        record.setWeight(weight);
+                    } else {
+                        request.setAttribute("errorMessage", "Cân nặng phải lớn hơn 0.");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Cân nặng phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                     return;
                 }
             } else {
-                // Xử lý nếu weight không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Weight is required.");
+                request.setAttribute("errorMessage", "Cân nặng là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 return;
             }
 
-// Kiểm tra nhiệt độ
+            // Kiểm tra nhiệt độ
             String temperatureStr = request.getParameter("temperature");
             if (temperatureStr != null && !temperatureStr.isEmpty()) {
-                double temperature = Double.parseDouble(temperatureStr);
-                if (temperature > 0) {
-                    record.setTemperature(temperature);
-                }
-                else if (temperature <= 0) {
-                    // Nếu nhiệt độ không hợp lệ, gửi thông báo lỗi tới JSP
-                    request.setAttribute("errorMessage", "Nhiệt độ phải lớn hơn 0.");
+                try {
+                    double temperature = Double.parseDouble(temperatureStr);
+                    if (temperature > 0) {
+                        record.setTemperature(temperature);
+                    } else {
+                        request.setAttribute("errorMessage", "Nhiệt độ phải lớn hơn 0.");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Nhiệt độ phải là số hợp lệ.");
+                    loadAndSetLists(request);
                     request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
-                    return; // Dừng tiếp tục xử lý
+                    return;
                 }
             } else {
-                // Xử lý nếu temperature không hợp lệ
-                request.setAttribute("errorMessage", "Lỗi giá trị nhập vào.");
+                request.setAttribute("errorMessage", "Nhiệt độ là bắt buộc.");
+                loadAndSetLists(request);
                 request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 return;
             }
@@ -177,25 +240,74 @@ public class DoctorVacxinServlet extends HttpServlet {
             if (dao.addVacxin(record)) {
                 response.sendRedirect(request.getContextPath() + "/DoctorVacxinServlet");
             } else {
-                request.setAttribute("error", "Không thể thêm hồ sơ bệnh án");
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                request.setAttribute("errorMessage", "Không thể thêm hồ sơ bệnh án");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
             }
-
         } else if ("update".equals(action)) {
             MedicalRecords record = new MedicalRecords();
-            record.setRecordID(Integer.parseInt(request.getParameter("recordId")));
+            String recordIdStr = request.getParameter("recordId");
+            if (recordIdStr != null && !recordIdStr.isEmpty()) {
+                try {
+                    record.setRecordID(Integer.parseInt(recordIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID hồ sơ phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("errorMessage", "ID hồ sơ là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                return;
+            }
+
             record.setDiagnosis(request.getParameter("diagnosis"));
             record.setTreatment(request.getParameter("treatment"));
             record.setPrescription(request.getParameter("prescription"));
-            record.setWeight(Double.parseDouble(request.getParameter("weight")));
-            record.setTemperature(Double.parseDouble(request.getParameter("temperature")));
+            String weightStr = request.getParameter("weight");
+            if (weightStr != null && !weightStr.isEmpty()) {
+                try {
+                    record.setWeight(Double.parseDouble(weightStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Cân nặng phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("errorMessage", "Cân nặng là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                return;
+            }
+
+            String temperatureStr = request.getParameter("temperature");
+            if (temperatureStr != null && !temperatureStr.isEmpty()) {
+                try {
+                    record.setTemperature(Double.parseDouble(temperatureStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Nhiệt độ phải là số hợp lệ.");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("errorMessage", "Nhiệt độ là bắt buộc.");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
+                return;
+            }
+
             record.setNotes(request.getParameter("notes"));
 
             if (dao.updateMedicalRecord(record)) {
                 response.sendRedirect(request.getContextPath() + "/DoctorVacxinServlet");
             } else {
-                request.setAttribute("error", "Không thể cập nhật hồ sơ bệnh án");
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                request.setAttribute("errorMessage", "Không thể cập nhật hồ sơ bệnh án");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
             }
         }
     }
@@ -212,13 +324,19 @@ public class DoctorVacxinServlet extends HttpServlet {
                 if (dao.deleteMedicalRecord(recordId)) {
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Không thể xóa hồ sơ bệnh án");
+                    request.setAttribute("errorMessage", "Không thể xóa hồ sơ bệnh án");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
                 }
             } catch (NumberFormatException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID hồ sơ không hợp lệ");
+                request.setAttribute("errorMessage", "ID hồ sơ không hợp lệ");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
             }
         } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu ID hồ sơ");
+            request.setAttribute("errorMessage", "Thiếu ID hồ sơ");
+            loadAndSetLists(request);
+            request.getRequestDispatcher("/doctorVaccination.jsp").forward(request, response);
         }
     }
 }

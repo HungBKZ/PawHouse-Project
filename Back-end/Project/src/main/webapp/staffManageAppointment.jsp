@@ -172,7 +172,11 @@
                         <option value="">Tất cả trạng thái</option>
                         <option value="0">Đang xử lý</option>
                         <option value="1">Đã duyệt</option>
+<<<<<<< HEAD
+                        <option value="null">Đã từ chối</option>   
+=======
                         <option value="null">Đã từ chối</option>
+>>>>>>> cbc41ce3c6053650f088d3e04fd62ee9ca919008
                     </select>
                 </div>
             </div>

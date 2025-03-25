@@ -41,7 +41,7 @@ public class AppointmentServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             // Lấy danh sách lịch hẹn từ database
-            List<Appointment> appointments = appointmentDAO.getAllAppointments();
+            List<Appointment> appointments = appointmentDAO.getAllAppointmentsDoctor();
             request.setAttribute("appointments", appointments);
 
             // Kiểm tra thông báo thành công
@@ -69,7 +69,7 @@ public class AppointmentServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        
+
         try {
             if ("create".equals(action)) {
                 handleCreateAppointment(request, response);
@@ -97,8 +97,8 @@ public class AppointmentServlet extends HttpServlet {
             String price = request.getParameter("price");
 
             // Kiểm tra dữ liệu đầu vào
-            if (petId == null || petId.isEmpty() || serviceId == null || serviceId.isEmpty() ||
-                customerId == null || customerId.isEmpty() || doctorId == null || doctorId.isEmpty()) {
+            if (petId == null || petId.isEmpty() || serviceId == null || serviceId.isEmpty()
+                    || customerId == null || customerId.isEmpty() || doctorId == null || doctorId.isEmpty()) {
                 throw new IllegalArgumentException("Vui lòng điền đầy đủ thông tin bắt buộc");
             }
 
@@ -147,14 +147,21 @@ public class AppointmentServlet extends HttpServlet {
             String appointmentId = request.getParameter("appointmentID");
             String newStatus = request.getParameter("newStatus");
 
-            if (appointmentId == null || newStatus == null) {
+            if (appointmentId == null) {
                 throw new IllegalArgumentException("Thiếu thông tin cập nhật trạng thái");
             }
-
-            boolean success = appointmentDAO.updateAppointmentStatus(
-                Integer.parseInt(appointmentId), newStatus
-            );
-
+            
+            boolean success;
+            
+            if ("null".equals(newStatus)) {
+                success = appointmentDAO.updateAppointmentStatus(
+                        Integer.parseInt(appointmentId), null
+                );
+            } else {
+                success = appointmentDAO.updateAppointmentStatus(
+                        Integer.parseInt(appointmentId), newStatus
+                );
+            }
             if (success) {
                 response.sendRedirect("AppointmentServlet?success=updated");
             } else {

@@ -3,7 +3,6 @@ package controller;
 import DAO.MedicalRecordDAO;
 import DAO.PetDAO;
 import DAO.UserDAO;
-
 import Model.*;
 
 import jakarta.servlet.*;
@@ -17,27 +16,29 @@ import java.util.List;
 @WebServlet("/medical-record/*")
 public class MedicalRecordServlet extends HttpServlet {
 
+    private void loadAndSetLists(HttpServletRequest request) {
+        MedicalRecordDAO dao = new MedicalRecordDAO();
+        PetDAO pdao = new PetDAO();
+        UserDAO udao = new UserDAO();
+
+        List<MedicalRecords> list = dao.getAllWithPetAndDoctor();
+        List<Pet> Listp = pdao.getAllPets();
+        List<User> Listu = udao.getDoctor();
+
+        request.setAttribute("pet", Listp);
+        request.setAttribute("doctors", Listu);
+        request.setAttribute("records", list);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/")) {
-            // List all records
-            MedicalRecordDAO dao = new MedicalRecordDAO();
-            PetDAO pdao = new PetDAO();
-            UserDAO udao = new UserDAO();
-
-            List<MedicalRecords> list = dao.getAllWithPetAndDoctor();
-            List<Pet> Listp = pdao.getAllPets();
-            List<User> Listu = udao.getDoctor();
-
-            request.setAttribute("pet", Listp);
-            request.setAttribute("doctors", Listu);
-            request.setAttribute("records", list);
+            loadAndSetLists(request);
             request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
         } else {
-            // Get record details
             try {
                 int recordId = Integer.parseInt(pathInfo.substring(1));
                 MedicalRecordDAO dao = new MedicalRecordDAO();
@@ -64,10 +65,14 @@ public class MedicalRecordServlet extends HttpServlet {
 
                     request.getRequestDispatcher("/medicalRecordDetail.jsp").forward(request, response);
                 } else {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Medical record not found");
+                    request.setAttribute("errorMessage", "Không tìm thấy hồ sơ bệnh án");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 }
             } catch (NumberFormatException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid record ID");
+                request.setAttribute("errorMessage", "ID hồ sơ không hợp lệ");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
             }
         }
     }
@@ -85,82 +90,205 @@ public class MedicalRecordServlet extends HttpServlet {
             Pet pet = new Pet();
             String petIdStr = request.getParameter("petId");
             if (petIdStr != null && !petIdStr.isEmpty()) {
-                pet.setPetID(Integer.parseInt(petIdStr));
+                try {
+                    pet.setPetID(Integer.parseInt(petIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID thú cưng phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu petId không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Pet ID is required.");
+                request.setAttribute("errorMessage", "ID thú cưng là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 return;
             }
             record.setPet(pet);
 
-            // Set doctor information
             User doctor = new User();
             String doctorIdStr = request.getParameter("doctorId");
             if (doctorIdStr != null && !doctorIdStr.isEmpty()) {
-                doctor.setUserID(Integer.parseInt(doctorIdStr));
+                try {
+                    doctor.setUserID(Integer.parseInt(doctorIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID bác sĩ phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu doctorId không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Doctor ID is required.");
+                request.setAttribute("errorMessage", "ID bác sĩ là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 return;
             }
             record.setDoctor(doctor);
-            
+
             Appointment appointment = new Appointment();
             String appointmentIdStr = request.getParameter("appointmentId");
             if (appointmentIdStr != null && !appointmentIdStr.isEmpty()) {
-                appointment.setAppointmentID(Integer.parseInt(appointmentIdStr));
+                try {
+                    appointment.setAppointmentID(Integer.parseInt(appointmentIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID lịch hẹn phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu appointmentId không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Appointment ID is required.");
+                request.setAttribute("errorMessage", "ID lịch hẹn là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 return;
             }
             record.setAppointment(appointment);
 
-            // Set medical record details
             record.setDiagnosis(request.getParameter("diagnosis"));
-            record.setVaccinationDetails(request.getParameter("treatment"));
+            record.setTreatment(request.getParameter("treatment"));
             record.setPrescription(request.getParameter("prescription"));
+
             String weightStr = request.getParameter("weight");
             if (weightStr != null && !weightStr.isEmpty()) {
-                record.setWeight(Double.parseDouble(weightStr));
+                try {
+                    double weight = Double.parseDouble(weightStr);
+                    if (weight > 0) {
+                        record.setWeight(weight);
+                    } else {
+                        request.setAttribute("errorMessage", "Cân nặng phải lớn hơn 0");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Cân nặng phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu weight không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Weight is required.");
+                request.setAttribute("errorMessage", "Cân nặng là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 return;
             }
+
             String temperatureStr = request.getParameter("temperature");
             if (temperatureStr != null && !temperatureStr.isEmpty()) {
-                record.setTemperature(Double.parseDouble(temperatureStr));
+                try {
+                    double temperature = Double.parseDouble(temperatureStr);
+                    if (temperature > 0) {
+                        record.setTemperature(temperature);
+                    } else {
+                        request.setAttribute("errorMessage", "Nhiệt độ phải lớn hơn 0");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Nhiệt độ phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
             } else {
-                // Xử lý nếu temperature không hợp lệ
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Temperature is required.");
+                request.setAttribute("errorMessage", "Nhiệt độ là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 return;
             }
+
             record.setNotes(request.getParameter("notes"));
             record.setRecordDate(new Timestamp(System.currentTimeMillis()));
 
             if (dao.addMedicalRecord(record)) {
                 response.sendRedirect(request.getContextPath() + "/medical-record");
             } else {
-                request.setAttribute("error", "Không thể thêm hồ sơ bệnh án");
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                request.setAttribute("errorMessage", "Không thể thêm hồ sơ bệnh án");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
             }
-
         } else if ("update".equals(action)) {
             MedicalRecords record = new MedicalRecords();
-            record.setRecordID(Integer.parseInt(request.getParameter("recordId")));
+            String recordIdStr = request.getParameter("recordId");
+            if (recordIdStr != null && !recordIdStr.isEmpty()) {
+                try {
+                    record.setRecordID(Integer.parseInt(recordIdStr));
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "ID hồ sơ phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("errorMessage", "ID hồ sơ là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                return;
+            }
+
             record.setDiagnosis(request.getParameter("diagnosis"));
             record.setTreatment(request.getParameter("treatment"));
             record.setPrescription(request.getParameter("prescription"));
-            record.setWeight(Double.parseDouble(request.getParameter("weight")));
-            record.setTemperature(Double.parseDouble(request.getParameter("temperature")));
+
+            String weightStr = request.getParameter("weight");
+            if (weightStr != null && !weightStr.isEmpty()) {
+                try {
+                    double weight = Double.parseDouble(weightStr);
+                    if (weight > 0) {
+                        record.setWeight(weight);
+                    } else {
+                        request.setAttribute("errorMessage", "Cân nặng phải lớn hơn 0");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Cân nặng phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("errorMessage", "Cân nặng là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                return;
+            }
+
+            String temperatureStr = request.getParameter("temperature");
+            if (temperatureStr != null && !temperatureStr.isEmpty()) {
+                try {
+                    double temperature = Double.parseDouble(temperatureStr);
+                    if (temperature > 0) {
+                        record.setTemperature(temperature);
+                    } else {
+                        request.setAttribute("errorMessage", "Nhiệt độ phải lớn hơn 0");
+                        loadAndSetLists(request);
+                        request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("errorMessage", "Nhiệt độ phải là số hợp lệ");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                    return;
+                }
+            } else {
+                request.setAttribute("errorMessage", "Nhiệt độ là bắt buộc");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
+                return;
+            }
+
             record.setNotes(request.getParameter("notes"));
 
             if (dao.updateMedicalRecord(record)) {
                 response.sendRedirect(request.getContextPath() + "/medical-record");
             } else {
-                request.setAttribute("error", "Không thể cập nhật hồ sơ bệnh án");
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                request.setAttribute("errorMessage", "Không thể cập nhật hồ sơ bệnh án");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
             }
         }
     }
@@ -177,13 +305,19 @@ public class MedicalRecordServlet extends HttpServlet {
                 if (dao.deleteMedicalRecord(recordId)) {
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Không thể xóa hồ sơ bệnh án");
+                    request.setAttribute("errorMessage", "Không thể xóa hồ sơ bệnh án");
+                    loadAndSetLists(request);
+                    request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
                 }
             } catch (NumberFormatException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID hồ sơ không hợp lệ");
+                request.setAttribute("errorMessage", "ID hồ sơ không hợp lệ");
+                loadAndSetLists(request);
+                request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
             }
         } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu ID hồ sơ");
+            request.setAttribute("errorMessage", "Thiếu ID hồ sơ");
+            loadAndSetLists(request);
+            request.getRequestDispatcher("/doctorMedicalRecord.jsp").forward(request, response);
         }
     }
 }
