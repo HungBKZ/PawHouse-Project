@@ -16,7 +16,16 @@ public class AdminAccountServlet extends HttpServlet {
             throws ServletException, IOException {
 
         AccountDAO accountDAO = new AccountDAO();
-        List<Account> accounts = accountDAO.getAllAccounts();
+        String search = request.getParameter("search"); // Lấy tham số tìm kiếm từ request
+        List<Account> accounts;
+
+        if (search != null && !search.trim().isEmpty()) {
+            // Nếu có tham số tìm kiếm, gọi hàm tìm kiếm theo Username
+            accounts = accountDAO.searchAccountsByUsername(search);
+        } else {
+            // Nếu không có tham số tìm kiếm, lấy tất cả tài khoản
+            accounts = accountDAO.getAllAccounts();
+        }
 
         // Debug kiểm tra số lượng tài khoản lấy được
         System.out.println("Số lượng tài khoản: " + (accounts != null ? accounts.size() : "null"));

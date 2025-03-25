@@ -101,6 +101,32 @@
         <div class="container mt-5">
             <h2 class="text-center mb-4">Quản lý Thú Cưng</h2>
 
+            <!-- Thanh tìm kiếm -->
+            <form method="get" action="${pageContext.request.contextPath}/admin/pets" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="petName" class="form-label">Tên thú cưng</label>
+                        <input type="text" class="form-control" id="petName" name="petName" value="${param.petName}" placeholder="Nhập tên thú cưng">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="species" class="form-label">Loài</label>
+                        <select class="form-select" id="species" name="species">
+                            <option value="">Tất cả</option>
+                            <option value="Chó" ${param.species == 'Chó' ? 'selected' : ''}>Chó</option>
+                            <option value="Mèo" ${param.species == 'Mèo' ? 'selected' : ''}>Mèo</option>
+                            <option value="Bò Sát" ${param.species == 'Bò Sát' ? 'selected' : ''}>Bò Sát</option>
+                            <option value="Gậm Nhấm" ${param.species == 'Gậm Nhấm' ? 'selected' : ''}>Gậm Nhấm</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="${pageContext.request.contextPath}/admin/pets" class="btn btn-secondary w-100">Xóa bộ lọc</a>
+                    </div>
+                </div>
+            </form>
+
             <c:if test="${not empty error}">
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     ${error}

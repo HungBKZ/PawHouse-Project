@@ -2,6 +2,7 @@ package controller;
 
 import DAO.ServiceAdminDAO;
 import Model.ServiceAdmin;
+import Model.ServiceCategories; // Đổi từ ServiceCategory sang ServiceCategories
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ import Utils.DBContext;
                  maxFileSize = 1024 * 1024 * 10,      // 10MB
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
 public class AdminServiceServlet extends HttpServlet {
-    
+
     private static String getUploadDir(HttpServletRequest request) {
         return request.getServletContext().getRealPath("/imgs/service");
     }
@@ -32,8 +33,16 @@ public class AdminServiceServlet extends HttpServlet {
             throws ServletException, IOException {
         try (Connection conn = DBContext.getConnection()) {
             ServiceAdminDAO serviceDAO = new ServiceAdminDAO(conn);
-            List<ServiceAdmin> serviceList = serviceDAO.getAllServices();
+
+            // Lấy danh sách danh mục
+            List<ServiceCategories> categoryList = serviceDAO.getAllCategories(); // Đổi từ ServiceCategory sang ServiceCategories
+            request.setAttribute("categoryList", categoryList);
+
+            // Lấy danh sách dịch vụ (có thể tìm kiếm)
+            String search = request.getParameter("search");
+            List<ServiceAdmin> serviceList = serviceDAO.getServicesByName(search);
             request.setAttribute("serviceList", serviceList);
+
             request.getRequestDispatcher("/adminService-list.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +67,7 @@ public class AdminServiceServlet extends HttpServlet {
                 double price = Double.parseDouble(request.getParameter("price"));
                 int status = Integer.parseInt(request.getParameter("status"));
 
-                if (categoryID < 1 || categoryID > 12 || serviceName.trim().isEmpty() || description.trim().isEmpty() || price < 0) {
+                if (serviceName.trim().isEmpty() || description.trim().isEmpty() || price < 0) {
                     response.sendRedirect("/admin/services?error=invalidInput");
                     isRedirected = true;
                     return;
@@ -67,7 +76,7 @@ public class AdminServiceServlet extends HttpServlet {
                 Part filePart = request.getPart("image");
                 String imagePath = request.getParameter("existingImage");
                 if (filePart != null && filePart.getSize() > 0) {
-                    String fileName = "service" + System.currentTimeMillis() + ".jpg";
+                    String fileName = " Puzzle" + System.currentTimeMillis() + ".jpg";
                     String uploadDir = getUploadDir(request);
                     File uploadFolder = new File(uploadDir);
                     if (!uploadFolder.exists()) uploadFolder.mkdirs();

@@ -51,6 +51,15 @@
 
         <section class="container account-container my-5">
             <h2 class="text-center mb-4">Quản Lý Tài Khoản</h2>
+
+            <!-- Thanh tìm kiếm -->
+            <div class="mb-3">
+                <form action="/admin/accounts" method="get" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm theo Username" value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                </form>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-striped table-hover account-table">
                     <thead>
@@ -80,11 +89,15 @@
                                 </span>
                             </td>
                             <td>
-                                <button class="btn <%= account.getUserStatus() ? "btn-danger" : "btn-success"%> btn-sm toggle-status" 
-                                        data-userid="<%= account.getUserID()%>" 
-                                        data-status="<%= account.getUserStatus() ? 0 : 1%>">
-                                    <%= account.getUserStatus() ? "Disable" : "Enable"%>
-                                </button>
+                                <% if (account.getRoleID() == 1) { %>
+                                    <button class="btn btn-success btn-sm" disabled>Admin</button>
+                                <% } else { %>
+                                    <button class="btn <%= account.getUserStatus() ? "btn-danger" : "btn-success"%> btn-sm toggle-status" 
+                                            data-userid="<%= account.getUserID()%>" 
+                                            data-status="<%= account.getUserStatus() ? 0 : 1%>">
+                                        <%= account.getUserStatus() ? "Disable" : "Enable"%>
+                                    </button>
+                                <% } %>
                             </td>
                         </tr>
                         <% }
@@ -107,7 +120,7 @@
                     var newStatus = $(this).data("status");
                     var button = $(this);
 
-$.post("/admin/accounts/update-status", { userID: userID, newStatus: newStatus }, function(response) {
+                    $.post("/admin/accounts/update-status", { userID: userID, newStatus: newStatus }, function(response) {
                         if (response === "success") {
                             var statusCell = $("#status-" + userID);
                             if (newStatus === 0) {
