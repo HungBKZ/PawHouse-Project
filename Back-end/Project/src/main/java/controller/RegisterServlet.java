@@ -95,7 +95,7 @@ public class RegisterServlet extends HttpServlet {
             EmailUtility.sendEmail(email, subject, content);
 
             // Chuyển hướng đến trang nhập OTP
-            response.sendRedirect("verifyOTP");
+            response.sendRedirect("verifyOTP.jsp");
 
         } catch (SQLException e) {
             request.setAttribute("error", "Database error occurred: " + e.getMessage());

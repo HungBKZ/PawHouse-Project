@@ -241,7 +241,7 @@
 
             <div class="text-center mt-4">
                 <%
-                    String homeLink = "index.jsp"; 
+                    String homeLink = "home"; 
                     if (user.getRole() != null) {
                         switch (user.getRole().getRoleID()) {
                             case 1: 
