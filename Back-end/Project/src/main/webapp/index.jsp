@@ -439,99 +439,88 @@
     User currentUser = getAuthenticatedUser(request);
     boolean isLoggedIn = (currentUser != null);
 %>
-<section id="services" class="container py-5">
-    <h2 class="text-center fw-bold mb-4">Dịch Vụ Chúng Tôi Cung Cấp</h2>
-    <div class="row g-4">
-        <!-- Thú Y -->
-        <div class="col-md-4">
-            <div class="service-card card border-0 shadow">
-                <a href="<%= isLoggedIn ? "/MedicalServlet" : "#" %>"
-                   onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
-                    <img src="./imgs/thuy.png" class="card-img-top" alt="Thú y">
-                </a>
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">Thú Y</h5>
-                    <p class="card-text">Dịch vụ khám chữa bệnh chuyên nghiệp giúp thú cưng khỏe mạnh.</p>
-                    <a href="<%= isLoggedIn ? "/MedicalServlet" : "#" %>"
-                       class="btn btn-primary btn-custom"
-                       onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
-                        Tìm hiểu thêm
-                    </a>
+ <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <div id="loginToast" class="toast align-items-center text-bg-danger border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         </div>
 
-        <!-- Spa & Grooming -->
-        <div class="col-md-4">
-            <div class="service-card card border-0 shadow">
-                <a href="<%= isLoggedIn ? "/SpaServlet" : "#" %>"
-                   onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
-                    <img src="./imgs/spapet.jpg" class="card-img-top" alt="Spa">
-                </a>
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">Spa & Grooming</h5>
-                    <p class="card-text">Dịch vụ tắm, cắt tỉa lông, giúp thú cưng luôn sạch sẽ và đáng yêu.</p>
-                    <a href="<%= isLoggedIn ? "/SpaServlet" : "#" %>"
-                       class="btn btn-primary btn-custom"
-                       onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
-                        Tìm hiểu thêm
-                    </a>
+   
+
+        <!-- Giới thiệu -->
+        <section class="container text-center py-5">
+            <h2>Chào Mừng Đến Với PawHouse</h2>
+            <p class="lead">Chúng tôi cung cấp các sản phẩm và dịch vụ chất lượng nhất để chăm sóc thú cưng của bạn.</p>
+        </section>
+
+        <!-- Dịch Vụ -->
+        <section id="services" class="container py-5">
+            <h2 class="text-center fw-bold mb-4">Dịch Vụ Chúng Tôi Cung Cấp</h2>
+            <div class="row g-4">
+                <!-- Thú Y -->
+                <div class="col-md-4">
+                    <div class="service-card card border-0 shadow">
+                        <a href="<%= isLoggedIn ? "/MedicalServlet" : "#"%>"
+                           onclick="<%= isLoggedIn ? "" : "showLoginToast(); return false;"%>">
+                            <img src="./imgs/thuy.png" class="card-img-top" alt="Thú y">
+                        </a>
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">Thú Y</h5>
+                            <p class="card-text">Dịch vụ khám chữa bệnh chuyên nghiệp giúp thú cưng khỏe mạnh.</p>
+                            <a href="<%= isLoggedIn ? "/MedicalServlet" : "#"%>"
+                               class="btn btn-primary btn-custom"
+                               onclick="<%= isLoggedIn ? "" : "showLoginToast(); return false;"%>">
+                                Tìm hiểu thêm
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Nhận Nuôi -->
-        <div class="col-md-4">
-            <div class="service-card card border-0 shadow">
-                <a href="<%= isLoggedIn ? "/AdoptionServlet" : "#" %>"
-                   onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
-                    <img src="./imgs/takecare.jpg" class="card-img-top" alt="Nhận nuôi">
-                </a>
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">Nhận Nuôi</h5>
-                    <p class="card-text">Giúp thú cưng tìm mái ấm yêu thương, mang đến niềm vui cho gia đình bạn.</p>
-                    <a href="<%= isLoggedIn ? "/AdoptionServlet" : "#" %>"
-                       class="btn btn-primary btn-custom"
-                       onclick="<%= isLoggedIn ? "" : "alert('Vui lòng đăng nhập để xem thông tin chi tiết dịch vụ.'); return false;" %>">
-                        Tìm hiểu thêm
-                    </a>
+                <!-- Spa & Grooming -->
+                <div class="col-md-4">
+                    <div class="service-card card border-0 shadow">
+                        <a href="<%= isLoggedIn ? "/SpaServlet" : "#"%>"
+                           onclick="<%= isLoggedIn ? "" : "showLoginToast(); return false;"%>">
+                            <img src="./imgs/spapet.jpg" class="card-img-top" alt="Spa">
+                        </a>
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">Spa & Grooming</h5>
+                            <p class="card-text">Dịch vụ tắm, cắt tỉa lông, giúp thú cưng luôn sạch sẽ và đáng yêu.</p>
+                            <a href="<%= isLoggedIn ? "/SpaServlet" : "#"%>"
+                               class="btn btn-primary btn-custom"
+                               onclick="<%= isLoggedIn ? "" : "showLoginToast(); return false;"%>">
+                                Tìm hiểu thêm
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-
-        <!-- Section: Đánh giá khách hàng -->
-        <section id="reviews" class="container py-5">
-            <h2 class="text-center mb-4 section-title">Quy Trình Dịch Vụ & Đánh Giá</h2>
-
-            <!-- Thanh tiến trình (Step Progress) -->
-            <div class="d-flex justify-content-center align-items-center mb-4 flex-wrap">
-                <%-- Danh sách các bước --%>
-                <% String[] steps = {"Dịch Vụ Thú Y", "Hoạt Động Vận Động", "Kết Qủa Hoạt Động", "Lưu Trú Chó", "Lưu Trữ Mèo", "Chăm Sóc Mèo", "Bữa Ăn Dinh Dưỡng"}; %>
-                <% for (int i = 0; i < steps.length; i++) {%>
-                <div class="step">
-                    <div class="circle"><%= i + 1%></div>
-                    <span><%= steps[i]%></span>
+                <!-- Nhận Nuôi -->
+                <div class="col-md-4">
+                    <div class="service-card card border-0 shadow">
+                        <a href="<%= isLoggedIn ? "/AdoptionServlet" : "#"%>"
+                           onclick="<%= isLoggedIn ? "" : "showLoginToast(); return false;"%>">
+                            <img src="./imgs/takecare.jpg" class="card-img-top" alt="Nhận nuôi">
+                        </a>
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold">Nhận Nuôi</h5>
+                            <p class="card-text">Giúp thú cưng tìm mái ấm yêu thương, mang đến niềm vui cho gia đình bạn.</p>
+                            <a href="<%= isLoggedIn ? "/AdoptionServlet" : "#"%>"
+                               class="btn btn-primary btn-custom"
+                               onclick="<%= isLoggedIn ? "" : "showLoginToast(); return false;"%>">
+                                Tìm hiểu thêm
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <% if (i < steps.length - 1) { %> <div class="line"></div> <% } %>
-                <% } %>
-            </div>
-
-            <!-- Dịch vụ đánh giá (Căn chỉnh đều) -->
-            <div class="d-flex justify-content-center flex-wrap">
-                <%-- Danh sách dịch vụ với Bootstrap Icons --%>
-             <% String[] serviceIcons = {"bi-heart-pulse", "bi-bicycle", "bi-clipboard-check", "bi-house-door", "bi bi-bag-heart-fill", "bi-scissors", "bi-balloon-heart-fill"}; %>
-
-                <% for (int i = 0; i < steps.length; i++) {%>
-                <div class="review-card">
-                    <i class="bi <%= serviceIcons[i]%> service-icon"></i>
-                    <p><%= steps[i]%></p>
-                </div>
-                <% }%>
             </div>
         </section>
+
 
         <!-- Footer -->
         <%@ include file="includes/footer.jsp" %>
