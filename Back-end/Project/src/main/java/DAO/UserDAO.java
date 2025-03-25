@@ -411,4 +411,35 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+
+    public boolean checkPhoneExists(String phone) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Users WHERE Phone = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, phone);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean checkPhoneExistsExceptUser(String phone, int userId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Users WHERE Phone = ? AND UserID != ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, phone);
+            ps.setInt(2, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }

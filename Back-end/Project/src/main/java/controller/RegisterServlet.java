@@ -59,6 +59,13 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
+            // Kiểm tra xem số điện thoại đã tồn tại chưa
+            if (userDAO.checkPhoneExists(phone)) {
+                request.setAttribute("error", "Số điện thoại này đã được đăng ký!!!!");
+                request.getRequestDispatcher("register.jsp").forward(request, response);
+                return;
+            }
+
             // Tạo mã OTP (6 chữ số)
             Random random = new Random();
             int otp = 100000 + random.nextInt(900000);
