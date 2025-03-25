@@ -25,7 +25,6 @@
                 height: 100vh;
             }
 
-
             .login-container {
                 width: 100%;
                 max-width: 420px;
@@ -39,8 +38,6 @@
                 left: 50%;
                 transform: translate(-50%, -50%); /* Đảm bảo canh giữa */
             }
-
-
 
             .login-header img {
                 max-width: 120px;
@@ -128,7 +125,6 @@
                 }
             }
         </script>
-
     </head>
     <body>
         <div class="container">
@@ -213,7 +209,6 @@
                     </a>
                 </div>
 
-
                 <div class="register-link">
                     <p>Bạn chưa có tài khoản? <a href="register">Đăng ký ngay tại đây</a></p>
                     <a href="home" class="btn btn-outline-secondary mt-3">
@@ -225,12 +220,12 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                            function handleCredentialResponse(response) {
-                                // Handle Google Sign-In response
-                                console.log("Google Sign-In Response:", response);
-                                // Send the response.credential to your backend
-                                window.location.href = "googleLogin?credential=" + response.credential;
-                            }
+            function handleCredentialResponse(response) {
+                // Handle Google Sign-In response
+                console.log("Google Sign-In Response:", response);
+                // Send the response.credential to your backend
+                window.location.href = "googleLogin?credential=" + response.credential;
+            }
         </script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     </body>

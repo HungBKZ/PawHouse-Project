@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DAO;
 
 import Model.User;
@@ -18,10 +14,8 @@ public class UserDAO extends DBContext {
         List<User> userList = new ArrayList<>();
         String query = "SELECT * FROM Users";
 
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
-
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
@@ -31,25 +25,21 @@ public class UserDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setUserStatus(rs.getBoolean("UserStatus"));
-
+                user.setUserStatus(rs.getInt("UserStatus")); // Đổi từ getBoolean sang getInt
                 userList.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return userList;
     }
     
     public List<User> getDoctor() {
         List<User> userList = new ArrayList<>();
-        String query = "SELECT * FROM Users where roleID = 4";
+        String query = "SELECT * FROM Users WHERE RoleID = 4";
 
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
-
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
@@ -59,14 +49,12 @@ public class UserDAO extends DBContext {
                 user.setFullName(rs.getString("FullName"));
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setUserStatus(rs.getBoolean("UserStatus"));
-
+                user.setUserStatus(rs.getInt("UserStatus")); // Đổi từ getBoolean sang getInt
                 userList.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return userList;
     }
 
@@ -87,7 +75,7 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setUserStatus(rs.getBoolean("UserStatus"));
+                    user.setUserStatus(rs.getInt("UserStatus")); // Đổi từ getBoolean sang getInt
                     return user;
                 }
             }
@@ -112,7 +100,7 @@ public class UserDAO extends DBContext {
     }
 
     public boolean checkUserExists2(String email) throws SQLException {
-        String query = "SELECT COUNT(*) FROM Users WHERE  Email = ?";
+        String query = "SELECT COUNT(*) FROM Users WHERE Email = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, email);
@@ -127,8 +115,8 @@ public class UserDAO extends DBContext {
     }
 
     public boolean registerUser(User user) throws SQLException {
-        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Address,UserStatus, RoleID) "
-                + "VALUES (?, ?, ?, ?, ?, ?,?, 2)"; // RoleID 2 for regular user
+        String query = "INSERT INTO Users (Username, Password, Email, FullName, Phone, Address, UserStatus, RoleID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, 2)"; // RoleID 2 for regular user
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
@@ -136,9 +124,8 @@ public class UserDAO extends DBContext {
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
-            ps.setString(6,user.getAddress());
-            ps.setBoolean(7, user.isUserStatus());
-
+            ps.setString(6, user.getAddress());
+            ps.setInt(7, user.getUserStatus()); // Đổi từ setBoolean sang setInt
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         }
@@ -168,21 +155,20 @@ public class UserDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
-                    user.setUserID(rs.getInt("userID"));
-                    user.setUsername(rs.getString("username"));
-                    user.setEmail(rs.getString("email"));
-                    user.setFullName(rs.getString("fullName"));
-                    user.setPhone(rs.getString("phone"));
-                    user.setAddress(rs.getString("address"));
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setAddress(rs.getString("Address"));
                     Role role = new Role();
                     role.setRoleID(rs.getInt("RoleID"));
                     user.setRole(role);
-
-                    return user; // Trả về user nếu tìm thấy
+                    return user;
                 }
             }
         }
-        return null; // Trả về null nếu không tìm thấy user
+        return null;
     }
 
     public boolean saveResetToken(String email, String token) throws SQLException {
@@ -240,10 +226,9 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setUserStatus(rs.getBoolean("UserStatus"));
-                    user.setAddress(rs.getString("address"));
+                    user.setUserStatus(rs.getInt("UserStatus")); // Đổi từ getBoolean sang getInt
+                    user.setAddress(rs.getString("Address"));
                     
-                    // Set role information
                     Role role = new Role();
                     role.setRoleID(rs.getInt("RoleID"));
                     role.setRoleName(rs.getString("RoleName"));
@@ -269,7 +254,7 @@ public class UserDAO extends DBContext {
                     user.setFullName(rs.getString("FullName"));
                     user.setPhone(rs.getString("Phone"));
                     user.setAvatar(rs.getString("Avatar"));
-                    user.setUserStatus(rs.getBoolean("UserStatus"));
+                    user.setUserStatus(rs.getInt("UserStatus")); // Đổi từ getBoolean sang getInt
                     return user;
                 }
             }
@@ -285,12 +270,12 @@ public class UserDAO extends DBContext {
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword()); // For Google users, password will be empty
+            ps.setString(2, user.getPassword());
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getFullName());
             ps.setString(5, user.getPhone());
             ps.setString(6, user.getAvatar());
-            ps.setBoolean(7, user.isUserStatus());
+            ps.setInt(7, user.getUserStatus()); // Đổi từ setBoolean sang setInt
             ps.setInt(8, 2); // RoleID 2 for regular users
 
             int rowsAffected = ps.executeUpdate();
@@ -303,26 +288,25 @@ public class UserDAO extends DBContext {
             return false;
         }
 
-        // Check if email exists
         String checkQuery = "SELECT Email FROM Users WHERE Email = ?";
         try (PreparedStatement checkPs = connection.prepareStatement(checkQuery)) {
             checkPs.setString(1, email);
             try (ResultSet rs = checkPs.executeQuery()) {
                 if (rs.next()) {
-                    return true; // Email already exists, consider this a success
+                    return true;
                 }
             }
         }
 
-        // If email doesn't exist, insert new user with Google email
-        String insertQuery = "INSERT INTO Users (Email, Username, Password, FullName,Phone,Avatar, UserStatus, RoleID) VALUES (?, ?, ?, ?, ?, ?, 1, 2)";
+        String insertQuery = "INSERT INTO Users (Email, Username, Password, FullName, Phone, Avatar, UserStatus, RoleID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, 1, 2)";
         try (PreparedStatement insertPs = connection.prepareStatement(insertQuery)) {
             insertPs.setString(1, email);
-            insertPs.setString(2, email); // Use email as initial username
-            insertPs.setString(3, PasswordHasher.hashMD5("123456")); // Default password for Google users
-            insertPs.setString(4, fullName != null ? fullName : email); // Use email as fallback if name is null
+            insertPs.setString(2, email);
+            insertPs.setString(3, PasswordHasher.hashMD5("123456"));
+            insertPs.setString(4, fullName != null ? fullName : email);
             insertPs.setString(5, "0000000000");
-            insertPs.setString(6, email);
+            insertPs.setString(6, picture != null ? picture : email);
             int rowsAffected = insertPs.executeUpdate();
             return rowsAffected > 0;
         }
@@ -332,37 +316,32 @@ public class UserDAO extends DBContext {
         List<User> userList = new ArrayList<>();
         String query = "SELECT UserID, FullName FROM Users";
 
-        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
-
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
                 user.setFullName(rs.getString("FullName"));
-
                 userList.add(user);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return userList;
     }
 
     public boolean updateUserProfile(User user) {
-        String sql = "UPDATE Users SET FullName = ?, Phone = ?,Address=?, Avatar = ? WHERE UserID = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        String sql = "UPDATE Users SET FullName = ?, Phone = ?, Address = ?, Avatar = ? WHERE UserID = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getPhone());
-             stmt.setString(3, user.getAddress());
+            stmt.setString(3, user.getAddress());
             stmt.setString(4, user.getAvatar());
-           
             stmt.setInt(5, user.getUserID());
 
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -374,7 +353,7 @@ public class UserDAO extends DBContext {
                 + "JOIN Roles r ON u.RoleID = r.RoleID "
                 + "WHERE u.UserID = ?";
 
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -385,7 +364,6 @@ public class UserDAO extends DBContext {
         return null;
     }
 
- 
     public boolean updateUserPassword(int userId, String newPassword) throws SQLException {
         String query = "UPDATE Users SET Password = ? WHERE UserID = ?";
 
@@ -412,24 +390,23 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-// Lấy thông tin User theo ID
 
     public User getUserByID(int userID) {
         String sql = "SELECT * FROM Users WHERE UserID = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userID);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                User user = new User();
-                user.setUserID(rs.getInt("UserID"));
-                user.setFullName(rs.getString("FullName"));
-                user.setEmail(rs.getString("Email"));
-                user.setPhone(rs.getString("Phone"));
-                user.setAddress(rs.getString("Address"));
-                return user;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setAddress(rs.getString("Address"));
+                    return user;
+                }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

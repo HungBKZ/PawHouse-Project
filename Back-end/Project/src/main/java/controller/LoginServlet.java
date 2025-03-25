@@ -38,6 +38,12 @@ public class LoginServlet extends HttpServlet {
                 try {
                     User user = userDAO.checkLogin(savedEmail, savedPassword);
                     if (user != null) {
+                        // Kiểm tra trạng thái tài khoản
+                        if (user.getUserStatus() == 0) { // Nếu userStatus = 0 (tài khoản bị khóa)
+                            session.setAttribute("error", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên!");
+                            request.getRequestDispatcher("login.jsp").forward(request, response);
+                            return;
+                        }
                         Role role = userDAO.checkRole(user.getUserID());
                         user.setRole(role);
                         session.setAttribute("user", user);
@@ -81,6 +87,14 @@ public class LoginServlet extends HttpServlet {
         try {
             User user = userDAO.checkLogin(email, password);
             if (user != null) {
+                // Kiểm tra trạng thái tài khoản
+                if (user.getUserStatus() == 0) { // Nếu userStatus = 0 (tài khoản bị khóa)
+                    error = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên!";
+                    session.setAttribute("error", error);
+                    response.sendRedirect("login");
+                    return;
+                }
+
                 // Check user role
                 Role role = userDAO.checkRole(user.getUserID());
                 if (role == null) {
@@ -107,7 +121,6 @@ public class LoginServlet extends HttpServlet {
                     session.removeAttribute("redirectUrl");
                     response.sendRedirect(redirectUrl);
                 } else {
-                    // Redirect based on role if no specific redirect URL
                     handleUserLogin(user, response);
                 }
             } else {

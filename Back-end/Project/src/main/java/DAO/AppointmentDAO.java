@@ -59,7 +59,7 @@ public class AppointmentDAO extends DBContext {
                         rs.getString("Gender"),
                         rs.getString("PetImage"),
                         rs.getString("AdoptionStatus"),
-                        new User(rs.getInt("UserID"), null, "", "", "", "", "", "", true, ""),
+                        new User(rs.getInt("UserID"), null, "", "", "", "", "", "", 1, ""),
                         rs.getString("InUseService")
                 );
 
