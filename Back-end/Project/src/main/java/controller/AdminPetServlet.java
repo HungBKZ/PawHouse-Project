@@ -56,7 +56,6 @@ public class AdminPetServlet extends HttpServlet {
         AdminPetDAO dao = new AdminPetDAO();
         List<AdminPet> petList;
         
-        // Nếu có tham số tìm kiếm, gọi phương thức lọc, nếu không thì lấy tất cả
         if ((petName != null && !petName.trim().isEmpty()) || (species != null && !species.trim().isEmpty())) {
             petList = dao.searchPets(petName, species);
         } else {
@@ -64,8 +63,10 @@ public class AdminPetServlet extends HttpServlet {
         }
         
         List<Integer> userIds = getUserIdsFromDatabase();
+        List<String> categoryList = getPetCategoryNamesFromDatabase(); // Lấy danh sách CategoryName
         request.setAttribute("petList", petList);
         request.setAttribute("userIds", userIds);
+        request.setAttribute("categoryList", categoryList);
         request.getRequestDispatcher("/adminPet-list.jsp").forward(request, response);
     }
 
@@ -108,9 +109,8 @@ public class AdminPetServlet extends HttpServlet {
 
     private AdminPet extractPetFromRequest(HttpServletRequest request, boolean isNew) throws IOException, ServletException {
         int petID = isNew ? 0 : Integer.parseInt(request.getParameter("id"));
-        int categoryID = Integer.parseInt(request.getParameter("categoryID"));
         String name = request.getParameter("name");
-        String species = request.getParameter("species");
+        String species = request.getParameter("species"); // Đây là CategoryName
         String breed = request.getParameter("breed");
         int age = Integer.parseInt(request.getParameter("age"));
         String gender = request.getParameter("gender");
@@ -119,18 +119,22 @@ public class AdminPetServlet extends HttpServlet {
             adoptionStatus = "Chưa nhận nuôi";
         }
         
-        // Xử lý UserID dựa trên trạng thái nhận nuôi
         Integer userID;
         if ("Chưa nhận nuôi".equals(adoptionStatus) || "Đang chờ duyệt".equals(adoptionStatus)) {
-            userID = null; // Đặt null nếu chưa nhận nuôi hoặc đang chờ duyệt
+            userID = null;
         } else {
             String userIdStr = request.getParameter("userID");
             userID = (userIdStr != null && !userIdStr.isEmpty()) ? Integer.parseInt(userIdStr) : null;
         }
         
-        String inUseService = request.getParameter("inUseService");
-        if (inUseService != null && inUseService.isEmpty()) {
+        String inUseService;
+        if ("Chưa nhận nuôi".equals(adoptionStatus) || "Đang chờ duyệt".equals(adoptionStatus)) {
             inUseService = null;
+        } else {
+            inUseService = request.getParameter("inUseService");
+            if (inUseService != null && inUseService.isEmpty()) {
+                inUseService = null;
+            }
         }
 
         Part filePart = request.getPart("image");
@@ -150,7 +154,7 @@ public class AdminPetServlet extends HttpServlet {
             imagePath = oldPet != null ? oldPet.getPetImage() : null;
         }
 
-        return new AdminPet(petID, categoryID, name, species, breed, age, gender, imagePath, adoptionStatus, userID, inUseService);
+        return new AdminPet(petID, 0, name, species, breed, age, gender, imagePath, adoptionStatus, userID, inUseService);
     }
 
     private String extractFileName(Part part) {
@@ -176,5 +180,20 @@ public class AdminPetServlet extends HttpServlet {
             e.printStackTrace();
         }
         return userIds;
+    }
+
+    private List<String> getPetCategoryNamesFromDatabase() {
+        List<String> categoryNames = new ArrayList<>();
+        String query = "SELECT CategoryName FROM PetCategories";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                categoryNames.add(rs.getString("CategoryName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categoryNames;
     }
 }

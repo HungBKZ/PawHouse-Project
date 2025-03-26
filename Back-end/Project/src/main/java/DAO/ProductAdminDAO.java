@@ -85,7 +85,7 @@ public class ProductAdminDAO {
         }
     }
 
-    public void addProduct(ProductAdmin product) {
+    public boolean addProduct(ProductAdmin product) {
         String query = "INSERT INTO Products (CategoryID, ProductName, Description, Price, Stock, ProductImage, ProductStatus) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBContext.getConnection();
@@ -98,14 +98,15 @@ public class ProductAdminDAO {
             ps.setInt(5, product.getStock());
             ps.setString(6, product.getProductImage());
             ps.setInt(7, product.getProductStatus());
-            ps.executeUpdate();
-
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0; // Trả về true nếu thêm thành công
         } catch (SQLException e) {
             e.printStackTrace();
+            return false; // Trả về false nếu có lỗi
         }
     }
 
-    public void updateProduct(ProductAdmin product) {
+    public boolean updateProduct(ProductAdmin product) {
         String query = "UPDATE Products SET CategoryID = ?, ProductName = ?, Description = ?, Price = ?, Stock = ?, ProductImage = ?, ProductStatus = ? WHERE ProductID = ?";
 
         try (Connection conn = DBContext.getConnection();
@@ -119,10 +120,11 @@ public class ProductAdminDAO {
             ps.setString(6, product.getProductImage());
             ps.setInt(7, product.getProductStatus());
             ps.setInt(8, product.getProductID());
-            ps.executeUpdate();
-
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0; // Trả về true nếu cập nhật thành công
         } catch (SQLException e) {
             e.printStackTrace();
+            return false; // Trả về false nếu có lỗi
         }
     }
 }

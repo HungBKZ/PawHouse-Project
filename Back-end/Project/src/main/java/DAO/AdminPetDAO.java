@@ -21,17 +21,17 @@ public class AdminPetDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 pets.add(new AdminPet(
-                    rs.getInt("PetID"),
-                    rs.getInt("CategoryID"),
-                    rs.getString("PetName"),
-                    rs.getString("Species"),
-                    rs.getString("Breed"), // Thêm Breed vào đây
-                    rs.getInt("Age"),
-                    rs.getString("Gender"),
-                    rs.getString("PetImage"),
-                    rs.getString("AdoptionStatus"),
-                    rs.getObject("UserID") != null ? rs.getInt("UserID") : null, // Xử lý NULL
-                    rs.getString("InUseService")
+                        rs.getInt("PetID"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("PetName"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age"),
+                        rs.getString("Gender"),
+                        rs.getString("PetImage"),
+                        rs.getString("AdoptionStatus"),
+                        rs.getObject("UserID") != null ? rs.getInt("UserID") : null,
+                        rs.getString("InUseService")
                 ));
             }
         } catch (SQLException e) {
@@ -43,23 +43,22 @@ public class AdminPetDAO {
 
     public AdminPet getPetById(int petID) {
         String query = "SELECT * FROM Pets WHERE PetID = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, petID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new AdminPet(
-                    rs.getInt("PetID"),
-                    rs.getInt("CategoryID"),
-                    rs.getString("PetName"),
-                    rs.getString("Species"),
-                    rs.getString("Breed"),
-                    rs.getInt("Age"),
-                    rs.getString("Gender"),
-                    rs.getString("PetImage"),
-                    rs.getString("AdoptionStatus"),
-                    rs.getObject("UserID") != null ? rs.getInt("UserID") : null, // Xử lý NULL
-                    rs.getString("InUseService")
+                        rs.getInt("PetID"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("PetName"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age"),
+                        rs.getString("Gender"),
+                        rs.getString("PetImage"),
+                        rs.getString("AdoptionStatus"),
+                        rs.getObject("UserID") != null ? rs.getInt("UserID") : null,
+                        rs.getString("InUseService")
                 );
             }
         } catch (SQLException e) {
@@ -70,14 +69,17 @@ public class AdminPetDAO {
     }
 
     public void addPet(AdminPet pet) {
+        int categoryID = getCategoryIdByName(pet.getSpecies());
+        if (categoryID == -1) {
+            throw new IllegalArgumentException("Không tìm thấy CategoryID cho CategoryName: " + pet.getSpecies());
+        }
         if (("Chưa nhận nuôi".equals(pet.getAdoptionStatus()) || "Đang chờ duyệt".equals(pet.getAdoptionStatus())) && pet.getUserID() != null) {
             throw new IllegalArgumentException("UserID phải là null khi trạng thái là 'Chưa nhận nuôi' hoặc 'Đang chờ duyệt'");
         }
-        String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID, InUseService) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, pet.getCategoryID());
+        String query = "INSERT INTO Pets (CategoryID, PetName, Species, Breed, Age, Gender, PetImage, AdoptionStatus, UserID, InUseService) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, categoryID);
             ps.setString(2, pet.getPetName());
             ps.setString(3, pet.getSpecies());
             ps.setString(4, pet.getBreed());
@@ -88,7 +90,7 @@ public class AdminPetDAO {
             if (pet.getUserID() != null) {
                 ps.setInt(9, pet.getUserID());
             } else {
-                ps.setNull(9, Types.INTEGER); // Gán NULL nếu userID là null
+                ps.setNull(9, Types.INTEGER);
             }
             ps.setString(10, pet.getInUseService());
             int rowsAffected = ps.executeUpdate();
@@ -102,14 +104,17 @@ public class AdminPetDAO {
     }
 
     public void updatePet(AdminPet pet) {
+        int categoryID = getCategoryIdByName(pet.getSpecies());
+        if (categoryID == -1) {
+            throw new IllegalArgumentException("Không tìm thấy CategoryID cho CategoryName: " + pet.getSpecies());
+        }
         if (("Chưa nhận nuôi".equals(pet.getAdoptionStatus()) || "Đang chờ duyệt".equals(pet.getAdoptionStatus())) && pet.getUserID() != null) {
             throw new IllegalArgumentException("UserID phải là null khi trạng thái là 'Chưa nhận nuôi' hoặc 'Đang chờ duyệt'");
         }
-        String query = "UPDATE Pets SET CategoryID = ?, PetName = ?, Species = ?, Breed = ?, Age = ?, " +
-                      "Gender = ?, PetImage = ?, AdoptionStatus = ?, UserID = ?, InUseService = ? WHERE PetID = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, pet.getCategoryID());
+        String query = "UPDATE Pets SET CategoryID = ?, PetName = ?, Species = ?, Breed = ?, Age = ?, "
+                + "Gender = ?, PetImage = ?, AdoptionStatus = ?, UserID = ?, InUseService = ? WHERE PetID = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, categoryID);
             ps.setString(2, pet.getPetName());
             ps.setString(3, pet.getSpecies());
             ps.setString(4, pet.getBreed());
@@ -120,7 +125,7 @@ public class AdminPetDAO {
             if (pet.getUserID() != null) {
                 ps.setInt(9, pet.getUserID());
             } else {
-                ps.setNull(9, Types.INTEGER); // Gán NULL nếu userID là null
+                ps.setNull(9, Types.INTEGER);
             }
             ps.setString(10, pet.getInUseService());
             ps.setInt(11, pet.getPetID());
@@ -138,7 +143,7 @@ public class AdminPetDAO {
         String checkAdoptionQuery = "SELECT COUNT(*) as count FROM AdoptionHistory WHERE PetID = ?";
         String checkMedicalQuery = "SELECT COUNT(*) as count FROM MedicalRecords WHERE PetID = ?";
         String deletePetQuery = "DELETE FROM Pets WHERE PetID = ?";
-        
+
         try (Connection conn = DBContext.getConnection()) {
             PreparedStatement psAdoption = conn.prepareStatement(checkAdoptionQuery);
             psAdoption.setInt(1, petID);
@@ -173,8 +178,7 @@ public class AdminPetDAO {
 
     public void deleteAdoptionHistory(int petID) {
         String query = "DELETE FROM AdoptionHistory WHERE PetID = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, petID);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -188,10 +192,10 @@ public class AdminPetDAO {
         try {
             conn = DBContext.getConnection();
             conn.setAutoCommit(false);
-            
+
             String findAppointmentsQuery = "SELECT a.AppointmentID FROM Appointments a WHERE a.PetID = ?";
             List<Integer> appointmentIds = new ArrayList<>();
-            
+
             try (PreparedStatement psFind = conn.prepareStatement(findAppointmentsQuery)) {
                 psFind.setInt(1, petID);
                 ResultSet rs = psFind.executeQuery();
@@ -199,7 +203,7 @@ public class AdminPetDAO {
                     appointmentIds.add(rs.getInt("AppointmentID"));
                 }
             }
-            
+
             if (!appointmentIds.isEmpty()) {
                 String deletePaymentsQuery = "DELETE FROM Payment WHERE AppointmentID IN (SELECT AppointmentID FROM Appointments WHERE PetID = ?)";
                 try (PreparedStatement psPayment = conn.prepareStatement(deletePaymentsQuery)) {
@@ -207,15 +211,15 @@ public class AdminPetDAO {
                     psPayment.executeUpdate();
                 }
             }
-            
+
             String deleteAppointmentsQuery = "DELETE FROM Appointments WHERE PetID = ?";
             try (PreparedStatement psAppointment = conn.prepareStatement(deleteAppointmentsQuery)) {
                 psAppointment.setInt(1, petID);
                 psAppointment.executeUpdate();
             }
-            
+
             conn.commit();
-            
+
         } catch (SQLException e) {
             if (conn != null) {
                 try {
@@ -241,23 +245,21 @@ public class AdminPetDAO {
     public List<AdminPet> searchPets(String petName, String species) {
         List<AdminPet> pets = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT * FROM Pets WHERE 1=1");
-        
-        // Thêm điều kiện tìm kiếm nếu có
+
         if (petName != null && !petName.trim().isEmpty()) {
             query.append(" AND PetName LIKE ?");
         }
         if (species != null && !species.trim().isEmpty()) {
             query.append(" AND Species = ?");
         }
-        
+
         try (Connection conn = DBContext.getConnection()) {
             if (conn == null) {
                 System.err.println("\u274C Không kết nối được database");
                 return pets;
             }
             PreparedStatement ps = conn.prepareStatement(query.toString());
-            
-            // Gán giá trị cho các tham số
+
             int paramIndex = 1;
             if (petName != null && !petName.trim().isEmpty()) {
                 ps.setString(paramIndex++, "%" + petName.trim() + "%");
@@ -265,21 +267,21 @@ public class AdminPetDAO {
             if (species != null && !species.trim().isEmpty()) {
                 ps.setString(paramIndex++, species.trim());
             }
-            
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 pets.add(new AdminPet(
-                    rs.getInt("PetID"),
-                    rs.getInt("CategoryID"),
-                    rs.getString("PetName"),
-                    rs.getString("Species"),
-                    rs.getString("Breed"),
-                    rs.getInt("Age"),
-                    rs.getString("Gender"),
-                    rs.getString("PetImage"),
-                    rs.getString("AdoptionStatus"),
-                    rs.getObject("UserID") != null ? rs.getInt("UserID") : null,
-                    rs.getString("InUseService")
+                        rs.getInt("PetID"),
+                        rs.getInt("CategoryID"),
+                        rs.getString("PetName"),
+                        rs.getString("Species"),
+                        rs.getString("Breed"),
+                        rs.getInt("Age"),
+                        rs.getString("Gender"),
+                        rs.getString("PetImage"),
+                        rs.getString("AdoptionStatus"),
+                        rs.getObject("UserID") != null ? rs.getInt("UserID") : null,
+                        rs.getString("InUseService")
                 ));
             }
         } catch (SQLException e) {
@@ -287,5 +289,20 @@ public class AdminPetDAO {
             e.printStackTrace();
         }
         return pets;
+    }
+
+    private int getCategoryIdByName(String categoryName) {
+        String query = "SELECT CategoryID FROM PetCategories WHERE CategoryName = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, categoryName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("CategoryID");
+            }
+        } catch (SQLException e) {
+            System.err.println("\u274C Lỗi SQL khi lấy CategoryID: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // Trả về -1 nếu không tìm thấy
     }
 }

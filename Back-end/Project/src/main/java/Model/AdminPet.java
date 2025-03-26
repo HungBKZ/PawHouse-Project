@@ -10,11 +10,7 @@ public class AdminPet {
     private String gender;
     private String petImage;
     private String adoptionStatus;
-    /**
-     * UserID: null đại diện cho trường hợp chưa có người nhận nuôi.
-     * Chỉ có giá trị khác null khi AdoptionStatus là "Đã nhận nuôi".
-     */
-    private Integer userID; // Đổi từ int sang Integer để hỗ trợ null
+    private Integer userID;
     private String inUseService;
 
     public AdminPet() {}

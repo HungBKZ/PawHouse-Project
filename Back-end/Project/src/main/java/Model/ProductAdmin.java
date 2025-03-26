@@ -9,6 +9,7 @@ public class ProductAdmin {
     private int stock;
     private String productImage;
     private int productStatus;
+    private String categoryName; // Thêm thuộc tính mới để lưu tên danh mục
 
     public ProductAdmin() {}
 
@@ -21,6 +22,7 @@ public class ProductAdmin {
         this.stock = stock;
         this.productImage = productImage;
         this.productStatus = productStatus;
+        this.categoryName = getCategoryName(); // Tự động gán categoryName khi khởi tạo
     }
 
     public int getProductID() { return productID; }
@@ -31,18 +33,7 @@ public class ProductAdmin {
     public int getStock() { return stock; }
     public String getProductImage() { return productImage; }
     public int getProductStatus() { return productStatus; }
-
-    public void setProductID(int productID) { this.productID = productID; }
-    public void setCategoryID(int categoryID) { this.categoryID = categoryID; }
-    public void setProductName(String productName) { this.productName = productName; }
-    public void setDescription(String description) { this.description = description; }
-    public void setPrice(double price) { this.price = price; }
-    public void setStock(int stock) { this.stock = stock; }
-    public void setProductImage(String productImage) { this.productImage = productImage; }
-    public void setProductStatus(int productStatus) { this.productStatus = productStatus; }
-
-    // Phương thức ánh xạ categoryID sang tên danh mục
-    public String getCategoryName() {
+    public String getCategoryName() { 
         switch (this.categoryID) {
             case 1: return "Thức ăn cho chó";
             case 2: return "Thức ăn cho mèo";
@@ -62,4 +53,17 @@ public class ProductAdmin {
             default: return "Không xác định";
         }
     }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; } // Thêm setter
+
+    public void setProductID(int productID) { this.productID = productID; }
+    public void setCategoryID(int categoryID) { 
+        this.categoryID = categoryID; 
+        this.categoryName = getCategoryName(); // Cập nhật categoryName khi categoryID thay đổi
+    }
+    public void setProductName(String productName) { this.productName = productName; }
+    public void setDescription(String description) { this.description = description; }
+    public void setPrice(double price) { this.price = price; }
+    public void setStock(int stock) { this.stock = stock; }
+    public void setProductImage(String productImage) { this.productImage = productImage; }
+    public void setProductStatus(int productStatus) { this.productStatus = productStatus; }
 }
