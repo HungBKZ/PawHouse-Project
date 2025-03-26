@@ -1,6 +1,8 @@
 package controller;
 
 import DAO.AppointmentDAO;
+import DAO.UserDAO;
+import Model.User;
 import Model.Appointment;
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +20,7 @@ public class StaffAppointmentServlet extends HttpServlet {
     @Override
     public void init() {
         appointmentDAO = new AppointmentDAO();
+        
     }
 
     /**
@@ -27,10 +30,14 @@ public class StaffAppointmentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            UserDAO dao = new UserDAO();
             // Lấy danh sách lịch hẹn từ database
             List<Appointment> appointments = appointmentDAO.getAppointmentsSpa();
+            List<User> staff =  dao.getStaff();
 
             // Đẩy danh sách lên request
+            
+            request.setAttribute("staff", staff);
             request.setAttribute("appointments", appointments);
 
             // Chuyển hướng đến trang quản lý lịch hẹn
@@ -51,6 +58,7 @@ public class StaffAppointmentServlet extends HttpServlet {
             // Lấy dữ liệu từ form
             String idParam = request.getParameter("appointmentID");
             String statusParam = request.getParameter("appointmentStatus");
+            String staffParam = request.getParameter("userID");
 
             // Kiểm tra dữ liệu đầu vào có hợp lệ không
             if (idParam == null || statusParam == null) {
@@ -60,13 +68,17 @@ public class StaffAppointmentServlet extends HttpServlet {
             }
 
             int appointmentID = Integer.parseInt(idParam);
+            
+            Integer userID= Integer.parseInt(staffParam);
+            
             String status = statusParam;
             if (statusParam.equals("null")) {
                 status = null;
             }
+            
 
             // Cập nhật trạng thái trong database
-            boolean success = appointmentDAO.updateAppointmentStatus(appointmentID, status);
+            boolean success = appointmentDAO.updateAppointmentStatus2(appointmentID, status, userID);
 
             if (success) {
                 response.sendRedirect("StaffAppointmentServlet?success=updated");
@@ -78,5 +90,6 @@ public class StaffAppointmentServlet extends HttpServlet {
             request.setAttribute("errorMessage", "Dữ liệu nhập không hợp lệ!");
             doGet(request, response);
         }
+        
     }
 }

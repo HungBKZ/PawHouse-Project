@@ -148,11 +148,11 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label"><i class="fas fa-calendar"></i> Từ ngày</label>
-                            <input type="date" name="startDate" class="form-control" value="${param.startDate}">
+                            <input type="date" name="startDate" class="form-control" value="${param.startDate}" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label"><i class="fas fa-calendar"></i> Đến ngày</label>
-                            <input type="date" name="endDate" class="form-control" value="${param.endDate}">
+                            <input type="date" name="endDate" class="form-control" value="${param.endDate}" required>
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">

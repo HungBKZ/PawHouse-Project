@@ -57,6 +57,30 @@ public class UserDAO extends DBContext {
         }
         return userList;
     }
+    
+     public List<User> getStaff() {
+        List<User> userList = new ArrayList<>();
+        String query = "SELECT * FROM Users WHERE RoleID = 3";
+
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setUsername(rs.getString("Username"));
+                user.setPassword(rs.getString("Password"));
+                user.setEmail(rs.getString("Email"));
+                user.setFullName(rs.getString("FullName"));
+                user.setPhone(rs.getString("Phone"));
+                user.setAvatar(rs.getString("Avatar"));
+                user.setUserStatus(rs.getInt("UserStatus")); // Đổi từ getBoolean sang getInt
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
 
     public User checkLogin(String email, String password) throws SQLException {
         String query = "SELECT * FROM Users WHERE Email = ? AND Password = ?";

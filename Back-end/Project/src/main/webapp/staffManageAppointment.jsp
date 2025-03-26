@@ -172,11 +172,7 @@
                         <option value="">Tất cả trạng thái</option>
                         <option value="0">Đang xử lý</option>
                         <option value="1">Đã duyệt</option>
-<<<<<<< HEAD
                         <option value="null">Đã từ chối</option>   
-=======
-                        <option value="null">Đã từ chối</option>
->>>>>>> cbc41ce3c6053650f088d3e04fd62ee9ca919008
                     </select>
                 </div>
             </div>
@@ -191,6 +187,7 @@
                         <th>Dịch Vụ</th>
                         <th>Ngày Hẹn</th>
                         <th>Trạng Thái</th>
+                        <th>Nhân Viên</th>
                         <th>Giá</th>
                         <th>Hành Động</th>
                     </tr>
@@ -204,17 +201,27 @@
                             <td>${appointment.service.serviceName}</td>
                             <td>${appointment.appointmentDate}</td>
                             <td data-status="${appointment.appointmentStatus}">
-                                <select class="form-select appointment-status">
+                                <select class="form-select status-select">
                                     <option value="0" ${appointment.appointmentStatus == '0' ? 'selected' : ''}>Đang xử lý</option>
                                     <option value="1" ${appointment.appointmentStatus == '1' ? 'selected' : ''}>Duyệt</option>
                                     <option value="null" ${appointment.appointmentStatus == null ? 'selected' : ''}>Từ chối</option>
                                 </select>
                             </td>
+                            <td>
+                                <select class="form-select staff-select">
+                                    <option value="0">Không có</option>
+                                    <c:forEach var="staff" items="${staff}">
+                                        <option value="${staff.userID}" ${staff.userID == appointment.staff.userID ? 'selected' : ''}>${staff.username}</option>
+                                    </c:forEach>
+                                </select>
+                            </td>
+
                             <td>${appointment.price} VND</td>
                             <td>
                                 <form action="StaffAppointmentServlet" method="post">
                                     <input type="hidden" name="appointmentID" value="${appointment.appointmentID}">
                                     <input type="hidden" name="appointmentStatus" class="status-input" value="${appointment.appointmentStatus}">
+                                    <input type="hidden" name="userID" class="staff-input" value="${appointment.staff != null ? appointment.staff.userID : '0'}">
                                     <button type="submit" class="btn btn-primary mt-2">Lưu</button>
                                 </form>
                             </td>
@@ -225,20 +232,27 @@
         </div>
 
         <footer>
-            <p>© 2025 PawHouse. Mọi quyền được bảo lưu.</p>
+            <p> 2025 PawHouse. Mọi quyền được bảo lưu.</p>
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            // 🌟 Bắt sự kiện thay đổi trạng thái để cập nhật giá trị vào input ẩn
-            document.querySelectorAll(".appointment-status").forEach(select => {
+            // Update both status and staff inputs when their respective selects change
+            document.querySelectorAll(".status-select").forEach(select => {
                 select.addEventListener("change", function () {
                     let hiddenInput = this.closest("tr").querySelector(".status-input");
                     hiddenInput.value = this.value;
                 });
             });
 
-            // 📅 Kích hoạt Date Picker với style đẹp hơn
+            document.querySelectorAll(".staff-select").forEach(select => {
+                select.addEventListener("change", function () {
+                    let hiddenInput = this.closest("tr").querySelector(".staff-input");
+                    hiddenInput.value = this.value;
+                });
+            });
+
+            // Kích hoạt Date Picker với style đẹp hơn
             flatpickr("#searchDate", {
                 dateFormat: "Y-m-d",
                 altInput: true,
@@ -247,7 +261,7 @@
                 disableMobile: true
             });
 
-            // 🔎 Hàm lọc dữ liệu theo bộ lọc nhập liệu
+            // Hàm lọc dữ liệu theo bộ lọc nhập liệu
             function filterAppointments() {
                 let searchCustomer = document.getElementById("searchCustomer").value.toLowerCase();
                 let searchPet = document.getElementById("searchPet").value.toLowerCase();
@@ -262,7 +276,7 @@
                     let pet = row.cells[2].textContent.toLowerCase();
                     let service = row.cells[3].textContent.toLowerCase();
                     let date = row.cells[4].textContent.trim();
-                    let status = row.cells[5].querySelector(".appointment-status").value;
+                    let status = row.cells[5].querySelector(".status-select").value;
 
                     if (
                             customer.includes(searchCustomer) &&
@@ -278,7 +292,7 @@
                 });
             }
 
-            // 🌟 Gắn sự kiện lọc dữ liệu ngay khi nhập vào input hoặc thay đổi select
+            // Gắn sự kiện lọc dữ liệu ngay khi nhập vào input hoặc thay đổi select
             document.querySelectorAll("input, select").forEach(input => {
                 input.addEventListener("input", filterAppointments);
             });
