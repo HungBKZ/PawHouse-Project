@@ -54,11 +54,11 @@
                 <form action="BookService" method="POST" id="bookingServiceForm" novalidate>
                     <div class="mb-3">
                         <label for="service" class="form-label">Tên Dịch Vụ</label>
-                        <input type="text" class="form-control" id="service" disabled="true" value="${service.serviceName}"/>
+                        <input type="text" class="form-control" id="service" disabled value="${service.serviceName}">
                     </div>
                     <div class="mb-3 mt-3">
                         <label for="price" class="form-label">Giá Tiền</label>
-                        <input type="text" class="form-control" id="price" disabled="true" value="${service.price}"/>
+                        <input type="text" class="form-control" id="price" disabled value="${service.price}">
                     </div>
                     <div class="mb-3 mt-3">
                         <label for="pet" class="form-label">Chọn PET của bạn</label>

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -15,6 +15,7 @@
         </style>
     </head>
     <body>
+        <%@ include file="includes/navbar.jsp" %>
         <div class="container text-center">
             <div class="success-icon mb-3">
                 ✅
@@ -33,7 +34,7 @@
             <a href="index.jsp" class="btn btn-outline-success mt-4">Quay về trang chủ</a>
             <!--<a href="viewAppointment.jsp" class="btn btn-outline-success mt-4 ms-2">Xem lịch hẹn</a>-->
         </div>
-
+        <%@ include file="includes/footer.jsp" %>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

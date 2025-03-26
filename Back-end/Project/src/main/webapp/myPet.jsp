@@ -104,15 +104,19 @@
                                                 <c:choose>
                                                     <c:when test="${pet.adoptionStatus eq 'Đã nhận nuôi'}">
                                                         <i class="fas fa-check-circle text-success me-2"></i>
+                                                        <span class="text-success">${pet.adoptionStatus}</span>
+                                                    </c:when>
+                                                    <c:when test="${pet.adoptionStatus eq 'Chưa nhận nuôi'}">
+                                                        <i class="fas fa-times-circle text-danger me-2"></i>
+                                                        <span class="text-danger">Đã từ chối</span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <i class="fas fa-paw text-warning me-2"></i>
+                                                        <span class="text-warning">${pet.adoptionStatus}</span>
                                                     </c:otherwise>
                                                 </c:choose>
-                                                <span class="${pet.adoptionStatus eq 'Đã nhận nuôi' ? 'text-success' : 'text-warning'}">
-                                                    ${pet.adoptionStatus}
-                                                </span>
                                             </p>
+
                                             <c:set var="serviceStatus" value="${empty pet.inUseService ? 'Chưa từng sử dụng dịch vụ' : pet.inUseService}" />
                                             <c:set var="statusIcon" value="" />
                                             <c:set var="statusClass" value="status-none" />
