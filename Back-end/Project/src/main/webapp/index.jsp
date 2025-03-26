@@ -520,6 +520,36 @@
                 </div>
             </div>
         </section>
+                                
+                                 <section id="reviews" class="container py-5">
+            <h2 class="text-center mb-4 section-title">Quy Trình Dịch Vụ & Đánh Giá</h2>
+
+            <!-- Thanh tiến trình (Step Progress) -->
+            <div class="d-flex justify-content-center align-items-center mb-4 flex-wrap">
+                <%-- Danh sách các bước --%>
+                <% String[] steps = {"Dịch Vụ Thú Y", "Hoạt Động Vận Động", "Kết Qủa Hoạt Động", "Lưu Trú Chó", "Lưu Trữ Mèo", "Chăm Sóc Mèo", "Bữa Ăn Dinh Dưỡng"}; %>
+                <% for (int i = 0; i < steps.length; i++) {%>
+                <div class="step">
+                    <div class="circle"><%= i + 1%></div>
+                    <span><%= steps[i]%></span>
+                </div>
+                <% if (i < steps.length - 1) { %> <div class="line"></div> <% } %>
+                <% } %>
+            </div>
+
+            <!-- Dịch vụ đánh giá (Căn chỉnh đều) -->
+            <div class="d-flex justify-content-center flex-wrap">
+                <%-- Danh sách dịch vụ với Bootstrap Icons --%>
+             <% String[] serviceIcons = {"bi-heart-pulse", "bi-bicycle", "bi-clipboard-check", "bi-house-door", "bi bi-bag-heart-fill", "bi-scissors", "bi-balloon-heart-fill"}; %>
+
+                <% for (int i = 0; i < steps.length; i++) {%>
+                <div class="review-card">
+                    <i class="bi <%= serviceIcons[i]%> service-icon"></i>
+                    <p><%= steps[i]%></p>
+                </div>
+                <% }%>
+            </div>
+        </section>
 
 
         <!-- Footer -->
