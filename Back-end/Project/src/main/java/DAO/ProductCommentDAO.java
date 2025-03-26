@@ -13,12 +13,12 @@ public class ProductCommentDAO extends DBContext {
     public List<ProductComment> getAllComments() {
         List<ProductComment> commentList = new ArrayList<>();
         String query = "SELECT pc.*, p.ProductName, p.ProductImage, p.Price, p.Stock, p.ProductStatus as PStatus, "
-                + "u.Username, u.Email, u.FullName, u.Phone, u.Avatar, u.UserStatus "
+                + "u.UserID, u.Username, u.Email, u.FullName, u.Phone, u.Avatar, u.UserStatus "
                 + "FROM ProductComment pc "
                 + "JOIN Products p ON pc.ProductID = p.ProductID "
                 + "JOIN Users u ON pc.UserID = u.UserID "
                 + "ORDER BY pc.Date_Comment DESC";
-                
+
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
 
@@ -34,12 +34,12 @@ public class ProductCommentDAO extends DBContext {
                 // Set User details
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
-                user.setUsername(rs.getString("Username"));
+                user.setUsername(rs.getString("Username")); // Giữ lại để tương thích
                 user.setEmail(rs.getString("Email"));
-                user.setFullName(rs.getString("FullName"));
+                user.setFullName(rs.getString("FullName")); // Đảm bảo lấy FullName
                 user.setPhone(rs.getString("Phone"));
                 user.setAvatar(rs.getString("Avatar"));
-                user.setUserStatus(rs.getInt("UserStatus")); // Thay getBoolean thành getInt
+                user.setUserStatus(rs.getInt("UserStatus")); // Đúng với kiểu int trong User.java
                 comment.setUser(user);
 
                 // Set Product details
@@ -79,7 +79,8 @@ public class ProductCommentDAO extends DBContext {
 
     public List<ProductComment> getCommentsByProductId(int productId) {
         List<ProductComment> comments = new ArrayList<>();
-        String query = "SELECT pc.*, u.UserID, u.Username, u.Avatar FROM ProductComment pc "
+        String query = "SELECT pc.*, u.UserID, u.Username, u.FullName, u.Avatar " + // Thêm FullName vào đây để tương thích
+                "FROM ProductComment pc "
                 + "JOIN Users u ON pc.UserID = u.UserID "
                 + "WHERE pc.ProductID = ? AND pc.ProductCommentStatus = 1 "
                 + "ORDER BY pc.Date_Comment DESC";
@@ -98,6 +99,7 @@ public class ProductCommentDAO extends DBContext {
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
                 user.setUsername(rs.getString("Username"));
+                user.setFullName(rs.getString("FullName")); // Thêm FullName
                 user.setAvatar(rs.getString("Avatar"));
                 comment.setUser(user);
 
@@ -116,8 +118,7 @@ public class ProductCommentDAO extends DBContext {
     public boolean toggleCommentStatus(int commentId) {
         String query = "UPDATE ProductComment SET ProductCommentStatus = CASE WHEN ProductCommentStatus = 1 THEN 0 ELSE 1 END WHERE CommentID = ?";
         
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, commentId);
             int result = ps.executeUpdate();
             return result > 0;

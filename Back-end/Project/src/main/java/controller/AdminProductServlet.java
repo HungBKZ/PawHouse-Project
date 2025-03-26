@@ -29,7 +29,7 @@ public class AdminProductServlet extends HttpServlet {
 
     private String getUploadDirectory(HttpServletRequest request) {
         Properties properties = new Properties();
-        String configPath = "src/main/config/config.properties";
+        String configPath = request.getServletContext().getRealPath("/WEB-INF/config.properties");
 
         try (InputStream input = new FileInputStream(configPath)) {
             properties.load(input);
@@ -40,8 +40,8 @@ public class AdminProductServlet extends HttpServlet {
             return uploadPath;
         } catch (IOException ex) {
             ex.printStackTrace();
+            return request.getServletContext().getRealPath("/imgs/product");
         }
-        return request.getServletContext().getRealPath("/imgs/product");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -84,7 +84,13 @@ public class AdminProductServlet extends HttpServlet {
                 String description = request.getParameter("description");
                 double price = Double.parseDouble(request.getParameter("price"));
                 int stock = Integer.parseInt(request.getParameter("stock"));
-                int status = Integer.parseInt(request.getParameter("status"));
+                String statusStr = request.getParameter("status");
+                int status = (statusStr != null && !statusStr.isEmpty()) ? Integer.parseInt(statusStr) : 0;
+
+                // Logic điều chỉnh trạng thái dựa trên stock
+                if (stock <= 0) {
+                    status = 0; // Nếu stock = 0, trạng thái mặc định là Không hoạt động
+                }
 
                 if (price < 0 || stock < 0) {
                     response.sendRedirect(request.getContextPath() + "/admin/products?error=InvalidValues");
@@ -105,20 +111,28 @@ public class AdminProductServlet extends HttpServlet {
                     imagePath = "imgs/product/" + fileName;
                 }
 
+                ProductAdmin product;
                 if ("add".equals(action)) {
-                    ProductAdmin product = new ProductAdmin(0, categoryID, name, description, price, stock, imagePath, status);
-                    productDAO.addProduct(product);
+                    product = new ProductAdmin(0, categoryID, name, description, price, stock, imagePath, status);
+                    boolean added = productDAO.addProduct(product);
+                    if (!added) {
+                        response.sendRedirect(request.getContextPath() + "/admin/products?error=AddFailed");
+                        return;
+                    }
                 } else if ("update".equals(action)) {
                     int id = Integer.parseInt(request.getParameter("id"));
-                    ProductAdmin product = new ProductAdmin(id, categoryID, name, description, price, stock, imagePath, status);
-                    productDAO.updateProduct(product);
+                    product = new ProductAdmin(id, categoryID, name, description, price, stock, imagePath, status);
+                    boolean updated = productDAO.updateProduct(product);
+                    if (!updated) {
+                        response.sendRedirect(request.getContextPath() + "/admin/products?error=UpdateFailed");
+                        return;
+                    }
                 }
             }
-        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/admin/products");
+        } catch (Exception e) {
+            e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/admin/products?error=InvalidInput");
-            return;
         }
-
-        response.sendRedirect(request.getContextPath() + "/admin/products");
     }
 }
