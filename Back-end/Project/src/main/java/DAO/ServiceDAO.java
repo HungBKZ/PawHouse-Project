@@ -115,5 +115,40 @@ public class ServiceDAO extends DBContext {
 
         return service;
     }
-}
 
+     public List<Service> getMedicalServices() {
+        List<Service> serviceList = new ArrayList<>();
+        String query = "SELECT s.*, sc.CategoryID, sc.CategoryName, sc.Type "
+                     + "FROM Services s "
+                     + "JOIN ServiceCategories sc ON s.CategoryID = sc.CategoryID "
+                     + "WHERE sc.Type = 'Thú y' AND s.ServiceStatus = 1";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Service service = new Service();
+                service.setServiceID(rs.getInt("ServiceID"));
+
+                ServiceCategories category = new ServiceCategories();
+                category.setCategoryID(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+                category.setType(rs.getString("Type"));
+                service.setCategory(category);
+
+                service.setServiceName(rs.getString("ServiceName"));
+                service.setDescription(rs.getString("Description"));
+                service.setPrice(rs.getDouble("Price"));
+                service.setServiceImage(rs.getString("ServiceImage"));
+                service.setServiceStatus(rs.getBoolean("ServiceStatus"));
+
+                serviceList.add(service);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return serviceList;
+    }
+}

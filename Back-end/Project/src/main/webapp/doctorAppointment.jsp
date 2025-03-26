@@ -49,6 +49,7 @@
                 text-transform: uppercase;
                 letter-spacing: 1.5px;
                 background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                background-clip: text;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 position: relative;
@@ -295,32 +296,32 @@
                 }
             }
             .navbar {
-            background: #fff;
-            box-shadow: var(--shadow);
-            padding: 15px 0;
-        }
+                background: #fff;
+                box-shadow: var(--shadow);
+                padding: 15px 0;
+            }
 
-        .navbar-brand {
-            font-size: 28px;
-            font-weight: 800;
-            color: #0072ff;
-            transition: color 0.3s ease;
-        }
+            .navbar-brand {
+                font-size: 28px;
+                font-weight: 800;
+                color: #0072ff;
+                transition: color 0.3s ease;
+            }
 
-        .navbar-brand:hover {
-            color: #00c6ff;
-        }
+            .navbar-brand:hover {
+                color: #00c6ff;
+            }
 
-        .nav-link {
-            font-weight: 600;
-            color: #333;
-            padding: 10px 20px;
-            transition: color 0.3s ease;
-        }
+            .nav-link {
+                font-weight: 600;
+                color: #333;
+                padding: 10px 20px;
+                transition: color 0.3s ease;
+            }
 
-        .nav-link:hover {
-            color: #0072ff;
-        }
+            .nav-link:hover {
+                color: #0072ff;
+            }
         </style>
     </head>
     <body>
@@ -371,7 +372,8 @@
                             <th>Trạng thái</th>
                             <th>Giá</th>
                             <th>Ghi chú</th>
-                            <th>Thao tác</th>
+                            <th>Nhân Viên</th>
+                            <th>Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -382,35 +384,30 @@
                                 <td>${appointment.customer.fullName}</td>
                                 <td>${appointment.service.serviceName}</td>
                                 <td>${appointment.appointmentDate}</td>
-                                <td>
-                                    <span class="appointment-status
-                                          <c:choose>
-                                              <c:when test="${appointment.appointmentStatus == null}">cancelled</c:when>
-                                              <c:when test="${appointment.appointmentStatus == 1}">confirmed</c:when>
-                                              <c:when test="${appointment.appointmentStatus == 0}">pending</c:when>
-                                          </c:choose>">
-                                        <c:choose>
-                                            <c:when test="${appointment.appointmentStatus == null}">Đã Từ Chối</c:when>
-                                            <c:when test="${appointment.appointmentStatus == 1}">Đã Duyệt</c:when>
-                                            <c:when test="${appointment.appointmentStatus == 0}">Đang Xử Lý</c:when>
-                                        </c:choose>
-                                    </span>
+                                <td data-status="${appointment.appointmentStatus}">
+                                    <select class="form-select status-select">
+                                        <option value="0" ${appointment.appointmentStatus == '0' ? 'selected' : ''}>Đang xử lý</option>
+                                        <option value="1" ${appointment.appointmentStatus == '1' ? 'selected' : ''}>Duyệt</option>
+                                        <option value="null" ${appointment.appointmentStatus == null ? 'selected' : ''}>Từ chối</option>
+                                    </select>
                                 </td>
                                 <td>${appointment.price}</td>
                                 <td>${appointment.notes}</td>
                                 <td>
-                                    <form action="AppointmentServlet" method="post" style="display: inline;">
+                                    <select class="form-select staff-select">
+                                        <option value="0">Không có</option>
+                                        <c:forEach var="staff" items="${staff}">
+                                            <option value="${staff.userID}" ${staff.userID == appointment.staff.userID ? 'selected' : ''}>${staff.username}</option>
+                                        </c:forEach>
+                                    </select>
+                                </td>
+                                <td>
+                                    <form action="AppointmentServlet" method="post">
+                                        <input type="hidden" name="action" value="update">
                                         <input type="hidden" name="appointmentID" value="${appointment.appointmentID}">
-                                        <input type="hidden" name="action" value="updateStatus">
-                                        <c:if test="${appointment.appointmentStatus == '0'}">
-                                            <button type="submit" class="btn btn-success btn-action" name="newStatus" value="1">
-                                                <i class="bi bi-check-circle"></i> Duyệt 
-                                            </button>
-                                            <button type="submit" class="btn btn-danger btn-action" name="newStatus" value= "null" >
-                                                <i class="bi bi-check-circle"></i> Từ chối
-                                            </button>
-                                        </c:if>
-                                        
+                                        <input type="hidden" name="appointmentStatus" class="status-input" value="${appointment.appointmentStatus}">
+                                        <input type="hidden" name="userID" class="staff-input" value="${appointment.staff != null ? appointment.staff.userID : '0'}">
+                                        <button type="submit" class="btn btn-primary mt-2">Lưu</button>
                                     </form>
                                 </td>
                             </tr>
@@ -421,45 +418,65 @@
 
             <div class="appointment-form">
                 <h3>Tạo lịch hẹn mới</h3>
-                <form action="AppointmentServlet" method="post">
+                <form action="AppointmentServlet" method="post" id="appointmentForm" onsubmit="return validateForm()">
                     <input type="hidden" name="action" value="create">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="petId">ID Thú cưng:</label>
-                                <input type="number" class="form-control" name="petId" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="appointmentDate">Ngày hẹn:</label>
-                                <input type="datetime-local" class="form-control" name="appointmentDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="serviceId">ID Dịch vụ:</label>
-                                <input type="number" class="form-control" name="serviceId" required>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customerId" class="form-label">Chọn khách hàng</label>
+                            <select class="form-select" id="customerId" name="customerId" required onchange="loadPets(this.value)">
+                                <option value="">Chọn khách hàng</option>
+                                <c:forEach items="${customers}" var="customer">
+                                    <option value="${customer.userID}">${customer.fullName} - ${customer.phone}</option>
+                                </c:forEach>
+                            </select>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="customerId">ID Khách hàng:</label>
-                                <input type="number" class="form-control" name="customerId" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="doctorId">ID Bác sĩ:</label>
-                                <input type="number" class="form-control" name="doctorId" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="price">Giá:</label>
-                                <input type="number" step="0.01" class="form-control" name="price" required>
-                            </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="petId" class="form-label">Chọn thú cưng</label>
+                            <select class="form-select" id="petId" name="petId" required>
+                                <option value="">Vui lòng chọn khách hàng trước</option>
+                            </select>
                         </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="doctorId" class="form-label">Chọn bác sĩ</label>
+                            <select class="form-select" id="doctorId" name="doctorId" required>
+                                <option value="">Chọn bác sĩ</option>
+                                <c:forEach items="${staff}" var="doctor">
+                                    <option value="${doctor.userID}">${doctor.fullName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="serviceId" class="form-label">Chọn dịch vụ</label>
+                            <select class="form-select" id="serviceId" name="serviceId" required onchange="updatePrice()">
+                                <option value="">Chọn dịch vụ</option>
+                                <c:forEach items="${services}" var="service">
+                                    <option value="${service.serviceID}" data-price="${service.price}">${service.serviceName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label">Giá dịch vụ</label>
+                            <input type="text" class="form-control" id="price" name="price" readonly>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="appointmentDate" class="form-label">Ngày hẹn</label>
+                            <input type="datetime-local" class="form-control" id="appointmentDate" name="appointmentDate" required>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="note" class="form-label">Ghi chú</label>
+                            <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+                        </div>
+
                         <div class="col-12">
-                            <div class="form-group">
-                                <label for="notes">Ghi chú:</label>
-                                <textarea class="form-control" name="notes" rows="3"></textarea>
-                            </div>
+                            <button type="submit" class="btn btn-primary">Tạo lịch hẹn</button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Tạo lịch hẹn</button>
                 </form>
             </div>
             <div class="text-center mt-4">
@@ -471,11 +488,102 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-                                        function viewDetails(appointmentId) {
-                                            // Implement view details functionality
-                                            alert('Xem chi tiết lịch hẹn ID: ' + appointmentId);
+                                function loadPets(customerId) {
+                                    console.log('Loading pets for customer:', customerId);
+                                    if (!customerId) {
+                                        $('#petId').html('<option value="">Vui lòng chọn khách hàng trước</option>');
+                                        return;
+                                    }
+
+                                    $.ajax({
+                                        url: 'AppointmentServlet',
+                                        method: 'GET',
+                                        data: {
+                                            action: 'getPets',
+                                            customerId: customerId
+                                        },
+                                        success: function (response) {
+                                            console.log('Server response:', response);
+                                            try {
+                                                let pets = response;
+
+                                                // Kiểm tra kiểu dữ liệu của response
+                                                if (typeof response === 'string') {
+                                                    pets = JSON.parse(response);
+                                                }
+
+                                                console.log('Parsed pets:', pets);
+
+                                                if (!Array.isArray(pets)) {
+                                                    console.error('Response is not an array:', pets);
+                                                    throw new Error('Invalid pets data format: expected array');
+                                                }
+
+                                                if (pets.length === 0) {
+                                                    console.log('No pets found for this customer');
+                                                    $('#petId').html('<option value="">Không tìm thấy thú cưng nào đã nhận nuôi</option>');
+                                                    return;
+                                                }
+
+                                                let options = '<option value="">Chọn thú cưng</option>';
+                                                pets.forEach(pet => {
+                                                    if (pet && pet.petID && pet.petName) {
+                                                        options += `<option value="${pet.petID}">${pet.petName}</option>`;
+                                                    } else {
+                                                        console.warn('Invalid pet data:', pet);
+                                                    }
+                                                });
+                                                $('#petId').html(options);
+                                                console.log('Successfully loaded ' + pets.length + ' pets');
+                                            } catch (e) {
+                                                console.error('Error parsing response:', e);
+                                                console.error('Raw response:', response);
+                                                $('#petId').html('<option value="">Lỗi khi tải danh sách thú cưng</option>');
+                                            }
+                                        },
+                                        error: function (xhr, status, error) {
+                                            console.error('AJAX error:', error);
+                                            console.error('Status:', status);
+                                            console.error('Response:', xhr.responseText);
+                                            $('#petId').html('<option value="">Lỗi khi tải danh sách thú cưng</option>');
                                         }
+                                    });
+                                }
+
+
+                                function updatePrice() {
+                                    let selectedOption = $('#serviceId option:selected');
+                                    let price = selectedOption.data('price') || '';
+                                    $('#price').val(price ? price.toLocaleString('vi-VN') + ' VNĐ' : '');
+                                }
+
+                                function viewDetails(appointmentId) {
+                                    // Implement view details functionality
+                                    alert('Xem chi tiết lịch hẹn ID: ' + appointmentId);
+                                }
+
+                                // Add event listeners for status and staff selection changes
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    // Handle status changes
+                                    document.querySelectorAll('.status-select').forEach(function (select) {
+                                        select.addEventListener('change', function () {
+                                            const row = this.closest('tr');
+                                            const statusInput = row.querySelector('.status-input');
+                                            statusInput.value = this.value;
+                                        });
+                                    });
+
+                                    // Handle staff changes
+                                    document.querySelectorAll('.staff-select').forEach(function (select) {
+                                        select.addEventListener('change', function () {
+                                            const row = this.closest('tr');
+                                            const staffInput = row.querySelector('.staff-input');
+                                            staffInput.value = this.value;
+                                        });
+                                    });
+                                });
         </script>
     </body>
 </html>

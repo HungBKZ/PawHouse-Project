@@ -466,4 +466,29 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
+    public List<User> getCustomersWithPets() {
+        List<User> customerList = new ArrayList<>();
+        String query = "SELECT DISTINCT u.* FROM Users u " +
+                      "INNER JOIN Pets p ON u.UserID = p.UserID " +
+                      "WHERE u.RoleID = 2 AND u.UserStatus = 1";
+
+        try (PreparedStatement ps = connection.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setUsername(rs.getString("Username"));
+                user.setEmail(rs.getString("Email"));
+                user.setFullName(rs.getString("FullName"));
+                user.setPhone(rs.getString("Phone"));
+                user.setAvatar(rs.getString("Avatar"));
+                user.setUserStatus(rs.getInt("UserStatus"));
+                customerList.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customerList;
+    }
 }

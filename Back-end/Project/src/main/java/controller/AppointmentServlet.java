@@ -6,10 +6,13 @@ package controller;
 
 import DAO.AppointmentDAO;
 import DAO.PetDAO;
+import DAO.UserDAO;
+import DAO.ServiceDAO;
 import Model.Appointment;
 import Model.Pet;
 import Model.Service;
 import Model.User;
+import com.google.gson.Gson;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,19 +32,37 @@ public class AppointmentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private AppointmentDAO appointmentDAO;
     private PetDAO petDAO;
+    private UserDAO userDAO;
+    private ServiceDAO serviceDAO;
 
     @Override
     public void init() throws ServletException {
         appointmentDAO = new AppointmentDAO();
         petDAO = new PetDAO();
+        userDAO = new UserDAO();
+        serviceDAO = new ServiceDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+        
+        if ("getPets".equals(action)) {
+            handleGetPets(request, response);
+            return;
+        }
+        
         try {
-            // Lấy danh sách lịch hẹn từ database
+            // Lấy danh sách lịch hẹn và dữ liệu cần thiết
+            List<User> customers = userDAO.getCustomersWithPets();
+            List<User> doctors = userDAO.getDoctor();
+            List<Service> services = serviceDAO.getMedicalServices();
             List<Appointment> appointments = appointmentDAO.getAllAppointmentsDoctor();
+            
+            request.setAttribute("customers", customers);
+            request.setAttribute("staff", doctors);
+            request.setAttribute("services", services);
             request.setAttribute("appointments", appointments);
 
             // Kiểm tra thông báo thành công
@@ -57,11 +78,40 @@ public class AppointmentServlet extends HttpServlet {
                 }
             }
 
-            // Chuyển hướng đến trang doctorAppointment.jsp để hiển thị
             request.getRequestDispatcher("/doctorAppointment.jsp").forward(request, response);
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Lỗi khi tải danh sách lịch hẹn: " + e.getMessage());
+            request.setAttribute("errorMessage", "Lỗi khi tải dữ liệu: " + e.getMessage());
             request.getRequestDispatcher("/doctorAppointment.jsp").forward(request, response);
+        }
+    }
+
+    private void handleGetPets(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            int customerId = Integer.parseInt(request.getParameter("customerId"));
+            System.out.println("Getting pets for customer ID: " + customerId);
+            
+            List<Pet> pets = petDAO.getPetsByCustomerId(customerId);
+            System.out.println("Found " + pets.size() + " pets");
+            
+            // Convert pets list to JSON and send response
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json; charset=UTF-8");
+            
+            Gson gson = new Gson();
+            String jsonPets = gson.toJson(pets);
+            System.out.println("JSON response: " + jsonPets);
+            
+            response.getWriter().write(jsonPets);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid customer ID format: " + request.getParameter("customerId"));
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid customer ID");
+        } catch (Exception e) {
+            System.err.println("Error getting pets: " + e.getMessage());
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Error: " + e.getMessage());
         }
     }
 
@@ -73,7 +123,7 @@ public class AppointmentServlet extends HttpServlet {
         try {
             if ("create".equals(action)) {
                 handleCreateAppointment(request, response);
-            } else if ("updateStatus".equals(action)) {
+            } else if ("update".equals(action)) {
                 handleUpdateStatus(request, response);
             } else {
                 throw new ServletException("Invalid action parameter");
@@ -87,56 +137,73 @@ public class AppointmentServlet extends HttpServlet {
     private void handleCreateAppointment(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Lấy và kiểm tra các tham số bắt buộc
-            String petId = request.getParameter("petId");
+            // Get all parameters first
+            String customerIdStr = request.getParameter("customerId");
+            String petIdStr = request.getParameter("petId");
+            String doctorIdStr = request.getParameter("doctorId");
+            String serviceIdStr = request.getParameter("serviceId");
             String appointmentDate = request.getParameter("appointmentDate");
-            String serviceId = request.getParameter("serviceId");
-            String customerId = request.getParameter("customerId");
-            String doctorId = request.getParameter("doctorId");
-            String notes = request.getParameter("notes");
-            String price = request.getParameter("price");
+            String note = request.getParameter("note");
 
-            // Kiểm tra dữ liệu đầu vào
-            if (petId == null || petId.isEmpty() || serviceId == null || serviceId.isEmpty()
-                    || customerId == null || customerId.isEmpty() || doctorId == null || doctorId.isEmpty()) {
-                throw new IllegalArgumentException("Vui lòng điền đầy đủ thông tin bắt buộc");
+            // Validate all required fields
+            if (customerIdStr == null || customerIdStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn khách hàng");
+            }
+            if (petIdStr == null || petIdStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn thú cưng");
+            }
+            if (doctorIdStr == null || doctorIdStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn bác sĩ");
+            }
+            if (serviceIdStr == null || serviceIdStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn dịch vụ");
+            }
+            if (appointmentDate == null || appointmentDate.trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn ngày hẹn");
             }
 
-            // Chuyển đổi ID sang Integer
-            int petIdInt = Integer.parseInt(petId);
-            int serviceIdInt = Integer.parseInt(serviceId);
-            int customerIdInt = Integer.parseInt(customerId);
-            int doctorIdInt = Integer.parseInt(doctorId);
+            // Parse IDs after validation
+            int customerId = Integer.parseInt(customerIdStr);
+            int petId = Integer.parseInt(petIdStr);
+            int doctorId = Integer.parseInt(doctorIdStr);
+            int serviceId = Integer.parseInt(serviceIdStr);
 
-            // Lấy thông tin Pet
-            Pet pet = petDAO.getById(petIdInt);
-            if (pet == null) {
-                throw new IllegalArgumentException("Không tìm thấy thú cưng với ID: " + petId);
-            }
-
-            // Tạo đối tượng Appointment
+            // Create appointment object
             Appointment appointment = new Appointment();
+            
+            // Set customer
+            User customer = new User();
+            customer.setUserID(customerId);
+            appointment.setCustomer(customer);
+            
+            // Set pet
+            Pet pet = new Pet();
+            pet.setPetID(petId);
             appointment.setPet(pet);
-            appointment.setService(new Service(serviceIdInt));
-            appointment.setCustomer(new User(customerIdInt));
-            appointment.setDoctor(new User(doctorIdInt));
+            
+            // Set doctor
+            User doctor = new User();
+            doctor.setUserID(doctorId);
+            appointment.setStaff(doctor);
+            
+            // Set service
+            Service service = new Service();
+            service.setServiceID(serviceId);
+            appointment.setService(service);
+            
+            // Set other fields
             appointment.setAppointmentDate(Timestamp.valueOf(appointmentDate.replace("T", " ") + ":00"));
-            appointment.setBookingDate(new Timestamp(System.currentTimeMillis()));
+            appointment.setNotes(note);
             appointment.setAppointmentStatus("Chờ duyệt");
-            appointment.setNotes(notes);
-            appointment.setPrice(Double.parseDouble(price));
+            appointment.setBookingDate(new Timestamp(System.currentTimeMillis()));
 
-            // Lưu lịch hẹn vào database
+            // Lưu vào database
             appointmentDAO.addAppointment(appointment);
 
             // Chuyển hướng với thông báo thành công
-            response.sendRedirect("AppointmentServlet?success=created");
-
-        } catch (IllegalArgumentException e) {
-            request.setAttribute("errorMessage", "Lỗi dữ liệu: " + e.getMessage());
-            doGet(request, response);
+            response.sendRedirect(request.getContextPath() + "/AppointmentServlet?success=created");
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Lỗi hệ thống: " + e.getMessage());
+            request.setAttribute("errorMessage", "Lỗi khi tạo lịch hẹn: " + e.getMessage());
             doGet(request, response);
         }
     }
@@ -144,31 +211,39 @@ public class AppointmentServlet extends HttpServlet {
     private void handleUpdateStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String appointmentId = request.getParameter("appointmentID");
-            String newStatus = request.getParameter("newStatus");
+            // Lấy dữ liệu từ form
+            String idParam = request.getParameter("appointmentID");
+            String statusParam = request.getParameter("appointmentStatus");
+            String staffParam = request.getParameter("userID");
 
-            if (appointmentId == null) {
-                throw new IllegalArgumentException("Thiếu thông tin cập nhật trạng thái");
+            // Kiểm tra dữ liệu đầu vào có hợp lệ không
+            if (idParam == null || statusParam == null) {
+                request.setAttribute("errorMessage", "Thiếu dữ liệu cần thiết!");
+                doGet(request, response);
+                return;
+            }
+
+            int appointmentID = Integer.parseInt(idParam);
+            
+            Integer userID= Integer.parseInt(staffParam);
+            
+            String status = statusParam;
+            if (statusParam.equals("null")) {
+                status = null;
             }
             
-            boolean success;
-            
-            if ("null".equals(newStatus)) {
-                success = appointmentDAO.updateAppointmentStatus(
-                        Integer.parseInt(appointmentId), null
-                );
-            } else {
-                success = appointmentDAO.updateAppointmentStatus(
-                        Integer.parseInt(appointmentId), newStatus
-                );
-            }
+
+            // Cập nhật trạng thái trong database
+            boolean success = appointmentDAO.updateAppointmentStatus2(appointmentID, status, userID);
+
             if (success) {
                 response.sendRedirect("AppointmentServlet?success=updated");
             } else {
-                throw new Exception("Không thể cập nhật trạng thái");
+                request.setAttribute("errorMessage", "Cập nhật trạng thái thất bại.");
+                doGet(request, response);
             }
-        } catch (Exception e) {
-            request.setAttribute("errorMessage", "Lỗi cập nhật trạng thái: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Dữ liệu nhập không hợp lệ!");
             doGet(request, response);
         }
     }

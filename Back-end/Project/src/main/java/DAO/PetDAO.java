@@ -353,7 +353,7 @@ public class PetDAO extends DBContext {
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setNString(1, adoptionStatus); // Gán giá trị trạng thái nhận nuôi
-            System.out.println("🟢 Query: SELECT * FROM Pets WHERE AdoptionStatus = N'" + adoptionStatus + "';");
+            System.out.println(" Query: SELECT * FROM Pets WHERE AdoptionStatus = N'" + adoptionStatus + "';");
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -377,7 +377,7 @@ public class PetDAO extends DBContext {
                 pets.add(pet); // Thêm vào danh sách
             }
         } catch (SQLException e) {
-            System.err.println("❌ Lỗi khi lấy danh sách thú cưng với AdoptionStatus = " + adoptionStatus + ": " + e.getMessage());
+            System.err.println(" Lỗi khi lấy danh sách thú cưng với AdoptionStatus = " + adoptionStatus + ": " + e.getMessage());
         }
 
         return pets;
@@ -455,7 +455,7 @@ public class PetDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, userId);
             ps.setNString(2, adoptionStatus); // Gán giá trị trạng thái nhận nuôi
-            System.out.println("🟢 Query: SELECT * FROM Pets WHERE UserID = " + userId + " AND AdoptionStatus = N'" + adoptionStatus + "';");
+            System.out.println(" Query: SELECT * FROM Pets WHERE UserID = " + userId + " AND AdoptionStatus = N'" + adoptionStatus + "';");
 
             ResultSet rs = ps.executeQuery();
 
@@ -484,7 +484,7 @@ public class PetDAO extends DBContext {
                 pets.add(pet); // Thêm vào danh sách
             }
         } catch (SQLException e) {
-            System.err.println("❌ Lỗi khi lấy danh sách thú cưng Đang chờ duyệt của UserID = " + userId + ": " + e.getMessage());
+            System.err.println(" Lỗi khi lấy danh sách thú cưng Đang chờ duyệt của UserID = " + userId + ": " + e.getMessage());
         }
 
         return pets;
@@ -586,7 +586,7 @@ public class PetDAO extends DBContext {
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setInt(1, petId);  // Gán giá trị petId
-            System.out.println("🟢 Query: SELECT * FROM Pets WHERE PetID = " + petId);
+            System.out.println(" Query: SELECT * FROM Pets WHERE PetID = " + petId);
 
             ResultSet rs = ps.executeQuery();
 
@@ -614,9 +614,44 @@ public class PetDAO extends DBContext {
                 pet.setOwner(owner);
             }
         } catch (SQLException e) {
-            System.err.println("❌ Lỗi khi lấy thông tin thú cưng PetID = " + petId + ": " + e.getMessage());
+            System.err.println(" Lỗi khi lấy thông tin thú cưng PetID = " + petId + ": " + e.getMessage());
         }
 
         return pet;  // Trả về đối tượng Pet hoặc null nếu không tìm thấy
+    }
+
+    public List<Pet> getPetsByCustomerId(int userId) {
+        List<Pet> pets = new ArrayList<>();
+        String query = "SELECT p.PetID, p.PetName, p.Species, p.Age, p.AdoptionStatus " +
+                      "FROM Pets p " +
+                      "WHERE p.UserID = ? AND p.AdoptionStatus = N'Đã nhận nuôi'";
+                      
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, userId);
+            System.out.println("Executing query for UserID: " + userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Pet pet = new Pet();
+                    pet.setPetID(rs.getInt("PetID"));
+                    pet.setPetName(rs.getNString("PetName"));
+                    pet.setSpecies(rs.getNString("Species"));
+                    pet.setAge(rs.getInt("Age"));
+                    pet.setAdoptionStatus(rs.getNString("AdoptionStatus"));
+                    
+                    System.out.println("\nAdded pet:");
+                    System.out.println("ID: " + pet.getPetID());
+                    System.out.println("Name: " + pet.getPetName());
+                    System.out.println("Species: " + pet.getSpecies());
+                    System.out.println("Status: " + pet.getAdoptionStatus());
+                    pets.add(pet);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching pets: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        System.out.println("\nTotal pets found: " + pets.size());
+        return pets;
     }
 }

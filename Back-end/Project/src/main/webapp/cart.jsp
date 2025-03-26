@@ -56,6 +56,35 @@
                 font-weight: bold;
                 color: #28a745;
             }
+            
+            /* Hiệu ứng hover */
+            tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            /* Căn giữa nội dung trong bảng */
+            table th, table td {
+                vertical-align: middle;
+                text-align: center;
+            }
+
+            /* Tổng tiền đẹp hơn */
+            .total-amount {
+                font-size: 22px;
+                font-weight: bold;
+                color: #28a745;
+            }
+
+            /* Modal style */
+            .modal-content {
+                border-radius: 10px;
+                padding: 20px;
+            }
+
+            .modal-header {
+                background-color: #007bff;
+                color: white;
+            }
         </style>
 
         <script>
@@ -78,6 +107,14 @@
             }
 
 
+            function showPopup(message) {
+                document.getElementById("popup-message").innerText = message;
+                var myModal = new bootstrap.Modal(document.getElementById('popupModal'), {
+                    keyboard: false
+                });
+                myModal.show();
+            }
+
             function submitSelected() {
                 let selectedProducts = [];
                 document.querySelectorAll('.product-checkbox:checked').forEach(checkbox => {
@@ -85,7 +122,7 @@
                 });
 
                 if (selectedProducts.length === 0) {
-                    alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+                    showPopup("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
                     return;
                 }
 
@@ -157,6 +194,21 @@
                 </form>
             </div>
         </section>
+        
+        <!-- Modal Pop-Up -->
+        <div class="modal fade" id="popupModal" tabindex="-1" aria-labelledby="popupModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="popupModalLabel">Thông Báo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="popup-message">
+                        <!-- Thông báo sẽ được hiển thị tại đây -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <%@ include file="includes/footer.jsp" %>
 
