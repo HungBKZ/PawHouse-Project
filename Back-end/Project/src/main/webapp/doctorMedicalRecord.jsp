@@ -523,8 +523,12 @@
                                     <input type="number" step="0.1" name="temperature" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Mã khám bệnh</label>
-                                    <input type="number" step="0.1" name="appointmentId" class="form-control" required>
+                                    <label class="form-label">Mã khám bệnh - Dịch vụ</label>
+                                    <select name="appointmentId" class="form-control" required>
+                                        <c:forEach items="${AppointmentsDoctor}" var="AppointmentsDoctor">
+                                            <option value="${AppointmentsDoctor.appointmentID}">${AppointmentsDoctor.appointmentID} - ${AppointmentsDoctor.service.serviceName}</option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
                             <div class="mb-3">

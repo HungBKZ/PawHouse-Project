@@ -3,6 +3,7 @@ package controller;
 import DAO.MedicalRecordDAO;
 import DAO.PetDAO;
 import DAO.UserDAO;
+import DAO.AppointmentDAO;
 import Model.*;
 
 import jakarta.servlet.*;
@@ -22,11 +23,16 @@ public class DoctorVacxinServlet extends HttpServlet {
         MedicalRecordDAO dao = new MedicalRecordDAO();
         PetDAO pdao = new PetDAO();
         UserDAO udao = new UserDAO();
+        AppointmentDAO adao = new AppointmentDAO();
+        
 
+        List<Appointment> Lista = adao.getAllAppointmentsDoctorVacxin();
         List<Pet> Listp = pdao.getAllPets();
         List<User> Listu = udao.getDoctor();
         List<MedicalRecords> list = dao.getAllWithPetAndDoctor2();
-
+        
+        
+        request.setAttribute("AppointmentsDoctor", Lista);
         request.setAttribute("pet", Listp);
         request.setAttribute("doctors", Listu);
         request.setAttribute("records", list);
