@@ -11,6 +11,8 @@
         <title>PawHouse - Sản Phẩm</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+        <!-- Add Toastify CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -106,6 +108,17 @@
                 margin-bottom: 0;
             }
 
+            /* Responsive cho màn hình nhỏ */
+            @media (max-width: 768px) {
+                .order-btn {
+                    top: 55%;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(-50%);
+                    font-size: 18px;
+                    padding: 12px 30px;
+                }
+            }
+
             /* Pagination styling */
             #pagination {
                 margin-top: 2rem;
@@ -133,30 +146,6 @@
                 text-decoration: none;
                 color: inherit;
             }
-            .custom-alert {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background-color: #4CAF50;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 5px;
-                font-size: 16px;
-                font-weight: bold;
-                z-index: 1000;
-                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-                transition: opacity 0.5s ease;
-            }
-
-            .custom-alert.error {
-                background-color: #f44336;
-            }
-
-            .custom-alert.fade-out {
-                opacity: 0;
-            }
-
-
         </style>
     </head>
     <body>
@@ -214,223 +203,273 @@
                                         <div class="product-card shadow">
                                             <a href="ProductDetail?id=${p.productID}">
                                                 <img src="${p.productImage}" class="card-img-top" alt="${p.productName}">
-                                                <div class="card-body text-center">
-                                                    <h5 class="card-title">${p.productName}</h5>
-                                                    <p class="card-text">${p.description}</p>
-                                                    <p class="price">${p.price} VND</p>
-                                                    <p class="stock">${p.stock} sản phẩm</p>
-                                                    <button class="btn btn-success w-100">Mua Ngay</button>
-                                                    <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">
-                                                        🛒 Thêm vào Giỏ
-                                                    </button>
                                             </a>
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">${p.productName}</h5>
+                                                <p class="card-text">${p.description}</p>
+                                                <p class="price">${p.price} VND</p>
+                                                <p class="stock">${p.stock} sản phẩm</p>
+                                                <c:choose>
+                                                    <c:when test="${not empty sessionScope.user}">
+                                                        <c:choose>
+                                                            <c:when test="${p.stock == 0}">
+                                                                <p class="text-danger fw-bold">Sản phẩm đã hết hàng</p>
+                                                                <p class="text-danger fw-bold">Đợi shop thêm vào đã nhé!</p>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-success w-100 mt-2 buy-now-btn"
+                                                                        data-product-id="${p.productID}">Mua Ngay</button>
+
+                                                                <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn"
+                                                                        data-product-id="${p.productID}">
+                                                                    🛒 Thêm vào Giỏ
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${p.stock == 0}">
+                                                                <p class="text-danger fw-bold">Sản phẩm đã hết hàng</p>
+                                                                <p class="text-danger fw-bold">Đợi shop thêm vào đã nhé!</p>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
+                                                                <button class="btn btn-outline-primary w-100 mt-2 login-required"">
+                                                                    🛒 Thêm vào Giỏ
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+
                                         </div>
                                     </div>
-                                </div>
 
-                            </c:forEach>
-                        </c:otherwise>
-                    </c:choose>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div id="pagination" class="d-flex justify-content-center mt-4"></div>
                 </div>
-                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
-    <%@ include file="includes/footer.jsp" %>
+        <!-- Footer -->
+        <%@ include file="includes/footer.jsp" %>
+        <!-- Add Toastify JS -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script>
+            function showToast(message, type) {
+                const backgroundColor = type === 'success' ? '#28a745' :
+                        type === 'error' ? '#dc3545' :
+                        '#17a2b8'; // info color
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.preventDefault(); // Ngăn chặn điều hướng trang
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: backgroundColor,
+                    stopOnFocus: true,
+                    close: true
+                }).showToast();
+            }
 
-                    let productId = this.getAttribute("data-product-id");
-
-                    fetch("AddToCart?productId=" + productId + "&quantity=1", {
-                        method: "GET"
-                    }).then(response => {
-                        if (response.ok) {
-                            showCustomAlert("Đã thêm sản phẩm vào giỏ hàng!", "success");
-                        } else {
-                            showCustomAlert("Lỗi khi thêm vào giỏ hàng.", "error");
-                        }
-                    }).catch(error => {
-                        console.error("Error:", error);
-                        showCustomAlert("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+            document.addEventListener("DOMContentLoaded", function () {
+                // Xử lý nút yêu cầu đăng nhập
+                document.querySelectorAll(".login-required").forEach(button => {
+                    button.addEventListener("click", function () {
+                        showToast("Vui lòng đăng nhập để thực hiện chức năng này!", "error");
                     });
                 });
-            });
-        });
 
-// Hàm hiển thị thông báo đẹp hơn
-        function showCustomAlert(message, type) {
-            let alertBox = document.createElement("div");
-            alertBox.className = `custom-alert ${type}`;
-            alertBox.innerText = message;
-
-            document.body.appendChild(alertBox);
-
-            setTimeout(() => {
-                alertBox.classList.add("fade-out");
-                setTimeout(() => alertBox.remove(), 500);
-            }, 2000);
-        }
-        document.addEventListener("DOMContentLoaded", function () {
-            const PRODUCTS_PER_PAGE = 9;
-            let currentPage = 1;
-            let currentProducts = Array.from(document.querySelectorAll(".product-item"));
-            let filteredProducts = [...currentProducts];
-
-            const searchBox = document.getElementById("searchBox");
-            const sortOptions = document.getElementById("sortOptions");
-            const paginationContainer = document.getElementById("pagination");
-            const productGrid = document.getElementById("productGrid");
-
-            searchBox.addEventListener("input", handleSearch);
-            sortOptions.addEventListener("change", handleSort);
-
-            function handleSearch() {
-                let searchQuery = searchBox.value.toLowerCase().trim();
-                filteredProducts = currentProducts.filter(item =>
-                    item.getAttribute("data-name").toLowerCase().includes(searchQuery)
-                );
-
-                currentPage = 1;
-                updateDisplay();
-            }
-
-            function handleSort() {
-                let sortType = sortOptions.value;
-
-                filteredProducts.sort((a, b) => {
-                    let nameA = a.getAttribute("data-name").toLowerCase();
-                    let nameB = b.getAttribute("data-name").toLowerCase();
-                    let priceA = parseFloat(a.getAttribute("data-price"));
-                    let priceB = parseFloat(b.getAttribute("data-price"));
-
-                    switch (sortType) {
-                        case "name_asc":
-                            return nameA.localeCompare(nameB);
-                        case "name_desc":
-                            return nameB.localeCompare(nameA);
-                        case "price_low":
-                            return priceA - priceB;
-                        case "price_high":
-                            return priceB - priceA;
-                        default:
-                            return 0;
-                    }
+                // Xử lý nút Mua Ngay
+                document.querySelectorAll(".buy-now-btn").forEach(button => {
+                    button.addEventListener("click", function () {
+                        const productId = this.getAttribute("data-product-id");
+                        // Thêm vào giỏ hàng và chuyển đến trang giỏ hàng
+                        fetch("AddToCart?productId=" + productId + "&quantity=1", {
+                            method: "GET"
+                        }).then(response => {
+                            if (response.ok) {
+                                window.location.href = "Cart";
+                            } else {
+                                showToast("Lỗi khi thêm vào giỏ hàng!", "error");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                            showToast("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                        });
+                    });
                 });
 
-                // Reorder elements in the DOM
-                filteredProducts.forEach(product => {
-                    productGrid.appendChild(product);
+                // Xử lý nút Thêm vào giỏ
+                document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                    button.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        const productId = this.getAttribute("data-product-id");
+
+                        fetch("AddToCart?productId=" + productId + "&quantity=1", {
+                            method: "GET"
+                        }).then(response => {
+                            if (response.ok) {
+                                showToast("Đã thêm sản phẩm vào giỏ hàng!", "success");
+                            } else {
+                                showToast("Lỗi khi thêm vào giỏ hàng!", "error");
+                            }
+                        }).catch(error => {
+                            console.error("Error:", error);
+                            showToast("Đã xảy ra lỗi! Vui lòng thử lại.", "error");
+                        });
+                    });
                 });
 
-                currentPage = 1;
-                updateDisplay();
-            }
+                // Xử lý tìm kiếm và sắp xếp
+                const PRODUCTS_PER_PAGE = 9;
+                let currentPage = 1;
+                let currentProducts = Array.from(document.querySelectorAll(".product-item"));
+                let filteredProducts = [...currentProducts];
 
-            function updateDisplay() {
-                let noProductsMessage = document.getElementById("noProductsMessage");
+                const searchBox = document.getElementById("searchBox");
+                const sortOptions = document.getElementById("sortOptions");
+                const paginationContainer = document.getElementById("pagination");
+                const productGrid = document.getElementById("productGrid");
 
-                // Ẩn tất cả sản phẩm
-                currentProducts.forEach(item => item.style.display = "none");
+                searchBox.addEventListener("input", handleSearch);
+                sortOptions.addEventListener("change", handleSort);
 
-                if (filteredProducts.length === 0) {
-                    if (!noProductsMessage) {
-                        noProductsMessage = document.createElement("div");
-                        noProductsMessage.id = "noProductsMessage";
-                        noProductsMessage.className = "col-12 text-center no-products-found";
-                        noProductsMessage.innerHTML = `
-                            <i class="bi bi-search"></i>
-                            <h4>Không tìm thấy sản phẩm</h4>
-                            <p>Vui lòng thử tìm kiếm với từ khóa khác</p>
-                        `;
-                        productGrid.appendChild(noProductsMessage);
+                function handleSort() {
+                    let sortType = sortOptions.value;
+
+                    filteredProducts.sort((a, b) => {
+                        let nameA = a.getAttribute("data-name").toLowerCase();
+                        let nameB = b.getAttribute("data-name").toLowerCase();
+                        let priceA = parseFloat(a.getAttribute("data-price"));
+                        let priceB = parseFloat(b.getAttribute("data-price"));
+
+                        switch (sortType) {
+                            case "name_asc":
+                                return nameA.localeCompare(nameB);
+                            case "name_desc":
+                                return nameB.localeCompare(nameA);
+                            case "price_low":
+                                return priceA - priceB;
+                            case "price_high":
+                                return priceB - priceA;
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    // Reorder elements in the DOM
+                    filteredProducts.forEach(product => {
+                        productGrid.appendChild(product);
+                    });
+
+                    currentPage = 1;
+                    updateDisplay();
+                }
+
+                function updateDisplay() {
+                    let noProductsMessage = document.getElementById("noProductsMessage");
+
+                    // Ẩn tất cả sản phẩm
+                    currentProducts.forEach(item => item.style.display = "none");
+
+                    if (filteredProducts.length === 0) {
+                        if (!noProductsMessage) {
+                            noProductsMessage = document.createElement("div");
+                            noProductsMessage.id = "noProductsMessage";
+                            noProductsMessage.className = "col-12 text-center no-products-found";
+                            noProductsMessage.innerHTML = `
+                                <i class="bi bi-search"></i>
+                                <h4>Không tìm thấy sản phẩm</h4>
+                                <p>Vui lòng thử tìm kiếm với từ khóa khác</p>
+                            `;
+                            productGrid.appendChild(noProductsMessage);
+                        }
+                        noProductsMessage.style.display = "block";
+                        paginationContainer.innerHTML = "";
+                        paginationContainer.style.display = "none";
+                        return;
+                    } else {
+                        if (noProductsMessage)
+                            noProductsMessage.style.display = "none";
                     }
-                    noProductsMessage.style.display = "block";
+
+                    showPage(currentPage);
+                    updatePagination();
+                }
+
+                function showPage(page) {
+                    let start = (page - 1) * PRODUCTS_PER_PAGE;
+                    let end = start + PRODUCTS_PER_PAGE;
+
+                    // Ẩn tất cả sản phẩm trước
+                    currentProducts.forEach(item => item.style.display = "none");
+
+                    // Hiển thị chỉ các sản phẩm trong trang hiện tại
+                    filteredProducts.slice(start, end).forEach(product => {
+                        product.style.display = "";
+                    });
+                }
+
+                function updatePagination() {
                     paginationContainer.innerHTML = "";
-                    paginationContainer.style.display = "none";
-                    return;
-                } else {
-                    if (noProductsMessage)
-                        noProductsMessage.style.display = "none";
-                }
+                    let totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
 
-                showPage(currentPage);
-                updatePagination();
-            }
-
-            function showPage(page) {
-                let start = (page - 1) * PRODUCTS_PER_PAGE;
-                let end = start + PRODUCTS_PER_PAGE;
-
-                // Ẩn tất cả sản phẩm trước
-                currentProducts.forEach(item => item.style.display = "none");
-
-                // Hiển thị chỉ các sản phẩm trong trang hiện tại
-                filteredProducts.slice(start, end).forEach(product => {
-                    product.style.display = "";
-                });
-            }
-
-            function updatePagination() {
-                paginationContainer.innerHTML = "";
-                let totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-
-                if (totalPages <= 1) {
-                    paginationContainer.style.display = "none";
-                    return;
-                }
-
-                paginationContainer.style.display = "flex";
-
-                addPageButton("&laquo;", () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        updateDisplay();
-                        scrollToTop();
+                    if (totalPages <= 1) {
+                        paginationContainer.style.display = "none";
+                        return;
                     }
-                }, currentPage === 1);
 
-                for (let i = 1; i <= totalPages; i++) {
-                    addPageButton(i.toString(), () => {
-                        currentPage = i;
-                        updateDisplay();
-                        scrollToTop();
-                    }, currentPage === i);
+                    paginationContainer.style.display = "flex";
+
+                    addPageButton("&laquo;", () => {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            updateDisplay();
+                            scrollToTop();
+                        }
+                    }, currentPage === 1);
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        addPageButton(i.toString(), () => {
+                            currentPage = i;
+                            updateDisplay();
+                            scrollToTop();
+                        }, currentPage === i);
+                    }
+
+                    addPageButton("&raquo;", () => {
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            updateDisplay();
+                            scrollToTop();
+                        }
+                    }, currentPage === totalPages);
                 }
 
-                addPageButton("&raquo;", () => {
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        updateDisplay();
-                        scrollToTop();
-                    }
-                }, currentPage === totalPages);
-            }
+                function addPageButton(text, onClick, isActive) {
+                    let button = document.createElement("button");
+                    button.className = `btn ${isActive ? "btn-primary" : "btn-outline-primary"} mx-1`;
+                    button.innerHTML = text;
+                    button.disabled = isActive;
+                    button.onclick = onClick;
+                    paginationContainer.appendChild(button);
+                }
 
-            function addPageButton(text, onClick, isActive) {
-                let button = document.createElement("button");
-                button.className = `btn ${isActive ? "btn-primary" : "btn-outline-primary"} mx-1`;
-                button.innerHTML = text;
-                button.disabled = isActive;
-                button.onclick = onClick;
-                paginationContainer.appendChild(button);
-            }
+                function scrollToTop() {
+                    document.querySelector('.section-title').scrollIntoView({behavior: 'smooth'});
+                }
 
-            function scrollToTop() {
-                document.querySelector('.section-title').scrollIntoView({behavior: 'smooth'});
-            }
+                // Khởi tạo hiển thị ban đầu
+                updateDisplay();
+            });
+        </script>
 
-            // Khởi tạo hiển thị ban đầu
-            updateDisplay();
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

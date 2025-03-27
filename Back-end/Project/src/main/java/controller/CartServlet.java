@@ -21,7 +21,7 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("loggedInUser");
 
@@ -42,6 +42,27 @@ public class CartServlet extends HttpServlet {
         // Lấy danh sách sản phẩm trong giỏ hàng của user
         CartDAO cartDAO = new CartDAO();
         List<Cart> cartList = cartDAO.getCartByUser(user.getUserID());
+
+        // Kiểm tra quantity vs stock
+        boolean stockExceeded = false;
+        StringBuilder errorMsg = new StringBuilder();
+        for (Cart item : cartList) {
+            int quantity = item.getQuantity();
+            int stock = item.getProduct().getStock();
+            if (quantity > stock) {
+                stockExceeded = true;
+                errorMsg.append("Sản phẩm '")
+                        .append(item.getProduct().getProductName())
+                        .append("' chỉ còn lại ")
+                        .append(stock)
+                        .append(" sản phẩm trong kho.<br>");
+            }
+        }
+
+        if (stockExceeded) {
+            request.setAttribute("stockError", errorMsg.toString());
+        }
+
         // Đưa danh sách vào request và chuyển hướng đến cart.jsp
         request.setAttribute("cartList", cartList);
         request.getRequestDispatcher("cart.jsp").forward(request, response);

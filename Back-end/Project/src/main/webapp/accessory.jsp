@@ -95,7 +95,7 @@
                 position: relative;
                 overflow: hidden;
                 text-align: center;
-                
+
             }
 
             /* Banner image container */
@@ -151,7 +151,7 @@
                 text-decoration: none;
                 box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease-in-out;
-                margin-left:500px; 
+                margin-left:500px;
             }
 
             /* Hiệu ứng hover */
@@ -224,7 +224,7 @@
                         <h5>Danh Mục</h5>
                         <ul class="list-unstyled">
                             <li><a href="AccessoryProducts?category=">Tất cả danh mục</a></li>
-                            <c:forEach var="category" items="${categoryList}">
+                                <c:forEach var="category" items="${categoryList}">
                                 <li>
                                     <a href="AccessoryProducts?category=${category.categoryID}" 
                                        class="${category.categoryID == param.category ? 'active' : ''}">${category.categoryName}</a>
@@ -263,18 +263,35 @@
                                                 <p class="stock">${p.stock} sản phẩm</p>
                                                 <c:choose>
                                                     <c:when test="${not empty sessionScope.user}">
-                                                        <button class="btn btn-success w-100 mt-2 buy-now-btn" 
-                                                                data-product-id="${p.productID}">Mua Ngay</button>
-                                                        <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" 
-                                                                data-product-id="${p.productID}">
-                                                            🛒 Thêm vào Giỏ
-                                                        </button>
+                                                        <c:choose>
+                                                            <c:when test="${p.stock == 0}">
+                                                                <p class="text-danger fw-bold">Sản phẩm đã hết hàng</p>
+                                                                <p class="text-danger fw-bold">Đợi shop thêm vào đã nhé!</p>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-success w-100 mt-2 buy-now-btn"
+                                                                        data-product-id="${p.productID}">Mua Ngay</button>
+
+                                                                <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn"
+                                                                        data-product-id="${p.productID}">
+                                                                    🛒 Thêm vào Giỏ
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
-                                                        <button class="btn btn-outline-primary w-100 mt-2 login-required">
-                                                            🛒 Thêm vào Giỏ
-                                                        </button>
+                                                        <c:choose>
+                                                            <c:when test="${p.stock == 0}">
+                                                                <p class="text-danger fw-bold">Sản phẩm đã hết hàng</p>
+                                                                <p class="text-danger fw-bold">Đợi shop thêm vào đã nhé!</p>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
+                                                                <button class="btn btn-outline-primary w-100 mt-2 login-required"">
+                                                                    🛒 Thêm vào Giỏ
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </div>
@@ -296,10 +313,10 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         <script>
             function showToast(message, type) {
-                const backgroundColor = type === 'success' ? '#28a745' : 
-                                     type === 'error' ? '#dc3545' : 
-                                     '#17a2b8'; // info color
-                
+                const backgroundColor = type === 'success' ? '#28a745' :
+                        type === 'error' ? '#dc3545' :
+                        '#17a2b8'; // info color
+
                 Toastify({
                     text: message,
                     duration: 3000,
@@ -314,14 +331,14 @@
             document.addEventListener("DOMContentLoaded", function () {
                 // Xử lý nút yêu cầu đăng nhập
                 document.querySelectorAll(".login-required").forEach(button => {
-                    button.addEventListener("click", function() {
+                    button.addEventListener("click", function () {
                         showToast("Vui lòng đăng nhập để thực hiện chức năng này!", "error");
                     });
                 });
 
                 // Xử lý nút Mua Ngay
                 document.querySelectorAll(".buy-now-btn").forEach(button => {
-                    button.addEventListener("click", function() {
+                    button.addEventListener("click", function () {
                         const productId = this.getAttribute("data-product-id");
                         // Thêm vào giỏ hàng và chuyển đến trang giỏ hàng
                         fetch("AddToCart?productId=" + productId + "&quantity=1", {
@@ -341,10 +358,10 @@
 
                 // Xử lý nút Thêm vào giỏ
                 document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-                    button.addEventListener("click", function(event) {
+                    button.addEventListener("click", function (event) {
                         event.preventDefault();
                         const productId = this.getAttribute("data-product-id");
-                        
+
                         fetch("AddToCart?productId=" + productId + "&quantity=1", {
                             method: "GET"
                         }).then(response => {

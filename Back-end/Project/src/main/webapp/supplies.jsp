@@ -370,18 +370,35 @@
                                             <p class="stock">${p.stock} sản phẩm</p>
                                             <c:choose>
                                                 <c:when test="${not empty sessionScope.user}">
-                                                    <button class="btn btn-success w-100 mt-2 buy-now-btn" 
-                                                            data-product-id="${p.productID}">Mua Ngay</button>
-                                                    <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" 
-                                                            data-product-id="${p.productID}">
-                                                        🛒 Thêm vào Giỏ
-                                                    </button>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
-                                                    <button class="btn btn-outline-primary w-100 mt-2 login-required">
-                                                        🛒 Thêm vào Giỏ
-                                                    </button>
+                                                    <c:choose>
+                                                            <c:when test="${p.stock == 0}">
+                                                                <p class="text-danger fw-bold">Sản phẩm đã hết hàng</p>
+                                                                <p class="text-danger fw-bold">Đợi shop thêm vào đã nhé!</p>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-success w-100 mt-2 buy-now-btn"
+                                                                        data-product-id="${p.productID}">Mua Ngay</button>
+                                                                        
+                                                                <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn"
+                                                                        data-product-id="${p.productID}">
+                                                                    🛒 Thêm vào Giỏ
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${p.stock == 0}">
+                                                                <p class="text-danger fw-bold">Sản phẩm đã hết hàng</p>
+                                                                <p class="text-danger fw-bold">Đợi shop thêm vào đã nhé!</p>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button class="btn btn-success w-100 mt-2 login-required">Mua Ngay</button>
+                                                                <button class="btn btn-outline-primary w-100 mt-2 login-required"">
+                                                                    🛒 Thêm vào Giỏ
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                 </c:otherwise>
                                             </c:choose>
                                         </div>
