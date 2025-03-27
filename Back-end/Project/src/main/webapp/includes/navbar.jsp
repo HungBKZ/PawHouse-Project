@@ -35,7 +35,7 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="serviceDropdown" role="button">
+                    <a class="nav-link dropdown-toggle" href="/Service" id="serviceDropdown" role="button">
                         Dịch vụ
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="serviceDropdown">
