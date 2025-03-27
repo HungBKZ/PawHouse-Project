@@ -4,12 +4,13 @@
     Author     : hungv
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="Model.Appointment" %>
 <%@ page import="Model.User" %>
 <%@ page import="Model.Pet" %>
 <%@ page import="Model.Service" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,7 +40,7 @@
                     <td>${appointment.service.serviceName}</td>
                     <td>${appointment.appointmentDate}</td>
                     <td>${appointment.appointmentStatus}</td>
-                    <td>${appointment.price}</td>
+                    <td><fmt:formatNumber value="${appointment.price}" pattern="#,##0"/> VND</td>
                 </tr>
             </c:forEach>
         </tbody>

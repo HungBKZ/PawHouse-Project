@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="Model.Service" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -103,7 +104,7 @@
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${service.serviceName}</h5>
                                 <p class="card-text">${service.description}</p>
-                                <p class="price mt-auto fw-bold text-success">${service.price} VND</p>
+                                <p class="price mt-auto fw-bold text-success"><fmt:formatNumber value="${service.price}" pattern="#,##0"/> VND</p>
                                 <a href="BookService?id=${service.serviceID}" class="btn btn-custom mt-2 w-100">Đặt Lịch</a>
                             </div>
                         </div>
@@ -123,7 +124,7 @@
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${service.serviceName}</h5>
                                 <p class="card-text">${service.description}</p>
-                                <p class="price mt-auto fw-bold text-success">${service.price} VND</p>
+                                <p class="price mt-auto fw-bold text-success"><fmt:formatNumber value="${service.price}" pattern="#,##0"/> VND</p>
                                 <a href="BookService?id=${service.serviceID}" class="btn btn-custom mt-2 w-100">Đặt Lịch</a>
                             </div>
                         </div>

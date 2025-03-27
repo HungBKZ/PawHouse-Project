@@ -1,8 +1,8 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="Model.Product" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -217,7 +217,7 @@
                                                 <div class="card-body text-center">
                                                     <h5 class="card-title">${p.productName}</h5>
                                                     <p class="card-text">${p.description}</p>
-                                                    <p class="price">${p.price} VND</p>
+                                                    <p class="price"><fmt:formatNumber value="${p.price}" pattern="#,##0"/> VND</p>
                                                     <p class="stock">${p.stock} sản phẩm</p>
                                                     <button class="btn btn-success w-100">Mua Ngay</button>
                                                     <button class="btn btn-outline-primary w-100 mt-2 add-to-cart-btn" data-product-id="${p.productID}">

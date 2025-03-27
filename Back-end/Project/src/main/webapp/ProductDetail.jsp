@@ -1,9 +1,10 @@
-=<%@page import="Model.ProductComment"%>
+<%@page import="Model.ProductComment"%>
 <%@page import="java.util.List"%>
 <%@page import="DAO.ProductCommentDAO"%>
 <%@page import="Model.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="vn">
@@ -181,7 +182,7 @@
                             <div class="col-md-6">
                                 <div class="card-body">
                                     <h2 class="card-title">${product.productName}</h2>
-                                    <p class="product-price">₫${product.price}</p>
+                                    <p class="product-price"><fmt:formatNumber value="${product.price}" pattern="#,##0"/>₫</p>
                                     <span class="stock-status ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
                                         ${product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}
                                         ${product.stock > 0 ? '(' : ''}${product.stock > 0 ? product.stock : ''}${product.stock > 0 ? ' sản phẩm)' : ''}
@@ -330,7 +331,7 @@
                                                             ${relatedProduct.productName}
                                                         </a>
                                                     </h6>
-                                                    <p class="card-text text-danger fw-bold mb-0">₫${relatedProduct.price}</p>
+                                                    <p class="card-text text-danger fw-bold mb-0"><fmt:formatNumber value="${relatedProduct.price}" pattern="#,##0"/>₫</p>
                                                 </div>
                                             </div>
                                         </div>

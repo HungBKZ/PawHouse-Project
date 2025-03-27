@@ -11,6 +11,9 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- jsPDF -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <style>
             body {
                 background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
@@ -21,13 +24,13 @@
             }
             /* Style lại navbar */
             .navbar {
-                background: #17a2b8; /* Nền trắng */
-                padding: 0.8rem 1.5rem; /* Giảm padding để nhỏ gọn */
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow nhẹ */
-                border-bottom: 1px solid #dee2e6; /* Đường viền dưới */
+                background: #17a2b8;
+                padding: 0.8rem 1.5rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-bottom: 1px solid #dee2e6;
             }
             .navbar-brand, .nav-link {
-                color: #000 !important; /* Chữ màu đen */
+                color: #000 !important;
                 font-weight: 600;
                 font-size: 1rem;
                 letter-spacing: 0.5px;
@@ -35,72 +38,70 @@
                 padding: 0.5rem 1rem;
             }
             .navbar-brand i, .nav-link i {
-                color: #000; /* Icon màu đen */
+                color: #000;
                 margin-right: 5px;
             }
             .navbar-brand:hover, .nav-link:hover {
-                color: #007bff !important; /* Hover đổi màu xanh */
+                color: #007bff !important;
             }
             .navbar-brand:hover i, .nav-link:hover i {
-                color: #007bff; /* Icon cũng đổi màu xanh khi hover */
+                color: #007bff;
             }
             .navbar-toggler {
                 padding: 0.25rem 0.5rem;
                 border: none;
             }
-            .navbar-toggler-icon {
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-            }
-            .report-card {
-                border-radius: 15px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                transition: transform 0.2s;
-            }
-            .report-card:hover {
-                transform: translateY(-5px);
-            }
-            .chart-container {
-                position: relative;
-                height: 300px;
-                margin: 20px 0;
-            }
-            .container-fluid {
-                padding: 40px 20px;
-            }
-            h1 {
-                color: #0056b3;
-                font-weight: 700;
-                margin-bottom: 40px;
-                letter-spacing: 1px;
-            }
-            .form-select, .form-control {
-                border-radius: 10px;
-                box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-            }
-            .btn-primary {
-                background: #007bff;
+            .btn-export {
+                background: linear-gradient(90deg, #e74c3c, #c0392b);
                 border: none;
-                border-radius: 25px;
-                padding: 10px 20px;
-            }
-            .bg-primary {
-                background: linear-gradient(90deg, #007bff, #0056b3) !important;
-            }
-            .bg-success {
-                background: linear-gradient(90deg, #28a745, #218838) !important;
-            }
-            .bg-info {
-                background: linear-gradient(90deg, #17a2b8, #138496) !important;
-            }
-            .bg-warning {
-                background: linear-gradient(90deg, #ffc107, #e0a800) !important;
-            }
-            .text-white h5 {
+                color: white;
+                padding: 10px 25px;
+                border-radius: 50px;
                 font-weight: 600;
-                color: #fff;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+                margin-right: 15px;
             }
-            .text-white h3 {
-                font-weight: 700;
+            .btn-export:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+                background: linear-gradient(90deg, #c0392b, #e74c3c);
+                color: white;
+            }
+            .btn-print {
+                background: linear-gradient(90deg, #9b59b6, #8e44ad);
+                border: none;
+                color: white;
+                padding: 10px 25px;
+                border-radius: 50px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+            }
+            .btn-print:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+                background: linear-gradient(90deg, #8e44ad, #9b59b6);
+                color: white;
+            }
+            @media print {
+                body {
+                    background: white;
+                }
+                .navbar, .btn-export, .btn-print {
+                    display: none;
+                }
+                .container-fluid {
+                    width: 100%;
+                    margin: 0;
+                    padding: 15px;
+                }
+                .card {
+                    border: none;
+                    box-shadow: none;
+                }
             }
         </style>
     </head>
@@ -108,12 +109,7 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <span class="navbar-brand"><i class="fas fa-paw"></i> PawHouse</span>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
+                <div class="navbar-nav me-auto">
                             <c:choose>
                                 <c:when test="${sessionScope.user.role.roleID == 1}">
                                     <a class="nav-link" href="/adminDashboard.jsp"><i class="fas fa-home"></i> Trang chủ Admin</a>
@@ -125,13 +121,19 @@
                                     <a class="nav-link" href="/"><i class="fas fa-home"></i> Trang chủ</a>
                                 </c:otherwise>
                             </c:choose>
-                        </li>
-                    </ul>
+                </div>
+                <div class="d-flex">
+                    <button class="btn-export me-2" onclick="generatePDF()">
+                        <i class="fas fa-file-pdf me-2"></i>Xuất PDF
+                    </button>
+                    <button class="btn-print" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>In báo cáo
+                    </button>
                 </div>
             </div>
         </nav>
 
-        <div class="container-fluid py-4">
+        <div class="container-fluid py-4" id="report-content">
             <h1 class="mb-4"><i class="fas fa-chart-line"></i> Báo Cáo Doanh Thu</h1>
 
             <!-- Bộ lọc thời gian -->
@@ -326,47 +328,88 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-        const dates = <c:out value="${report.reportDatesJson}" escapeXml="false"/>;
-        const productRevs = <c:out value="${report.productRevenuesJson}" escapeXml="false"/>;
-        const serviceRevs = <c:out value="${report.serviceRevenuesJson}" escapeXml="false"/>;
-        const prodRev = <c:out value="${report.productRevenue}"/>;
-        const servRev = <c:out value="${report.serviceRevenue}"/>;
+                        const dates = <c:out value="${report.reportDatesJson}" escapeXml="false"/>;
+                        const productRevs = <c:out value="${report.productRevenuesJson}" escapeXml="false"/>;
+                        const serviceRevs = <c:out value="${report.serviceRevenuesJson}" escapeXml="false"/>;
+                        const prodRev = <c:out value="${report.productRevenue}"/>;
+                        const servRev = <c:out value="${report.serviceRevenue}"/>;
 
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revenueCtx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [
-                    {label: 'Doanh thu sản phẩm', data: productRevs, borderColor: 'rgb(40, 167, 69)', tension: 0.1},
-                    {label: 'Doanh thu dịch vụ', data: serviceRevs, borderColor: 'rgb(23, 162, 184)', tension: 0.1}
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(value);
+                        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+                        new Chart(revenueCtx, {
+                            type: 'line',
+                            data: {
+                                labels: dates,
+                                datasets: [
+                                    {label: 'Doanh thu sản phẩm', data: productRevs, borderColor: 'rgb(40, 167, 69)', tension: 0.1},
+                                    {label: 'Doanh thu dịch vụ', data: serviceRevs, borderColor: 'rgb(23, 162, 184)', tension: 0.1}
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function (value) {
+                                                return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(value);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
+                        const pieCtx = document.getElementById('pieChart').getContext('2d');
+                        new Chart(pieCtx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Sản phẩm', 'Dịch vụ'],
+                                datasets: [{data: [prodRev, servRev], backgroundColor: ['rgb(40, 167, 69)', 'rgb(23, 162, 184)']}]
+                            },
+                            options: {responsive: true, maintainAspectRatio: false}
+                        });
+
+                        async function generatePDF() {
+                            const {jsPDF} = window.jspdf;
+                            const doc = new jsPDF();
+
+                            // Lấy nội dung cần chuyển thành PDF
+                            const content = document.getElementById('report-content');
+
+                            try {
+                                // Chuyển HTML thành canvas
+                                const canvas = await html2canvas(content, {
+                                    scale: 2,
+                                    useCORS: true,
+                                    logging: false
+                                });
+
+                                // Chuyển canvas thành ảnh
+                                const imgData = canvas.toDataURL('image/png');
+
+                                // Tính toán kích thước để fit vào trang PDF
+                                const imgWidth = 210; // A4 width in mm
+                                const pageHeight = 295; // A4 height in mm
+                                const imgHeight = canvas.height * imgWidth / canvas.width;
+
+                                // Thêm ảnh vào PDF
+                                doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                                // Thêm footer
+                                doc.setFontSize(10);
+                                doc.setTextColor(150);
+                                const today = new Date().toLocaleDateString('vi-VN');
+                                doc.text('Báo cáo được tạo ngày: ' + today, 10, pageHeight - 10);
+
+                                // Tải PDF
+                                doc.save('bao_cao_doanh_thu_' + today.replace(/\//g, '_') + '.pdf');
+
+                            } catch (error) {
+                                console.error('Lỗi khi tạo PDF:', error);
+                                alert('Có lỗi xảy ra khi tạo PDF. Vui lòng thử lại.');
                             }
                         }
-                    }
-                }
-            }
-        });
-
-        const pieCtx = document.getElementById('pieChart').getContext('2d');
-        new Chart(pieCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Sản phẩm', 'Dịch vụ'],
-                datasets: [{data: [prodRev, servRev], backgroundColor: ['rgb(40, 167, 69)', 'rgb(23, 162, 184)']}]
-            },
-            options: {responsive: true, maintainAspectRatio: false}
-        });
         </script>
     </body>
 </html>

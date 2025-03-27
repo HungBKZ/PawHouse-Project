@@ -4,6 +4,7 @@
 <%@ page import="Model.User" %>
 <%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -391,7 +392,7 @@
                                         <option value="null" ${appointment.appointmentStatus == null ? 'selected' : ''}>Từ chối</option>
                                     </select>
                                 </td>
-                                <td>${appointment.price}</td>
+                                <td><fmt:formatNumber value="${appointment.price}" pattern="#,##0"/> VND</td>
                                 <td>${appointment.notes}</td>
                                 <td>
                                     <select class="form-select staff-select">
@@ -453,7 +454,7 @@
                             <select class="form-select" id="serviceId" name="serviceId" required onchange="updatePrice()">
                                 <option value="">Chọn dịch vụ</option>
                                 <c:forEach items="${services}" var="service">
-                                    <option value="${service.serviceID}" data-price="${service.price}">${service.serviceName}</option>
+                                    <option value="${service.serviceID}" data-price="<fmt:formatNumber value="${service.price}" pattern="#,##0"/>">${service.serviceName}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -556,7 +557,7 @@
                                 function updatePrice() {
                                     let selectedOption = $('#serviceId option:selected');
                                     let price = selectedOption.data('price') || '';
-                                    $('#price').val(price ? price.toLocaleString('vi-VN') + ' VNĐ' : '');
+                                    $('#price').val(price ? price + ' VND' : '');
                                 }
 
                                 function viewDetails(appointmentId) {

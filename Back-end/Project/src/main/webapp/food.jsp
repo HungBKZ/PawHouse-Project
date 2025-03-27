@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -322,7 +323,7 @@
                                             <div class="card-body text-center d-flex flex-column flex-grow-1">
                                                 <h5 class="card-title">${p.productName}</h5>
                                                 <p class="card-text">${p.description}</p>
-                                                <p class="price mt-auto">${p.price} VND</p>
+                                                <p class="price mt-auto"><fmt:formatNumber value="${p.price}" pattern="#,##0"/> VND</p>
                                                 <p class="stock">${p.stock} sản phẩm</p>
                                                 <c:choose>
                                                     <c:when test="${not empty sessionScope.user}">

@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -216,7 +217,7 @@
                                 </select>
                             </td>
 
-                            <td>${appointment.price} VND</td>
+                            <td><fmt:formatNumber value="${appointment.price}" pattern="#,##0"/> VND</td>
                             <td>
                                 <form action="StaffAppointmentServlet" method="post">
                                     <input type="hidden" name="appointmentID" value="${appointment.appointmentID}">
